@@ -2,3 +2,36 @@
 {% block title %}
     用户登录
 {% endblock %}
+
+{% block css_block %}
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css"/>
+{% endblock %}
+
+
+{% block body %}
+    <div id="login">
+        <h1>Login</h1>
+        <input type="text" required="required" placeholder="用户名" id="user_name">
+        <input type="password" required="required" placeholder="密码" id="password">
+        <button class="button" type="submit" id="button">登录</button>
+    </div>
+
+{% endblock %}
+
+{% block js_block %}
+
+    <script>
+        $("#button").click(function () {
+            user_name = $("#user_name").val();
+            password = $("#password").val();
+            $.ajax({
+                url:"/api/login/",
+                type:"POST",
+                data:{"user_name": user_name,"password": password},
+                success:function (data) {
+                    alert(data.data);
+                }
+            })
+        })
+    </script>
+{% endblock %}
