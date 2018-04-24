@@ -1,27 +1,18 @@
 # coding=utf-8
 from django.http import HttpResponse
 from django.views.generic import View
+from rest_framework.views import APIView
+from rest_framework.views import Response
 
 
-class HttpApiBaseView(View):
+class HttpApiBaseView(APIView):
 
-    def get(self, request, *args, **kwargs):
-        data = self.get_data(request, *args, **kwargs)
-        return HttpResponse(data)
+    def success_response(self, data):
+        return Response(data={"code": 0, "data": data})
 
-    def post(self, request, *args, **kwargs):
-        data = self.post_data(request)
-        return HttpResponse(data)
+    def error_response(self, error_reason):
+        return Response(data={"code": 1, "data": error_reason})
 
-    def post_data(self, request):
-        return self._post_data(request)
-
-    def _post_data(self, request):
-        raise NotImplementedError
-
-    def get_data(self, request, *args, **kwargs):
-        return self._get_data(request)
-
-    def _get_data(self, request):
-        raise NotImplementedError
-
+    def serializer_invalid_response(self, serializer):
+        for k, v in serializer.errors.iteritems():
+            return self.error_response(k + " : " + v[0])

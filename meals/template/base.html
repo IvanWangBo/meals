@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+
+    {% block css_block %}{% endblock %}
+</head>
+
+
+<body>
+
+<!-- custom body begin -->
+{% block body %}{% endblock %}
+<!-- custom body end -->
+
+{% block js_block %}{% endblock %}
+<!-- footer begin -->
+<!-- footer end -->
+</body>
+</html>

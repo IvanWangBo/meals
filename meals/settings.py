@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api',
     'api.users',
+    'api.restaurants',
+    'api.companies',
     'utils',
+    'rest_framework',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -61,7 +64,7 @@ AUTH_USER_MODEL = 'users.Users'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'meals/template/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

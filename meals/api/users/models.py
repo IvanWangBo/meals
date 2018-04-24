@@ -16,8 +16,9 @@ class UserManager(models.Manager):
 class Users(AbstractBaseUser):
     user_name = models.CharField(max_length=30, unique=True, blank=False)
     real_name = models.CharField(max_length=30, blank=False)
-    email = models.EmailField(max_length=254, blank=True, null=True)
+    email = models.EmailField(max_length=254, blank=True)
     admin_type = models.IntegerField(default=UserAdminType.personnel)
+    phone_number = models.CharField(max_length=20, blank=False)
     gender = models.IntegerField(default=UserGender.unknown)
     company_id = models.IntegerField(default=0, blank=False)
     department_id = models.IntegerField(default=0, blank=False)

@@ -15,9 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from api.users.views import UserInfoView
+from api.users.views import LoginView
+from api.users.views import LogoutView
+from django.views.generic import TemplateView
 
-urlpatterns = [
+urlpatterns = (
     url(r'^admin/', admin.site.urls),
-    url(r'^hello/$', UserInfoView.as_view())
-]
+    url(r'^login/$', TemplateView.as_view(template_name="login.html"), name="user_login_page"),
+    url(r'^api/login/$', LoginView.as_view()),
+    url(r'^api/logout/$', LogoutView.as_view()),
+)
