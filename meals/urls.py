@@ -25,6 +25,10 @@ urlpatterns = [
 
     # html
     url(r'^login/$', TemplateView.as_view(template_name="login.html"), name="user_login_page"),
+    url(r'^personnel/$', TemplateView.as_view(template_name="personnel/index.html"), name="personnel_index_page"),
+    url(r'^admin/$', TemplateView.as_view(template_name="admin/index.html"), name="admin_index_page"),
+    url(r'^company/$', TemplateView.as_view(template_name="company/index.html"), name="company_index_page"),
+    url(r'^restaurant/$', TemplateView.as_view(template_name="restaurant/index.html"), name="restaurant_index_page"),
 
     # api
     url(r'^api/login/$', LoginView.as_view()),

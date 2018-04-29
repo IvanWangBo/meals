@@ -7,11 +7,11 @@ from rest_framework.views import Response
 
 class HttpApiBaseView(APIView):
 
-    def success_response(self, data):
-        return Response(data={"code": 0, "data": data})
+    def success_response(self, data, message=""):
+        return Response(data={"code": 200, "data": data, "message": message})
 
-    def error_response(self, error_reason):
-        return Response(data={"code": 1, "data": error_reason})
+    def error_response(self, data, message=""):
+        return Response(data={"code": 401, "data": data, "message": message})
 
     def serializer_invalid_response(self, serializer):
         for k, v in serializer.errors.iteritems():

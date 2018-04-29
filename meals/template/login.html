@@ -29,7 +29,29 @@
                 type:"POST",
                 data:{"user_name": user_name,"password": password},
                 success:function (data) {
-                    alert(data.data);
+                    alert(data.message);
+                    function getLocationVal(id){
+                            var temp = unescape(location.search).split(id+"=")[1] || "";
+                            return temp.indexOf("&")>=0 ? temp.split("&")[0] : temp;
+                        }
+                    var from = getLocationVal("__from");
+                        if(from != ""){
+                            window.location.href = from;
+                        }
+                        else{
+                            admin_type = data.data['admin_type'];
+                            if(admin_type == 0) {
+                                location.href = "/personnel/";
+                            } else if (admin_type == 1) {
+                                location.href = "/restaurant/";
+                            } else if (admin_type == 2) {
+                                location.href = "/company/";
+                            } else if (admin_type == 3) {
+                                location.href = "/admin/";
+                            } else {
+                                alert("用户类型错误");
+                            }
+                        }
                 }
             })
         })

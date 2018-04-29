@@ -2,8 +2,8 @@
 from django.core.management.base import BaseCommand
 
 from api.users.models import Users
+from api.instances import cacher
 from common.constants import UserAdminType
-
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -35,10 +35,11 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.SUCCESS("Nothing happened"))
 
         except Users.DoesNotExist:
-            user = Users.objects.create(user_name=user_name, real_name=u"管理员", email="admin@meals.com", admin_type=UserAdminType.admin)
             self.stdout.write(self.style.WARNING("password: "))
             password = raw_input()
-            user.set_password(password)
-            user.save()
-            self.stdout.write(self.style.SUCCESS("Successfully created admin user.\n"
+            user = cacher.create_user(user_name=user_name, password=password, real_name=u"管理员", admin_type=UserAdminType.admin)
+            if not user:
+                self.stdout.write(self.style.ERROR("create user failed\n"))
+            else:
+                self.stdout.write(self.style.SUCCESS("Successfully created admin user.\n"
                                                  "Username: %s\nPassword: %s\n" % (user_name, password)))
