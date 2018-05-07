@@ -86,14 +86,29 @@ WSGI_APPLICATION = 'meals.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+DB_NAME = 'meals'
+DB_USER = 'meals'
+DB_PASSWORD = 'meals123'
+DB_HOST = '127.0.0.1'
+DB_PORT = 3306
+
+db_conn_args = {
+    "name": DB_NAME,
+    "host": DB_HOST,
+    "port": DB_PORT,
+    "user": DB_USER,
+    "passwd": DB_PASSWORD,
+    'charset': 'utf8mb4'
+}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'meals',
-        'USER': 'meals',
-        'PASSWORD': 'meals123',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
         'OPTIONS': {'charset': 'utf8mb4'},
         'TEST': {
             'NAME': 'meals',
@@ -143,3 +158,5 @@ STATIC_ROOT = os.path.join(BASE_DIR , 'static')
 STATICFILES_DIRS = (
      os.path.join(BASE_DIR, 'meals/static'),
 )
+
+MEDIA_URL = '/media/'

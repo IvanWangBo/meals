@@ -2,6 +2,7 @@
 from api.base_view import HttpApiBaseView
 from django.contrib import auth
 from api.users.serializers import LoginSerializer
+from api.instances import cacher
 
 
 class LoginView(HttpApiBaseView):
@@ -24,8 +25,23 @@ class LoginView(HttpApiBaseView):
         else:
             return self.error_response(data={}, message=u"用户名或密码错误")
 
+class PersonnelListView(HttpApiBaseView):
+    def get(self, request):
+        company_id = request.GET.get("company_id", None)
+        if not company_id:
+            return self.error_response(data=[], message=u"该公司不存在")
+        personnel_list = cacher.get_personnel_list(company_id)
 
-class LogoutView(HttpApiBaseView):
+class CreatePersonnel(HttpApiBaseView):
     def post(self, request):
-        auth.logout(request)
-        return self.success_response(data={}, message=u"登出成功")
+        pass
+
+class CreateCompany(HttpApiBaseView):
+    def post(self, request):
+        pass
+
+class CreateDish(HttpApiBaseView):
+    def post(self, request):
+        pass
+
+

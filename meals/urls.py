@@ -32,5 +32,4 @@ urlpatterns = [
 
     # api
     url(r'^api/login/$', LoginView.as_view()),
-    url(r'^api/logout/$', LogoutView.as_view()),
 ]

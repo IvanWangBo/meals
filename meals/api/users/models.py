@@ -21,7 +21,7 @@ class Users(AbstractBaseUser):
     phone_number = models.CharField(max_length=20, blank=False)
     gender = models.IntegerField(default=UserGender.unknown)
     company_id = models.IntegerField(default=0, blank=False)
-    department_id = models.IntegerField(default=0, blank=False)
+    department_id = models.IntegerField(default=0, blank=False, choices=[])
     is_enabled = models.BooleanField(default=True, blank=False)
     create_time = models.DateTimeField(auto_now_add=True, blank=False)
 

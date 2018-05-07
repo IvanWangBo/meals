@@ -7,7 +7,7 @@ from common.constants import UserGender
 
 
 class Cacher(object):
-    def __init__(self, dal=None):
+    def __init__(self, dal):
         self.dal = dal
 
     def create_user(self, user_name, password, real_name="", email="", admin_type=UserAdminType.personnel, phone_number="", gender=UserGender.unknown, company_id=0, department_id=0, is_enabled=1):
@@ -29,3 +29,10 @@ class Cacher(object):
         except Exception as err:
             print err # todo 把print改成log的形式
             return None
+
+    def get_personnel_list(self, company_id):
+        return self.dal._db_get_table_records(
+            'users',
+            ['user_name', 'real_name', 'phone_number', 'gender', 'company_id', 'department_id', ],
+            where={'company_id': company_id, 'admin_type': UserAdminType.personnel, 'is_enabled': 1})
+
