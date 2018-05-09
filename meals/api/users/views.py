@@ -44,4 +44,10 @@ class CreateDish(HttpApiBaseView):
     def post(self, request):
         pass
 
+class RegisterView(HttpApiBaseView):
+    pass
+
+class LogoutView(HttpApiBaseView):
+    pass
+
 
