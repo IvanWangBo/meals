@@ -5,6 +5,7 @@ from django.contrib import admin
 from api.users.views import LoginView
 from api.users.views import LogoutView
 from api.users.views import RegisterView
+from api.companies.views import CompanyAdminView
 from django.views.generic import TemplateView
 
 
@@ -26,17 +27,20 @@ urlpatterns = [
     url(r'^api/login/$', LoginView.as_view()), # 登录
     url(r'^api/logout/$', LogoutView.as_view()), # 登出
     url(r'^api/register/$', RegisterView.as_view()), # 注册用户
-    #data:
-    #[{
-    #    "company_id": 1001,
-    #    "company_name": "xxx",
-    #    "admin_account": "admin",
-    #    "phone_number": "123456789"
+
+    # company
+    url(r'api/company/admin/$', CompanyAdminView.as_view()), # 公司账号列表
+    #{
+    #    "message": "",
+    #    "code": 200,
+    #    "data": [
+    #        {
+    #            "phone_number": "",
+    #            "user_name": "wangbo",
+    #            "company_id": 0,
+    #            "company_name": ""
+    #        }
+    #    ]
     #}
-    #]
 
-    # 点餐
-
-
-    #
 ]
