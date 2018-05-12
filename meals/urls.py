@@ -55,7 +55,7 @@ urlpatterns = [
     #    "address": "北京市海淀区XXXXX" // string length 256
     #}
     #
-    # response":
+    # response.data:
     #{
     #     "company_id": "123",
     #     "admin_name": "admin123",
