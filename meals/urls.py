@@ -6,6 +6,7 @@ from api.users.views import LoginView
 from api.users.views import LogoutView
 from api.users.views import RegisterView
 from api.companies.views import CompanyAdminView
+from api.companies.views import AddCompanyView
 from django.views.generic import TemplateView
 
 
@@ -29,7 +30,9 @@ urlpatterns = [
     url(r'^api/register/$', RegisterView.as_view()), # 注册用户
 
     # company
+    # GET
     url(r'api/company/admin/$', CompanyAdminView.as_view()), # 公司账号列表
+    # response
     #{
     #    "message": "",
     #    "code": 200,
@@ -41,6 +44,22 @@ urlpatterns = [
     #            "company_name": ""
     #        }
     #    ]
+    #}
+
+    #POST
+    url(r'^api/company/add/$', AddCompanyView.as_view()),
+    # request:
+    #{
+    #    "company_name": "XXX公司", // string length 30
+    #    "province": "北京市", // string length 30
+    #    "address": "北京市海淀区XXXXX" // string length 256
+    #}
+    #
+    # response":
+    #{
+    #     "company_id": "123",
+    #     "admin_name": "admin123",
+    #     "password": "12345678"
     #}
 
 ]

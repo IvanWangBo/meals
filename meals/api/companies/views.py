@@ -1,4 +1,6 @@
 #coding=utf-8
+import random
+
 from api.base_view import HttpApiBaseView
 from api.users.models import Users
 from api.companies.models import Companies
@@ -41,11 +43,14 @@ class AddCompanyView(HttpApiBaseView):
         data = serializer.data
         try:
             company = Companies.objects.create(company_name=data["company_name"], province=data["province"], address=data["address"], is_enabled=1)
+            admin_name = 'admin%03d' % company.id
+            password = random.randint(10000000, 99999999)
+            company_admin = cacher.create_user(admin_name, password, admin_type=UserAdminType.company, company_id=company.id)
             company.save()
         except Exception as err:
             return self.error_response({}, message=u'公司创建失败')
         else:
-            return self.success_response({}, message=u'公司创建成功')
+            return self.success_response({'company_id': company.id, 'admin_name': admin_name, 'password': password}, message=u'公司创建成功')
 
 
 class AddCompanyAdminView(HttpApiBaseView):
