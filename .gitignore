@@ -8,3 +8,4 @@ bin/*
 include/*
 meals/.DS_Store
 pip-selfcheck.json
+*.xml
