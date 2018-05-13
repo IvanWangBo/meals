@@ -5,14 +5,37 @@
 
 {% block css_block %}
     <link rel="stylesheet" type="text/css" href="/static/css/login.css"/>
+
 {% endblock %}
 
 
 {% block body %}
-    <div id="login">
-        <h1>管理员主页</h1>
-    </div>
+<!--logo头部-->
+<div class="top">
+    <i></i>企业团餐管理系统
+</div>
+<!--下拉框-->
+<div class="selects_outer">
+    <select name="company_id" id="company_id">
 
+    </select>
+    <select name="restaurant_id" id="restaurant_id">
+
+    </select>
+    <select name="order_id" id="order_id">
+
+    </select>
+</div>
+<!--tab切换-->
+<div class="tabs">
+    <div class="js_tab tab">公司账号管理</div>
+    <div class="js_tab tab">添加公司账号</div>
+</div>
+<!--展示区-->
+<div class="js_main">
+    <div class="js_sec sec"></div>
+    <div class="js_sec sec"></div>
+</div>
 {% endblock %}
 
 {% block js_block %}
