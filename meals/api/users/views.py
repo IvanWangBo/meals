@@ -2,7 +2,14 @@
 from api.base_view import HttpApiBaseView
 from django.contrib import auth
 from api.users.serializers import LoginSerializer
+from api.users.serializers import AddPersonnelSerializer
+from api.companies.models import Departments
 from api.instances import cacher
+from api.users.models import Users
+from api.users.serializers import ResetUserSerializer
+from common.constants import UserAdminType
+from api.decorators import login_required
+from api.decorators import company_required
 
 
 class LoginView(HttpApiBaseView):
@@ -21,33 +28,63 @@ class LoginView(HttpApiBaseView):
         print user
         if user:
             auth.login(request, user)
-            return self.success_response(data={'admin_type': user.admin_type}, message=u"登录成功")
+            return self.success_response(data={'admin_type': user.admin_type, 'user_id': user.id}, message=u"登录成功")
         else:
             return self.error_response(data={}, message=u"用户名或密码错误")
 
+
 class PersonnelListView(HttpApiBaseView):
     def get(self, request):
-        company_id = request.GET.get("company_id", None)
-        if not company_id:
-            return self.error_response(data=[], message=u"该公司不存在")
+        company_id = request.data.get("company_id")
+        if company_id is None:
+            return self.error_response(data={}, message=u"该公司不存在")
         personnel_list = cacher.get_personnel_list(company_id)
 
-class CreatePersonnel(HttpApiBaseView):
-    def post(self, request):
-        pass
 
-class CreateCompany(HttpApiBaseView):
-    def post(self, request):
-        pass
+class AddPersonnelView(HttpApiBaseView):
+    @company_required
+    def get(self, request):
+        company_id = request.data.get("company_id")
+        if company_id is None:
+            return self.error_response(data={}, message=u"该公司不存在")
+        departments = Departments.objects.filter(company_id=company_id)
+        results = [{"department_id": department.id, "department_name": department.name} for department in departments]
+        return self.success_response(results)
 
-class CreateDish(HttpApiBaseView):
+    @company_required
     def post(self, request):
-        pass
+        try:
+            serializer = AddPersonnelSerializer(data=request.data)
+            user = cacher.create_user(
+                user_name=serializer.user_name,
+                real_name=serializer.real_name,
+                company_id=serializer.company_id,
+                department_id=serializer.department_id,
+                gender=serializer.gender,
+                phone_number=serializer.phone_number,
+                admin_type=UserAdminType.personnel
+            )
+            user.set_password(serializer.password)
+        except Exception as err:
+            return self.error_response({}, message=u"新建员工账号失败!")
+        else:
+            return self.success_response({}, message=u"新建员工账号成功!")
 
-class RegisterView(HttpApiBaseView):
-    pass
+
+class ResetUserView(HttpApiBaseView):
+    @login_required
+    def post(self, request):
+        serializer = ResetUserSerializer(data=request.data)
+        user = Users.objects.get(id=serializer.user_id)
+        if not user:
+            return self.error_response({}, message=u"该用户不存在")
+        if not user.check_password(serializer.password):
+            return self.error_response({}, message=u"原密码输入错误!")
+        user.set_password(serializer.new_password)
+        return self.success_response({}, message=u"用户密码修改成功")
+
 
 class LogoutView(HttpApiBaseView):
-    pass
-
-
+    @login_required
+    def post(self, request):
+        auth.logout(request)
