@@ -1,0 +1,147 @@
+.whole{
+    width: 100%;
+    background-color: rgba(255,255,255,0.9);
+}
+.top{
+    height:80px;
+    width: 100%;
+    line-height: 80px;
+    font-size: 24px;
+    font-weight: bolder;
+    color:#000;
+    padding-left: 6%;
+    background-color: rgba(0, 0, 0, 0.09);
+}
+.top i{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    vertical-align: middle;
+    background: lightblue;
+}
+.top_tabs{
+    height: 35px;
+    font-size: 14px;
+    line-height: 35px;
+    padding-left: 6%;
+    margin-top: 5px;
+}
+.top_tabs .top_tab{
+    width: 80px;
+    text-align: center;
+    background: darkgray;
+    color:#fff;
+    display: inline-block;
+    float: left;
+    border-radius: 5px;
+
+}
+.top_tabs .chosen_1{
+    font-size: 16px;
+    font-weight: bolder;
+    background-color: lightblue;
+    color:#000;
+}
+.main{
+    width: 100%;
+    padding-left: 6%;
+}
+.main .line{
+    border-top:2px dashed #ccc;
+    margin-top: 5px;
+    width: 88%;
+}
+.tabs{
+    width: 88%;
+    border-radius: 5px;
+    height: 45px;
+    margin-top: 5px;
+    background: lightgray;
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+}
+.tabs .tab{
+    margin: 0 auto;
+    display: inline-block;
+    width: 49%;
+    height: 35px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 5px;
+    color: #333;
+    line-height: 35px;
+    cursor: pointer;
+}
+.tabs .tab:nth-child(1){
+    margin-left: 5px;
+}
+.tabs .tab:nth-child(2){
+    margin-right: 5px;
+}
+.tabs .chosen_2{
+    background-color: #fff;
+    color: #000;
+}
+table{
+    border-collapse: collapse;
+    width: 60%;
+    margin-top: 20px;
+    margin-left: 0;
+}
+table tr,th,td{
+    font-size: 12px;
+    text-align: center;
+    height: 25px;
+    line-height: 25px;
+    border:1px solid #000;
+}
+table th{
+    background: lightgray;
+    font-weight: bolder;
+}
+table td .reset_pwd{
+    color: #fff;
+    width: 35px;
+    height: 22px;
+    border-radius: 5px;
+    background-color: red;
+    display: inline-block;
+}
+table td .reset_pwd:active{
+    background-color: lightgray;
+    color: #000;
+}
+.sec form{
+    margin-top: 10px;
+}
+.sec form .add_info{
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+}
+.sec form .btn{
+    width: 200px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    background-color: lightblue;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+.pop{
+    position: fixed;
+    top:50%;
+    left:50%;
+    -webkit-transform: translate(-50%,-50%);
+    -moz-transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
+    width: 60%;
+    background-color: #fff;
+    border-radius: 5px;
+}

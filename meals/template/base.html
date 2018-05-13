@@ -6,7 +6,7 @@
         {% block title %}
         {% endblock %}
     </title>
-
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css"/>
     {% block css_block %}{% endblock %}
 </head>
 
@@ -16,7 +16,9 @@
 <!-- custom body begin -->
 {% block body %}{% endblock %}
 <!-- custom body end -->
-<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/util.js"></script>
+<script src="/static/js/lazyload.js"></script>
 <script src="/static/js/csrftoken.js"></script>
 {% block js_block %}{% endblock %}
 <!-- footer begin -->
