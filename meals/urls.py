@@ -4,9 +4,12 @@ from django.conf.urls import url
 from django.contrib import admin
 from api.users.views import LoginView
 from api.users.views import LogoutView
-from api.users.views import RegisterView
+from api.users.views import ResetUserView
 from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
+from api.companies.views import AddCompanyAdminView
+from api.companies.views import ResetCompanyAdminView
+from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 
 
@@ -27,7 +30,7 @@ urlpatterns = [
     # user api
     url(r'^api/login/$', LoginView.as_view()), # 登录
     url(r'^api/logout/$', LogoutView.as_view()), # 登出
-    url(r'^api/register/$', RegisterView.as_view()), # 注册用户
+    url(r'^api/user/reset/', ResetUserView.as_view()), # 修改密码
 
     # company
     # GET
@@ -53,6 +56,7 @@ urlpatterns = [
     #    "company_name": "XXX公司", // string length 30
     #    "province": "北京市", // string length 30
     #    "address": "北京市海淀区XXXXX" // string length 256
+    #    "phone_number": "123456789"
     #}
     #
     # response.data:
@@ -61,5 +65,12 @@ urlpatterns = [
     #     "admin_name": "admin123",
     #     "password": "12345678"
     #}
+    # 添加公司管理员
+    url(r'api/company/admin/add/$', AddCompanyAdminView.as_view()),
+    # 重置管理员密码
+    url(r'api/company/admin/reset/', ResetCompanyAdminView.as_view()),
+
+    #添加员工账号
+    url(r'api/users/add/$', AddPersonnelView.as_view()),
 
 ]

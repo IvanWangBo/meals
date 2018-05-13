@@ -8,6 +8,8 @@ from api.decorators import admin_required
 from common.constants import UserAdminType
 from django.contrib import auth
 from api.companies.serializers import AddCompanySerializer
+from api.companies.serializers import AddCompanyAdminSerializer
+from api.companies.serializers import ResetCompanyAdminSerializer
 from api.instances import cacher
 
 
@@ -27,6 +29,7 @@ class CompanyAdminView(HttpApiBaseView):
             company_name = company_id_name_map.get(company_id, '')
             results.append({
                 'company_id': company_id,
+                'user_id': user.id,
                 'user_name': user_name,
                 'phone_number': phone_number,
                 'company_name': company_name
@@ -45,7 +48,8 @@ class AddCompanyView(HttpApiBaseView):
             company = Companies.objects.create(company_name=data["company_name"], province=data["province"], address=data["address"], is_enabled=1)
             admin_name = 'admin%03d' % company.id
             password = random.randint(10000000, 99999999)
-            company_admin = cacher.create_user(admin_name, password, admin_type=UserAdminType.company, company_id=company.id)
+            phone_number = serializer.phone_number
+            company_admin = cacher.create_user(admin_name, password, admin_type=UserAdminType.company, company_id=company.id, phone_number=phone_number)
             company.save()
         except Exception as err:
             return self.error_response({}, message=u'公司创建失败')
@@ -56,8 +60,35 @@ class AddCompanyView(HttpApiBaseView):
 class AddCompanyAdminView(HttpApiBaseView):
     @admin_required
     def get(self, request):
-        return self.success_response({})
+        companies = Companies.objects.all()
+        results = []
+        for company in companies:
+            results.append({
+                'company_id': company.id,
+                'company_name': company.company_name
+            })
+        return self.success_response(results)
 
     @admin_required
     def post(self, request):
-        return self.success_response({})
+        serializer = AddCompanyAdminSerializer(data=request.data)
+        company = Companies.objects.get(id=serializer.company_id)
+        if not company:
+            return self.error_response({}, message=u"没有ID为: %s 的公司" % serializer.company_id)
+        try:
+            company_admin = cacher.create_user(serializer.admin_name, serializer.password, admin_type=UserAdminType.company, company_id=company.id)
+        except Exception as err:
+            return self.error_response({}, message=u'公司管理员创建失败')
+        else:
+            return self.success_response({'company_id': company.id, 'admin_name': company_admin.user_name, 'password': serializer.password}, u"公司管理员创建成功")
+
+
+class ResetCompanyAdminView(HttpApiBaseView):
+    @admin_required
+    def post(self, request):
+        serializer = ResetCompanyAdminSerializer(data=request.data)
+        user = Users.objects.get(id=serializer.user_id)
+        if not user:
+            return self.error_response({}, u'该管理员不存在')
+        user.set_password(serializer.password)
+        return self.success_response({'password': serializer.password}, u"密码设置成功")
