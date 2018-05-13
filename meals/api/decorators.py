@@ -10,7 +10,6 @@ from common.constants import UserAdminType
 
 class BasePermissionDecorator(HttpApiBaseView):
     def __init__(self, func):
-        super(BasePermissionDecorator).__init__()
         self.func = func
 
     def __get__(self, obj, obj_type):

@@ -19,3 +19,4 @@ class UserGender(object):
     choices = [(unknown, u'未知的'), (male, u'男'), (female, u'女'), ]
 
     valid_list = [unknown, male, female, ]
+
