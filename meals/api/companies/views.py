@@ -72,23 +72,29 @@ class AddCompanyAdminView(HttpApiBaseView):
     @admin_required
     def post(self, request):
         serializer = AddCompanyAdminSerializer(data=request.data)
-        company = Companies.objects.get(id=serializer.company_id)
+        if not serializer.is_valid():
+            raise self.serializer_invalid_response(serializer)
+        data = serializer.data
+        company = Companies.objects.get(id=data["company_id"])
         if not company:
-            return self.error_response({}, message=u"没有ID为: %s 的公司" % serializer.company_id)
+            return self.error_response({}, message=u"没有ID为: %s 的公司" % data["company_id"])
         try:
-            company_admin = cacher.create_user(serializer.admin_name, serializer.password, admin_type=UserAdminType.company, company_id=company.id)
+            company_admin = cacher.create_user(data["admin_name"], data["password"], admin_type=UserAdminType.company, company_id=company.id)
         except Exception as err:
             return self.error_response({}, message=u'公司管理员创建失败')
         else:
-            return self.success_response({'company_id': company.id, 'admin_name': company_admin.user_name, 'password': serializer.password}, u"公司管理员创建成功")
+            return self.success_response({'company_id': company.id, 'admin_name': company_admin.user_name, 'password': data["password"]}, u"公司管理员创建成功")
 
 
 class ResetCompanyAdminView(HttpApiBaseView):
     @admin_required
     def post(self, request):
         serializer = ResetCompanyAdminSerializer(data=request.data)
-        user = Users.objects.get(id=serializer.user_id)
+        if not serializer.is_valid():
+            raise self.serializer_invalid_response(serializer)
+        data = serializer.data
+        user = Users.objects.get(id=data["user_id"])
         if not user:
             return self.error_response({}, u'该管理员不存在')
-        user.set_password(serializer.password)
-        return self.success_response({'password': serializer.password}, u"密码设置成功")
+        user.set_password(data["password"])
+        return self.success_response({'password': data["password"]}, u"密码设置成功")

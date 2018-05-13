@@ -55,16 +55,19 @@ class AddPersonnelView(HttpApiBaseView):
     def post(self, request):
         try:
             serializer = AddPersonnelSerializer(data=request.data)
+            if not serializer.is_valid():
+                raise self.serializer_invalid_response(serializer)
+            data = serializer.data
             user = cacher.create_user(
-                user_name=serializer.user_name,
-                real_name=serializer.real_name,
-                company_id=serializer.company_id,
-                department_id=serializer.department_id,
-                gender=serializer.gender,
-                phone_number=serializer.phone_number,
+                user_name=data["user_name"],
+                real_name=data["real_name"],
+                company_id=data["company_id"],
+                department_id=data["department_id"],
+                gender=data["gender"],
+                phone_number=data["phone_number"],
                 admin_type=UserAdminType.personnel
             )
-            user.set_password(serializer.password)
+            user.set_password(data["password"])
         except Exception as err:
             return self.error_response({}, message=u"新建员工账号失败!")
         else:
@@ -75,12 +78,15 @@ class ResetUserView(HttpApiBaseView):
     @login_required
     def post(self, request):
         serializer = ResetUserSerializer(data=request.data)
-        user = Users.objects.get(id=serializer.user_id)
+        if not serializer.is_valid():
+            raise self.serializer_invalid_response(serializer)
+        data = serializer.data
+        user = Users.objects.get(id=data["user_id"])
         if not user:
             return self.error_response({}, message=u"该用户不存在")
-        if not user.check_password(serializer.password):
+        if not user.check_password(data["password"]):
             return self.error_response({}, message=u"原密码输入错误!")
-        user.set_password(serializer.new_password)
+        user.set_password(data["new_password"])
         return self.success_response({}, message=u"用户密码修改成功")
 
 
