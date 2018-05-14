@@ -19,3 +19,14 @@ class Departments(models.Model):
 
     class Meta:
         db_table = "departments"
+
+
+class RestaurantRelation(models.Model):
+    company_id = models.IntegerField(default=0, blank=False)
+    restaurant_id = models.IntegerField(default=0, blank=False)
+    is_enabled = models.IntegerField(default=0, blank=False)
+    create_time = models.DateTimeField(auto_now_add=True, blank=False)
+
+    class Meta:
+        db_table = "restaurant_relation"
+

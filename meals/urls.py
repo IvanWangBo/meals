@@ -9,6 +9,10 @@ from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
 from api.companies.views import AddCompanyAdminView
 from api.companies.views import ResetCompanyAdminView
+from api.restaurants.views import AddDishView
+from api.restaurants.views import TimeRangeListView
+from api.restaurants.views import AddTimeRangeView
+from api.restaurants.views import DishesListView
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 
@@ -71,6 +75,16 @@ urlpatterns = [
     url(r'api/company/admin/reset/', ResetCompanyAdminView.as_view()),
 
     #添加员工账号
-    url(r'api/users/add/$', AddPersonnelView.as_view()),
+    url(r'api/user/add/$', AddPersonnelView.as_view()),
+
+    # 添加菜品
+    url(r"api/restaurant/dish/add/$", AddDishView.as_view()),
+    # 菜品清单
+    url(r"api/restaurant/dish/$", DishesListView.as_view()),
+
+    # 查询用餐时间段
+    url(r"api/restaurant/time_range/$", TimeRangeListView.as_view()),
+    # 新建用餐时间段
+    url(r"api/restaurant/time_range/add/$", AddTimeRangeView.as_view()),
 
 ]

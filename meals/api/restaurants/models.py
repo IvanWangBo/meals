@@ -16,9 +16,20 @@ class Dishes(models.Model):
     name = models.CharField(max_length=128, blank=False)
     price = models.FloatField()
     restaurant_id = models.IntegerField(default=0, blank=False)
-    image = models.ImageField()
-    count = models.IntegerField(default=0, blank=False)
+    image_url = models.CharField(max_length=256, blank=False, default='')
+    support_times = models.CharField(default='', blank=False, max_length=256)
     create_time = models.DateTimeField(auto_now_add=True, blank=False)
 
     class Meta:
         db_table = 'dishes'
+
+
+class TimeRange(models.Model):
+    name = models.CharField(max_length=30, blank=False)
+    start_time = models.TimeField(blank=False)
+    end_time = models.TimeField(blank=False)
+    create_time = models.DateTimeField(auto_now_add=True, blank=False)
+
+    class Meta:
+        db_table = 'time_range'
+
