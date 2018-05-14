@@ -52,7 +52,7 @@ class AddDishView(HttpApiBaseView):
 class DishesListView(HttpApiBaseView):
     @login_required
     def get(self, request):
-        serializers = DishesListSerializer(data=request.data)
+        serializers = DishesListSerializer(data=request.GET)
         if not serializers.is_valid():
             return self.error_response(serializers)
         data = serializers.data

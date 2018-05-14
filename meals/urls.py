@@ -5,6 +5,7 @@ from django.contrib import admin
 from api.users.views import LoginView
 from api.users.views import LogoutView
 from api.users.views import ResetUserView
+from api.users.views import PersonnelListView
 from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
 from api.companies.views import AddCompanyAdminView
@@ -80,8 +81,14 @@ urlpatterns = [
     # 创建部门
     url(r'api/company/department/add/$', AddDepartmentView.as_view()),
 
-    #添加员工账号
+    # 部门列表 GET
     url(r'api/user/add/$', AddPersonnelView.as_view()),
+
+
+    #添加员工账号 POST
+    url(r'api/user/add/$', AddPersonnelView.as_view()),
+    # 获取员工列表
+    url(r'api/user/list/$', PersonnelListView.as_view()),
 
     # 添加菜品
     url(r"api/restaurant/dish/add/$", AddDishView.as_view()),

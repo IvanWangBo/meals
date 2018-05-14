@@ -39,16 +39,35 @@ class LoginView(HttpApiBaseView):
 
 class PersonnelListView(HttpApiBaseView):
     def get(self, request):
-        company_id = request.data.get("company_id")
-        if company_id is None:
-            return self.error_response(data={}, message=u"该公司不存在")
-        personnel_list = cacher.get_personnel_list(company_id)
+        try:
+            company_id = request.GET.get("company_id")
+            if company_id is None:
+                return self.error_response(data={}, message=u"该公司不存在")
+            personnel_list = Users.objects.filter(company_id=company_id)
+            departments = Departments.objects.filter(company_id=company_id)
+            department_map = {}
+            for department in departments:
+                department_map[department.id] = department.name
+            results = []
+            for user in personnel_list:
+                results.append({
+                    'user_id': user.id,
+                    'department_id': user.department_id,
+                    'department_name': department_map.get(user.department_id, ''),
+                    'name': user.real_name,
+                    'left_rmb': 0,
+                    'to_settle': 0
+                })
+        except Exception as err:
+            return self.error_response({}, u"获取员工列表失败")
+        else:
+            return self.success_response(results, message=u"获取员工列表成功")
 
 
 class AddPersonnelView(HttpApiBaseView):
     @company_required
     def get(self, request):
-        company_id = request.data.get("company_id")
+        company_id = request.GET.get("company_id")
         if company_id is None:
             return self.error_response(data={}, message=u"该公司不存在")
         departments = Departments.objects.filter(company_id=company_id)
