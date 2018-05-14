@@ -59,7 +59,7 @@ urlpatterns = [
     #    "phone_number": "123456789"
     #}
     #
-    # response.data:
+    # response.data:u
     #{
     #     "company_id": "123",
     #     "admin_name": "admin123",
