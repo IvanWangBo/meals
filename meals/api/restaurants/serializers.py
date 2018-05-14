@@ -24,3 +24,13 @@ class DishesListSerializer(serializers.Serializer):
 class ModifyTimeRangeSerializer(serializers.Serializer):
     dish_id = serializers.IntegerField(allow_null=False)
     time_range_id = serializers.IntegerField(allow_null=False)
+
+
+class AddRestaurantSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=30, allow_blank=False)
+    phone_number = serializers.CharField(max_length=254, allow_blank=False)
+    address = serializers.CharField(max_length=256, allow_blank=False)
+
+
+class DeleteRestaurantSerializer(serializers.Serializer):
+    restaurant_id = serializers.IntegerField(allow_null=False)

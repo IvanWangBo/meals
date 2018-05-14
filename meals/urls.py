@@ -17,6 +17,9 @@ from api.restaurants.views import AddTimeRangeView
 from api.restaurants.views import DishesListView
 from api.restaurants.views import EnableDishTimeView
 from api.restaurants.views import DisableDishTimeView
+from api.restaurants.views import AddRestaurantView
+from api.restaurants.views import RestaurantListView
+from api.restaurants.views import DeleteRestaurantView
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 
@@ -103,5 +106,13 @@ urlpatterns = [
     url(r"api/restaurant/time_range/enable/$", EnableDishTimeView.as_view()),
     # 取消用餐时间段
     url(r"api/restaurant/time_range/disable/$", DisableDishTimeView.as_view()),
+
+    # 创建餐厅
+    url(r"api/restaurant/add/$", AddRestaurantView.as_view()),
+
+    # 餐厅列表
+    url(r"api/restaurant/list/$", RestaurantListView.as_view()),
+    # 删除餐厅
+    url(r"api/restaurant/delete/$", DeleteRestaurantView.as_view()),
 
 ]

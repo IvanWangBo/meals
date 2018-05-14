@@ -6,10 +6,13 @@ from api.decorators import admin_required
 from api.decorators import login_required
 from api.restaurants.models import Dishes
 from api.restaurants.models import TimeRange
+from api.restaurants.models import Restaurants
+from api.restaurants.serializers import DeleteRestaurantSerializer
 from api.restaurants.serializers import AddDishSerializer
 from api.restaurants.serializers import AddTimeRangeSerializer
 from api.restaurants.serializers import ModifyTimeRangeSerializer
 from api.restaurants.serializers import DishesListSerializer
+from api.restaurants.serializers import AddRestaurantSerializer
 
 
 class AddDishView(HttpApiBaseView):
@@ -168,5 +171,57 @@ class DisableDishTimeView(HttpApiBaseView):
 class AddRestaurantView(HttpApiBaseView):
     @admin_required
     def post(self, request):
-        pass
+        try:
+            serializers = AddRestaurantSerializer(data=request.data)
+            if not serializers.is_valid():
+                return self.error_response(serializers)
+            data = serializers.data
+            name = data['name']
+            phone_number = data['phone_number']
+            address = data['address']
+            restaurant = Restaurants.objects.create(name=name, address=address, phone_number=phone_number, is_enabled=1)
+            restaurant.save()
+        except Exception as err:
+            return self.error_response({}, u"创建餐厅失败")
+        else:
+            return self.success_response({
+                "restaurant_id": restaurant.id,
+                "name": name,
+                "address": address,
+                "phone_number": phone_number
+            }, u"创建餐厅成功")
 
+
+class RestaurantListView(HttpApiBaseView):
+    @admin_required
+    def get(self, request):
+        try:
+            restaurants = Restaurants.objects.filter(is_enabled=1)
+            results = [{
+                'restaurant_id': restaurant.id,
+                'name': restaurant.name,
+                'address': restaurant.address,
+                'phone_number': restaurant.phone_number
+            } for restaurant in restaurants]
+        except Exception as err:
+            return self.error_response({}, u"获取餐厅列表失败")
+        else:
+            return self.success_response(results, message=u"获取餐厅列表成功")
+
+
+class DeleteRestaurantView(HttpApiBaseView):
+    @admin_required
+    def post(self, request):
+        try:
+            serializers = DeleteRestaurantSerializer(data=request.data)
+            if not serializers.is_valid():
+                return self.error_response(serializers)
+            data = serializers.data
+            restaurant_id = data["restaurant_id"]
+            restaurant = Restaurants.objects.get(id=restaurant_id)
+            restaurant.is_enabled = 0
+            restaurant.save()
+        except Exception as err:
+            return self.error_response({}, message=u"删除餐厅失败")
+        else:
+            return self.success_response({}, message=u"删除餐厅成功")
