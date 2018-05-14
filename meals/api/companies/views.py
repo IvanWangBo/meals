@@ -3,13 +3,16 @@ import random
 
 from api.base_view import HttpApiBaseView
 from api.users.models import Users
+from api.companies.models import Departments
 from api.companies.models import Companies
 from api.decorators import admin_required
+from api.decorators import company_required
 from common.constants import UserAdminType
 from django.contrib import auth
 from api.companies.serializers import AddCompanySerializer
 from api.companies.serializers import AddCompanyAdminSerializer
 from api.companies.serializers import ResetCompanyAdminSerializer
+from api.companies.serializers import AddDepartmentSerializer
 from api.instances import cacher
 
 
@@ -98,3 +101,25 @@ class ResetCompanyAdminView(HttpApiBaseView):
             return self.error_response({}, u'该管理员不存在')
         user.set_password(data["password"])
         return self.success_response({'password': data["password"]}, u"密码设置成功")
+
+
+class AddDepartmentView(HttpApiBaseView):
+    @company_required
+    def post(self, request):
+        try:
+            serializer = AddDepartmentSerializer(data=request.data)
+            if not serializer.is_valid():
+                raise self.serializer_invalid_response(serializer)
+            data = serializer.data
+            company_id = data["company_id"]
+            name = data["name"]
+            department = Departments.objects.create(name=name, company_id=company_id)
+            department.save()
+        except Exception as err:
+            return self.error_response({}, u"创建部门失败")
+        else:
+            return self.success_response({
+                'department_id': department.id,
+                'name': department.name,
+                'company_id': department.company_id
+            }, u"创建部门成功")

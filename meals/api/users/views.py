@@ -28,7 +28,11 @@ class LoginView(HttpApiBaseView):
         print user
         if user:
             auth.login(request, user)
-            return self.success_response(data={'admin_type': user.admin_type, 'user_id': user.id}, message=u"登录成功")
+            return self.success_response(data={
+                'admin_type': user.admin_type,
+                'user_id': user.id,
+                'company_id': user.company_id
+            }, message=u"登录成功")
         else:
             return self.error_response(data={}, message=u"用户名或密码错误")
 

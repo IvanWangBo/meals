@@ -9,10 +9,13 @@ from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
 from api.companies.views import AddCompanyAdminView
 from api.companies.views import ResetCompanyAdminView
+from api.companies.views import AddDepartmentView
 from api.restaurants.views import AddDishView
 from api.restaurants.views import TimeRangeListView
 from api.restaurants.views import AddTimeRangeView
 from api.restaurants.views import DishesListView
+from api.restaurants.views import EnableDishTimeView
+from api.restaurants.views import DisableDishTimeView
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 
@@ -72,7 +75,10 @@ urlpatterns = [
     # 添加公司管理员
     url(r'api/company/admin/add/$', AddCompanyAdminView.as_view()),
     # 重置管理员密码
-    url(r'api/company/admin/reset/', ResetCompanyAdminView.as_view()),
+    url(r'api/company/admin/reset/$', ResetCompanyAdminView.as_view()),
+
+    # 创建部门
+    url(r'api/company/department/add/$', AddDepartmentView.as_view()),
 
     #添加员工账号
     url(r'api/user/add/$', AddPersonnelView.as_view()),
@@ -86,5 +92,9 @@ urlpatterns = [
     url(r"api/restaurant/time_range/$", TimeRangeListView.as_view()),
     # 新建用餐时间段
     url(r"api/restaurant/time_range/add/$", AddTimeRangeView.as_view()),
+    # 启用用餐时间段
+    url(r"api/restaurant/time_range/enable/$", EnableDishTimeView.as_view()),
+    # 取消用餐时间段
+    url(r"api/restaurant/time_range/disable/$", DisableDishTimeView.as_view()),
 
 ]

@@ -45,9 +45,9 @@ class admin_required(BasePermissionDecorator):
 
 class company_required(BasePermissionDecorator):
     def check_permission(self):
-        return self.request.user.is_authenticated() and self.request.user.admin_type == UserAdminType.company
+        return self.request.user.is_authenticated() and self.request.user.admin_type in [UserAdminType.company, UserAdminType.admin]
 
 
 class personnel_required(BasePermissionDecorator):
     def check_permission(self):
-        return self.request.user.is_authenticated() and self.request.user.admin_type == UserAdminType.personnel
+        return self.request.user.is_authenticated() and self.request.user.admin_type in [UserAdminType.personnel, UserAdminType.company, UserAdminType.admin]

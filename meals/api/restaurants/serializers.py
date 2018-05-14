@@ -19,3 +19,8 @@ class AddTimeRangeSerializer(serializers.Serializer):
 class DishesListSerializer(serializers.Serializer):
     restaurant_id = serializers.IntegerField(allow_null=False)
     time_range_id = serializers.IntegerField(allow_null=False)
+
+
+class ModifyTimeRangeSerializer(serializers.Serializer):
+    dish_id = serializers.IntegerField(allow_null=False)
+    time_range_id = serializers.IntegerField(allow_null=False)
