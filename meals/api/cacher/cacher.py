@@ -36,3 +36,18 @@ class Cacher(object):
             ['user_name', 'real_name', 'phone_number', 'gender', 'company_id', 'department_id', ],
             where={'company_id': company_id, 'admin_type': UserAdminType.personnel, 'is_enabled': 1})
 
+    def get_order_id(self):
+        self.dal.begin()
+        order_id = self.dal._db_get_table_record(
+            'order_id',
+            ['now_id', ],
+            where={}
+        )
+        if not order_id:
+            now_id = 1
+            self.dal.insert('order_id', {'now_id': now_id + 1})
+        else:
+            now_id = order_id.get('now_id', 1)
+            self.dal.update('order_id', {'now_id': now_id + 1}, where={'now_id': now_id})
+        self.dal.commit()
+        return now_id

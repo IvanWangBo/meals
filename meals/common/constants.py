@@ -20,3 +20,11 @@ class UserGender(object):
 
     valid_list = [unknown, male, female, ]
 
+
+class OrderStatus(object):
+    canceled = -1
+    created = 0
+    accepted = 1
+    sending = 2
+    finished = 3
+    settled = 4

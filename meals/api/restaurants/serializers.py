@@ -7,7 +7,7 @@ class AddDishSerializer(serializers.Serializer):
     price = serializers.FloatField(allow_null=False)
     restaurant_id = serializers.IntegerField(allow_null=False)
     image_url = serializers.CharField(max_length=30, allow_null=False)
-    support_times = serializers.ListField()
+    support_times = serializers.CharField(max_length=128, allow_blank=False)
 
 
 class AddTimeRangeSerializer(serializers.Serializer):
@@ -27,7 +27,7 @@ class ModifyTimeRangeSerializer(serializers.Serializer):
 
 
 class AddRestaurantSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=30, allow_blank=False)
+    restaurant_name = serializers.CharField(max_length=30, allow_blank=False)
     phone_number = serializers.CharField(max_length=254, allow_blank=False)
     address = serializers.CharField(max_length=256, allow_blank=False)
 

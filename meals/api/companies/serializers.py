@@ -21,5 +21,5 @@ class ResetCompanyAdminSerializer(serializers.Serializer):
 
 
 class AddDepartmentSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=30, allow_blank=False)
+    department_name = serializers.CharField(max_length=30, allow_blank=False)
     company_id = serializers.IntegerField(allow_null=False)

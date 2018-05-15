@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
 from common.constants import UserGender
+from common.constants import OrderStatus
 from common.constants import UserAdminType
 
 
@@ -31,3 +32,22 @@ class Users(AbstractBaseUser):
 
     class Meta:
         db_table = "users"
+
+
+class MealOrders(models.Model):
+    user_id = models.IntegerField(blank=False, default=0)
+    order_id = models.IntegerField(blank=False, default=0, db_index=True)
+    dish_id = models.IntegerField(blank=False, default=0)
+    count = models.IntegerField(blank=False, default=1)
+    state = models.IntegerField(blank=False, default=OrderStatus.created)
+    total_price = models.FloatField(blank=False, default=0.0)
+    create_time = models.DateTimeField(auto_now_add=True, blank=False)
+
+    class Meta:
+        db_table = "meal_orders"
+
+class OrderId(models.Model):
+    now_id = models.IntegerField(blank=False, default=1)
+
+    class Meta:
+        db_table = "order_id"

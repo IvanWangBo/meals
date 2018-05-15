@@ -27,3 +27,6 @@ class ResetUserSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=30, allow_blank=False)
     new_password = serializers.CharField(max_length=30, allow_blank=False)
 
+class MealsOrderSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(allow_null=False)
+    order_list = serializers.CharField(max_length=1024, allow_blank=False)

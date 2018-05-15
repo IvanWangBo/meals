@@ -6,11 +6,14 @@ from api.users.views import LoginView
 from api.users.views import LogoutView
 from api.users.views import ResetUserView
 from api.users.views import PersonnelListView
+from api.users.views import MealsOrderView
 from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
 from api.companies.views import AddCompanyAdminView
 from api.companies.views import ResetCompanyAdminView
 from api.companies.views import AddDepartmentView
+from api.companies.views import CompanyListView
+from api.companies.views import DepartmentListView
 from api.restaurants.views import AddDishView
 from api.restaurants.views import TimeRangeListView
 from api.restaurants.views import AddTimeRangeView
@@ -61,7 +64,7 @@ urlpatterns = [
     #}
 
     #POST
-    url(r'^api/company/add/$', AddCompanyView.as_view()),
+    url(r'^api/company/add/$', AddCompanyView.as_view()), # 添加公司及管理员
     # request:
     #{
     #    "company_name": "XXX公司", // string length 30
@@ -76,6 +79,8 @@ urlpatterns = [
     #     "admin_name": "admin123",
     #     "password": "12345678"
     #}
+    # 公司列表
+    url(r"api/company/list/$", CompanyListView.as_view()),
     # 添加公司管理员
     url(r'api/company/admin/add/$', AddCompanyAdminView.as_view()),
     # 重置管理员密码
@@ -85,10 +90,10 @@ urlpatterns = [
     url(r'api/company/department/add/$', AddDepartmentView.as_view()),
 
     # 部门列表 GET
-    url(r'api/user/add/$', AddPersonnelView.as_view()),
+    url(r'api/company/department/list/$', DepartmentListView.as_view()),
 
 
-    #添加员工账号 POST
+    # 添加员工账号 POST
     url(r'api/user/add/$', AddPersonnelView.as_view()),
     # 获取员工列表
     url(r'api/user/list/$', PersonnelListView.as_view()),
@@ -96,10 +101,10 @@ urlpatterns = [
     # 添加菜品
     url(r"api/restaurant/dish/add/$", AddDishView.as_view()),
     # 菜品清单
-    url(r"api/restaurant/dish/$", DishesListView.as_view()),
+    url(r"api/restaurant/dish/list/$", DishesListView.as_view()),
 
     # 查询用餐时间段
-    url(r"api/restaurant/time_range/$", TimeRangeListView.as_view()),
+    url(r"api/restaurant/time_range/list/$", TimeRangeListView.as_view()),
     # 新建用餐时间段
     url(r"api/restaurant/time_range/add/$", AddTimeRangeView.as_view()),
     # 启用用餐时间段
@@ -114,5 +119,9 @@ urlpatterns = [
     url(r"api/restaurant/list/$", RestaurantListView.as_view()),
     # 删除餐厅
     url(r"api/restaurant/delete/$", DeleteRestaurantView.as_view()),
+
+    # 订餐
+    url(r"api/user/meals/order/$", MealsOrderView.as_view()),
+
 
 ]

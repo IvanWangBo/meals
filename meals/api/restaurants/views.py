@@ -23,7 +23,7 @@ class AddDishView(HttpApiBaseView):
             if not serializers.is_valid():
                 return self.error_response(serializers)
             data = serializers.data
-            support_times = data["support_times"]
+            support_times = json.loads(data["support_times"])
             for support_time in support_times:
                 try:
                     time_range = TimeRange.objects.get(id=support_time)
@@ -37,13 +37,14 @@ class AddDishView(HttpApiBaseView):
                 price=data["price"],
                 restaurant_id=data["restaurant_id"],
                 image_url=data["image_url"],
-                support_times = json.dumps(data["support_times"])
+                support_times = data["support_times"]
             )
             dish.save()
         except Exception as err:
             return self.error_response({}, message=u"新建菜品失败")
         else:
             return self.success_response({
+                "dish_id": dish.id,
                 "name": data["name"],
                 "price": data["price"],
                 "restaurant_id": data["restaurant_id"],
@@ -55,40 +56,46 @@ class AddDishView(HttpApiBaseView):
 class DishesListView(HttpApiBaseView):
     @login_required
     def get(self, request):
-        serializers = DishesListSerializer(data=request.GET)
-        if not serializers.is_valid():
-            return self.error_response(serializers)
-        data = serializers.data
-        restaurant_id = data["restaurant_id"]
-        time_range_id = data["time_range_id"]
-        all_dishes = Dishes.objects.filter(restaurant_id=restaurant_id)
-        right_dishes = []
-        for dish in all_dishes:
-            support_times = json.loads(dish.support_times)
-            if time_range_id in support_times:
-                right_dishes.append({
-                    "dish_id": dish.id,
-                    "name": dish.name,
-                    "price": dish.price,
-                    "image_url": dish.image_url,
-                    "support_times": support_times
-                })
-        return self.success_response(right_dishes, message=u"查询菜单成功")
+        try:
+            serializers = DishesListSerializer(data=request.GET)
+            if not serializers.is_valid():
+                return self.error_response(serializers)
+            data = serializers.data
+            restaurant_id = data["restaurant_id"]
+            time_range_id = data["time_range_id"]
+            all_dishes = Dishes.objects.filter(restaurant_id=restaurant_id)
+            right_dishes = []
+            for dish in all_dishes:
+                support_times = json.loads(dish.support_times)
+                if time_range_id in support_times:
+                    right_dishes.append({
+                        "dish_id": dish.id,
+                        "name": dish.name,
+                        "price": dish.price,
+                        "image_url": dish.image_url,
+                        "support_times": support_times
+                    })
+            return self.success_response(right_dishes, message=u"查询菜单成功")
+        except Exception as err:
+            return self.error_response({}, message=u"查询菜单失败")
 
 
 class TimeRangeListView(HttpApiBaseView):
     @login_required
     def get(self, request):
-        result = []
-        time_range_list = TimeRange.objects.all()
-        for time_range in time_range_list:
-            result.append({
-                'time_range_id': time_range.id,
-                'name': time_range.name,
-                'start_time': time_range.start_time,
-                'end_time': time_range.end_time
-            })
-        return self.success_response(result, message=u"获取用餐时段成功")
+        try:
+            result = []
+            time_range_list = TimeRange.objects.all()
+            for time_range in time_range_list:
+                result.append({
+                    'time_range_id': time_range.id,
+                    'name': time_range.name,
+                    'start_time': time_range.start_time,
+                    'end_time': time_range.end_time
+                })
+            return self.success_response(result, message=u"获取用餐时段成功")
+        except Exception as err:
+            return self.error_response({}, message=u"获取用餐时段失败")
 
 
 class AddTimeRangeView(HttpApiBaseView):
@@ -176,7 +183,7 @@ class AddRestaurantView(HttpApiBaseView):
             if not serializers.is_valid():
                 return self.error_response(serializers)
             data = serializers.data
-            name = data['name']
+            name = data['restaurant_name']
             phone_number = data['phone_number']
             address = data['address']
             restaurant = Restaurants.objects.create(name=name, address=address, phone_number=phone_number, is_enabled=1)
@@ -186,20 +193,20 @@ class AddRestaurantView(HttpApiBaseView):
         else:
             return self.success_response({
                 "restaurant_id": restaurant.id,
-                "name": name,
+                "restaurant_name": name,
                 "address": address,
                 "phone_number": phone_number
             }, u"创建餐厅成功")
 
 
 class RestaurantListView(HttpApiBaseView):
-    @admin_required
+    @login_required
     def get(self, request):
         try:
             restaurants = Restaurants.objects.filter(is_enabled=1)
             results = [{
                 'restaurant_id': restaurant.id,
-                'name': restaurant.name,
+                'restaurant_name': restaurant.name,
                 'address': restaurant.address,
                 'phone_number': restaurant.phone_number
             } for restaurant in restaurants]
