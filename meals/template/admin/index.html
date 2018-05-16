@@ -37,8 +37,7 @@
                     </div>
                     <div class="add_info add_2">
                         所在省份:
-                        <select name="province" id="province_sel" class="province" required="required" placeholder="请输入">
-                            <option value="" selected="selected">请输入</option>
+                        <select name="province" id="province_sel" class="province" required="required" placeholder="请选择">
                             <option value="北京市">北京市</option>
                             <option value="天津市">天津市</option>
                             <option value="上海市">上海市</option>
@@ -186,7 +185,6 @@
                     success: function (d) {
                         if(d.code==200){
                             $(".company_name").val("");
-                            $(".province").val("");
                             $(".address").val("");
                             $(".phone_number").val("");
                             alert("公司管理员账号："+d.data.admin_name+",公司管理员密码："+d.data.password);
