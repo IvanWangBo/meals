@@ -16,9 +16,9 @@
         <i></i>企业团餐管理系统
     </div>
     <div class="top_tabs">
-        <a class="js_top_tab top_tab chosen_1" href="/admin">公司管理</a>
-        <a class="js_top_tab top_tab" href="">餐厅管理</a>
-        <a class="js_top_tab top_tab" href="">订单管理</a>
+        <a class="js_top_tab top_tab chosen_1" href="/admin/index">公司管理</a>
+        <a class="js_top_tab top_tab" href="/admin/restaurant">餐厅管理</a>
+        <a class="js_top_tab top_tab" href="/admin/order">订单管理</a>
     </div>
     <div class="js_main main">
         <div class="line"></div>
@@ -37,8 +37,7 @@
                     </div>
                     <div class="add_info add_2">
                         所在省份:
-                        <select name="province" id="province_sel" class="province" required="required" placeholder="请输入">
-                            <option value="" selected="selected">请输入</option>
+                        <select name="province" id="province_sel" class="province" required="required" placeholder="请选择">
                             <option value="北京市">北京市</option>
                             <option value="天津市">天津市</option>
                             <option value="上海市">上海市</option>
@@ -186,7 +185,6 @@
                     success: function (d) {
                         if(d.code==200){
                             $(".company_name").val("");
-                            $(".province").val("");
                             $(".address").val("");
                             $(".phone_number").val("");
                             alert("公司管理员账号："+d.data.admin_name+",公司管理员密码："+d.data.password);
@@ -199,6 +197,8 @@
                 })
             }else {
                 alert("请补全信息");
+                self.is_loading=false;
+                self.load_node.hide();
             }
         });
         self.body_node.delegate(".js_reset_pwd","click",function () {
@@ -242,6 +242,8 @@
                 })
             }else{
                 alert("请重新输入");
+                self.is_loading=false;
+                self.load_node.hide();
             }
         });
         self.body_node.delegate(".js_close","click",function () {
