@@ -1,5 +1,6 @@
 # coding=utf-8
 from rest_framework import serializers
+from datetime import datetime
 
 
 class LoginSerializer(serializers.Serializer):
@@ -35,3 +36,8 @@ class MealsOrderSerializer(serializers.Serializer):
 class CancelMealsOrderSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(allow_null=False)
     order_id = serializers.IntegerField(allow_null=False)
+
+
+class MealsOrderListSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(allow_null=False)
+    month = serializers.IntegerField(allow_null=True, default=datetime.now().month)

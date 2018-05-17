@@ -13,6 +13,7 @@ from api.users.models import Users
 from api.users.serializers import ResetUserSerializer
 from api.users.serializers import MealsOrderSerializer
 from api.users.serializers import CancelMealsOrderSerializer
+from api.users.serializers import MealsOrderListSerializer
 from common.constants import UserAdminType
 from common.constants import OrderStatus
 from api.decorators import login_required
@@ -200,3 +201,44 @@ class CancelMealsOrder(HttpApiBaseView):
             self.success_response({}, message=u"订单取消成功！")
         except Exception as err:
             return self.error_response({}, message=u"取消订单失败")
+
+
+class MealsOrderList(HttpApiBaseView):
+    @login_required
+    def get(self, request):
+        try:
+            serializer = MealsOrderListSerializer(data=request.data)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            user_id = data["user_id"]
+            month = data["month"]
+            orders = MealOrders.objects.filter(user_id=user_id, create_time__month=month)
+            result_map = {}
+            for order in orders:
+                result_map[order.order_id] = []
+            for order in orders:
+                result_map[order.order_id].append({
+                    'dish_id': order.dish_id,
+                    'dish_name': Dishes.objects.get(id=order.dish_id).name,
+                    'count': order.count,
+                    'state': order.state,
+                    'total_price': order.total_price,
+                    'create_time': order.create_time
+                })
+            result = []
+            for order_id in result_map:
+                result.append({
+                    'order_id': order_id,
+                    'order_list': result_map[order_id],
+                    'order_price': self._get_order_price(result_map[order_id])
+                })
+            return self.success_response(result, message=u"订单查询成功！")
+        except Exception as err:
+            return self.error_response({}, message=u"")
+
+    def _get_order_price(self, order_list):
+        order_price = 0
+        for order in order_list:
+            order_price += order['total_price']
+        return order_price

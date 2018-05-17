@@ -8,6 +8,7 @@ from api.users.views import ResetUserView
 from api.users.views import PersonnelListView
 from api.users.views import MealsOrderView
 from api.users.views import CancelMealsOrder
+from api.users.views import MealsOrderList
 from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
 from api.companies.views import AddCompanyAdminView
@@ -55,39 +56,10 @@ urlpatterns = [
     url(r'^api/logout/$', LogoutView.as_view()), # 登出
     url(r'^api/user/reset/', ResetUserView.as_view()), # 修改密码
 
-    # company
-    # GET
+    # 公司账号列表
     url(r'api/company/admin/$', CompanyAdminView.as_view()), # 公司账号列表
-    # response
-    #{
-    #    "message": "",
-    #    "code": 200,
-    #    "data": [
-    #        {
-    #            "phone_number": "",
-    #            "user_name": "wangbo",
-    #            "company_id": 0,
-    #            "company_name": ""
-    #        }
-    #    ]
-    #}
-
-    #POST
+    # 添加公司及管理员
     url(r'^api/company/add/$', AddCompanyView.as_view()), # 添加公司及管理员
-    # request:
-    #{
-    #    "company_name": "XXX公司", // string length 30
-    #    "province": "北京市", // string length 30
-    #    "address": "北京市海淀区XXXXX" // string length 256
-    #    "phone_number": "123456789"
-    #}
-    #
-    # response.data:u
-    #{
-    #     "company_id": "123",
-    #     "admin_name": "admin123",
-    #     "password": "12345678"
-    #}
     # 公司列表
     url(r"api/company/list/$", CompanyListView.as_view()),
     # 添加公司管理员
@@ -131,8 +103,9 @@ urlpatterns = [
 
     # 订餐
     url(r"api/user/meals/order/$", MealsOrderView.as_view()),
-
     # 取消订单
     url(r"api/user/meals/cancel/$", CancelMealsOrder.as_view()),
+    # 查询订单
+    url(r"api/user/meals/list/$", MealsOrderList.as_view()),
 
 ]
