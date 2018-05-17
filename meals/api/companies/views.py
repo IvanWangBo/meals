@@ -5,6 +5,10 @@ from api.base_view import HttpApiBaseView
 from api.users.models import Users
 from api.companies.models import Departments
 from api.companies.models import Companies
+from api.companies.models import RestaurantRelation
+from api.restaurants.models import Dishes
+from api.restaurants.models import Restaurants
+from api.users.models import MealOrders
 from api.decorators import admin_required
 from api.decorators import company_required
 from common.constants import UserAdminType
@@ -13,6 +17,8 @@ from api.companies.serializers import AddCompanySerializer
 from api.companies.serializers import AddCompanyAdminSerializer
 from api.companies.serializers import ResetCompanyAdminSerializer
 from api.companies.serializers import AddDepartmentSerializer
+from api.companies.serializers import RestaurantOrdersSummarySerializer
+from api.companies.serializers import RestaurantOrdersDetailsSerializer
 from api.instances import cacher
 
 
@@ -132,11 +138,114 @@ class AddDepartmentView(HttpApiBaseView):
             name = data["department_name"]
             department = Departments.objects.create(name=name, company_id=company_id)
             department.save()
-        except Exception as err:
-            return self.error_response({}, u"创建部门失败")
-        else:
             return self.success_response({
                 'department_id': department.id,
                 'department_name': department.name,
                 'company_id': department.company_id
             }, u"创建部门成功")
+        except Exception as err:
+            return self.error_response({}, u"创建部门失败")
+
+
+class RestaurantOrdersSummaryView(HttpApiBaseView):
+    @company_required
+    def get(self, request):
+        try:
+            serializer = RestaurantOrdersSummarySerializer(data=request.data)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            company_id = data["company_id"]
+            month = data["month"]
+            users = Users.objects.filter(company_id=company_id)
+            user_id_list = [user.id for user in users]
+            order_list = MealOrders.objects.filter(user_id__in=user_id_list, create_time__month=month)
+
+            order_info_list = [
+                {
+                    'order_id': order.order_id,
+                    'dish_id': order.dish_id,
+                    'restaurant_id': Dishes.objects.get(id=order.dish_id).restaurant_id,
+                    'total_price': order.total_price,
+                    'create_time': order.create_time
+                } for order in order_list
+            ]
+
+            restaurant_relation = RestaurantRelation.objects.filter(company_id=company_id, is_enabled=1)
+            restaurant_id_list = [r['restaurant_id'] for r in restaurant_relation]
+            restaurant_id_rmb_map = {}
+            for restaurant_id in restaurant_id_list:
+                restaurant_id_rmb_map[restaurant_id] = 0
+            for order_info in order_info_list:
+                restaurant_id_rmb_map[order_info['restaurant_id']] += order_info['total_price']
+            result = []
+            for restaurant_id in restaurant_id_rmb_map:
+                result.append({
+                    'restaurant_id': restaurant_id,
+                    'restaurant_name': Restaurants.objects.get(id=restaurant_id).name,
+                    'total_rmb': restaurant_id_rmb_map[restaurant_id]
+                })
+            return self.success_response(result, message=u"订单查询成功")
+        except Exception as err:
+            return self.error_response({}, u"订单查询失败")
+
+
+class RestaurantOrdersDetailsView(HttpApiBaseView):
+    @company_required
+    def get(self, request):
+        try:
+            serializer = RestaurantOrdersDetailsSerializer(data=request.data)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            company_id = data["company_id"]
+            month = data["month"]
+            restaurant_id = data["restaurant_id"]
+            support_dishes = Dishes.objects.filter(restaurant_id=restaurant_id)
+            dish_id_list = [dish.id for dish in support_dishes]
+            users = Users.objects.filter(company_id=company_id)
+            user_id_list = [user.id for user in users]
+            order_list = MealOrders.objects.filter(user_id__in=user_id_list, create_time__month=month, dish_id__in=dish_id_list)
+            result_map = {}
+
+
+            # 下面的都写错了！！！！！
+
+
+            for order in order_list:
+                result_map[order.create_time.date()] = {}
+            for key in result_map:
+                for dish_id in dish_id_list:
+                    result_map[key][dish_id] = {
+                        'count': 0,
+                        'total_price': 0
+                    }
+            for order in order_list:
+                result_map[order.create_time.date()][order.dish_id]['count'] += order.count
+                result_map[order.create_time.date()][order.dish_id]['total_price'] += order.total_price
+
+            result = []
+            for create_date in result_map:
+                daily_map = result_map[create_date]
+                dishes = []
+                for dish_id in daily_map:
+                    dishes.append({
+                        'dish_id': dish_id,
+                        'count': daily_map[dish_id]['count'],
+                        'total_price': daily_map[dish_id]['total_price'],
+                        'dish_name': Dishes.objects.get(id=dish_id).name
+                    })
+                result.append({
+                    'create_date': create_date,
+                    'order_list': dishes,
+                    'order_price': self._get_order_price(dishes)
+                })
+            return self.success_response(result, message=u"订单查询成功")
+        except Exception as err:
+            return self.error_response({}, u"订单查询失败")
+
+    def _get_order_price(self, order_list):
+        order_price = 0
+        for order in order_list:
+            order_price += order['total_price']
+        return order_price

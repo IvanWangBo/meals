@@ -1,4 +1,5 @@
 # coding=utf-8
+from datetime import datetime
 from rest_framework import serializers
 
 
@@ -23,3 +24,14 @@ class ResetCompanyAdminSerializer(serializers.Serializer):
 class AddDepartmentSerializer(serializers.Serializer):
     department_name = serializers.CharField(max_length=30, allow_blank=False)
     company_id = serializers.IntegerField(allow_null=False)
+
+
+class RestaurantOrdersSummarySerializer(serializers.Serializer):
+    company_id = serializers.IntegerField(allow_null=False)
+    month = serializers.IntegerField(allow_null=True, default=datetime.now().month)
+
+
+class RestaurantOrdersDetailsSerializer(serializers.Serializer):
+    company_id = serializers.IntegerField(allow_null=False)
+    month = serializers.IntegerField(allow_null=True, default=datetime.now().month)
+    restaurant_id = serializers.IntegerField(allow_null=False)

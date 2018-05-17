@@ -18,6 +18,7 @@ class Dishes(models.Model):
     restaurant_id = models.IntegerField(default=0, blank=False)
     image_url = models.CharField(max_length=256, blank=False, default='')
     support_times = models.CharField(default='', blank=False, max_length=256)
+    is_enabled = models.IntegerField(default=1, blank=False)
     create_time = models.DateTimeField(auto_now_add=True, blank=False)
 
     class Meta:
