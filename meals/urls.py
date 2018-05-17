@@ -7,6 +7,7 @@ from api.users.views import LogoutView
 from api.users.views import ResetUserView
 from api.users.views import PersonnelListView
 from api.users.views import MealsOrderView
+from api.users.views import CancelMealsOrder
 from api.companies.views import CompanyAdminView
 from api.companies.views import AddCompanyView
 from api.companies.views import AddCompanyAdminView
@@ -123,5 +124,7 @@ urlpatterns = [
     # 订餐
     url(r"api/user/meals/order/$", MealsOrderView.as_view()),
 
+    # 取消订单
+    url(r"api/user/meals/cancel/$", CancelMealsOrder.as_view()),
 
 ]

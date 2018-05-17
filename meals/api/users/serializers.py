@@ -30,3 +30,8 @@ class ResetUserSerializer(serializers.Serializer):
 class MealsOrderSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(allow_null=False)
     order_list = serializers.CharField(max_length=1024, allow_blank=False)
+
+
+class CancelMealsOrderSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(allow_null=False)
+    order_id = serializers.IntegerField(allow_null=False)

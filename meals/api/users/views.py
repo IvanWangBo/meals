@@ -12,6 +12,7 @@ from api.instances import cacher
 from api.users.models import Users
 from api.users.serializers import ResetUserSerializer
 from api.users.serializers import MealsOrderSerializer
+from api.users.serializers import CancelMealsOrderSerializer
 from common.constants import UserAdminType
 from common.constants import OrderStatus
 from api.decorators import login_required
@@ -174,3 +175,28 @@ class MealsOrderView(HttpApiBaseView):
             }, u"下单成功")
         except Exception as err:
             return self.error_response({}, message=u"订餐成功")
+
+
+class CancelMealsOrder(HttpApiBaseView):
+    @login_required
+    def post(self, request):
+        try:
+            serializer = CancelMealsOrderSerializer(data=request.data)
+            if not serializer.is_valid():
+                raise self.serializer_invalid_response(serializer)
+            data = serializer.data
+            user_id = data["user_id"]
+            order_id = data["order_id"]
+            order_list = MealOrders.objects.filter(order_id=order_id)
+            can_cancel = all([order.state in (OrderStatus.created, OrderStatus.accepted) for order in order_list])
+            if not can_cancel:
+                return self.error_response({},message=u"订单派送中，无法取消")
+            is_owner = all([order.user_id == user_id for order in order_list])
+            if not is_owner:
+                return self.error_response({},message=u"订单取消失败")
+            for order in order_list:
+                order.state = OrderStatus.canceled
+                order.save()
+            self.success_response({}, message=u"订单取消成功！")
+        except Exception as err:
+            return self.error_response({}, message=u"取消订单失败")
