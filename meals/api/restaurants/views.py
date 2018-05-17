@@ -21,7 +21,7 @@ class AddDishView(HttpApiBaseView):
         try:
             serializers = AddDishSerializer(data=request.data)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             support_times = json.loads(data["support_times"])
             for support_time in support_times:
@@ -59,7 +59,7 @@ class DishesListView(HttpApiBaseView):
         try:
             serializers = DishesListSerializer(data=request.GET)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             restaurant_id = data["restaurant_id"]
             time_range_id = data["time_range_id"]
@@ -104,7 +104,7 @@ class AddTimeRangeView(HttpApiBaseView):
         try:
             serializers = AddTimeRangeSerializer(data=request.data)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             name = data['name']
             start_time = data['start_time']
@@ -123,7 +123,7 @@ class EnableDishTimeView(HttpApiBaseView):
         try:
             serializers = ModifyTimeRangeSerializer(data=request.data)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             dish_id = data["dish_id"]
             time_range_id = data["time_range_id"]
@@ -152,7 +152,7 @@ class DisableDishTimeView(HttpApiBaseView):
         try:
             serializers = ModifyTimeRangeSerializer(data=request.data)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             dish_id = data["dish_id"]
             time_range_id = data["time_range_id"]
@@ -181,7 +181,7 @@ class AddRestaurantView(HttpApiBaseView):
         try:
             serializers = AddRestaurantSerializer(data=request.data)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             name = data['restaurant_name']
             phone_number = data['phone_number']
@@ -222,7 +222,7 @@ class DeleteRestaurantView(HttpApiBaseView):
         try:
             serializers = DeleteRestaurantSerializer(data=request.data)
             if not serializers.is_valid():
-                return self.error_response(serializers)
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             restaurant_id = data["restaurant_id"]
             restaurant = Restaurants.objects.get(id=restaurant_id)

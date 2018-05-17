@@ -19,7 +19,7 @@ from api.instances import cacher
 class CompanyAdminView(HttpApiBaseView):
     @admin_required
     def get(self, request):
-        users = Users.objects.filter(admin_type=UserAdminType.admin)
+        users = Users.objects.filter(admin_type=UserAdminType.company)
         companies = Companies.objects.all()
         company_id_name_map = {}
         for company in companies:
@@ -46,7 +46,7 @@ class AddCompanyView(HttpApiBaseView):
         try:
             serializer = AddCompanySerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             company = Companies.objects.create(company_name=data["company_name"], province=data["province"], address=data["address"], is_enabled=1)
             admin_name = 'admin%03d' % company.id
@@ -78,7 +78,7 @@ class AddCompanyAdminView(HttpApiBaseView):
         try:
             serializer = AddCompanyAdminSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             company = Companies.objects.get(id=data["company_id"])
             if not company:
@@ -95,7 +95,7 @@ class ResetCompanyAdminView(HttpApiBaseView):
         try:
             serializer = ResetCompanyAdminSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             user = Users.objects.get(id=data["user_id"])
             if not user:
@@ -126,7 +126,7 @@ class AddDepartmentView(HttpApiBaseView):
         try:
             serializer = AddDepartmentSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             company_id = data["company_id"]
             name = data["department_name"]

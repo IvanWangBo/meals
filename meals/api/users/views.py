@@ -86,10 +86,11 @@ class AddPersonnelView(HttpApiBaseView):
         try:
             serializer = AddPersonnelSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             user = cacher.create_user(
                 user_name=data["user_name"],
+                password=data["password"],
                 real_name=data["real_name"],
                 company_id=data["company_id"],
                 department_id=data["department_id"],
@@ -97,7 +98,6 @@ class AddPersonnelView(HttpApiBaseView):
                 phone_number=data["phone_number"],
                 admin_type=UserAdminType.personnel
             )
-            user.set_password(data["password"])
             return self.success_response({
                 "user_id": user.id,
                 "user_name": user.user_name,
@@ -119,7 +119,7 @@ class ResetUserView(HttpApiBaseView):
         try:
             serializer = ResetUserSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             user = Users.objects.get(id=data["user_id"])
             if not user:
@@ -145,7 +145,7 @@ class MealsOrderView(HttpApiBaseView):
         try:
             serializer = MealsOrderSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             user_id = data['user_id']
             order_list = json.loads(data['order_list'])
@@ -183,7 +183,7 @@ class CancelMealsOrder(HttpApiBaseView):
         try:
             serializer = CancelMealsOrderSerializer(data=request.data)
             if not serializer.is_valid():
-                raise self.serializer_invalid_response(serializer)
+                return self.serializer_invalid_response(serializer)
             data = serializer.data
             user_id = data["user_id"]
             order_id = data["order_id"]

@@ -50,11 +50,14 @@
                     <div class="add_info add_4">
                         联系电话: <input class="phone_number" type="text" name="phone_number" required="required" placeholder="请输入">
                     </div>
+                    <div class="add_info add_7">
+                        联系邮箱: <input class="email" type="text" name="email" required="required" placeholder="请输入">
+                    </div>
                     <div class="add_info add_5">
                         员工账号: <input class="user_name" type="text" name="user_name" required="required" placeholder="请输入">
                     </div>
                     <div class="add_info add_6">
-                        初始密码: <input class="user_password" type="text" name="user_password" required="required" placeholder="请输入">
+                        初始密码: <input class="password" type="text" name="password" required="required" placeholder="请输入">
                     </div>
                     <div id="js_add_btn" class="btn">添加</div>
                 </form>
@@ -182,7 +185,8 @@
                     url: "/api/company/department/add/",
                     type: "POST",
                     data: {
-                        "company_id": self.params.company_id
+                        "company_id": self.params.company_id,
+                        "department_name": department_name
                     },
                     success: function (d) {
                         if(d.code==200){
@@ -225,8 +229,9 @@
             var department_id=$(".department_id").val();
             var phone_number=$(".phone_number").val();
             var user_name=$(".user_name").val();
-            var user_password=$(".user_password").val();
-            if(real_name&&gender&&department_id&&phone_number&&user_name&&user_password){
+            var password=$(".password").val();
+            var email=$(".email").val();
+            if(real_name&&gender&&department_id&&phone_number&&user_name&&password&&email){
                 $.ajax({
                     url: "/api/user/add/",
                     type: "POST",
@@ -236,8 +241,9 @@
                         "department_id": department_id,
                         "phone_number": phone_number,
                         "user_name":user_name,
-                        "user_password":user_password,
-                        "company_id": self.params.company_id
+                        "password":password,
+                        "company_id": self.params.company_id,
+                        "email": email,
                     },
                     success: function (d) {
                         if(d.code==200){
@@ -246,6 +252,7 @@
                             $(".phone_number").val("");
                             $(".user_name").val("");
                             $(".user_password").val("");
+                            $(".email").val("");
                             alert("添加成功");
                         }else {
                             alert(d.message);

@@ -14,5 +14,7 @@ class HttpApiBaseView(APIView):
         return Response(data={"code": 400, "data": data, "message": message})
 
     def serializer_invalid_response(self, serializer):
+        messages = ""
         for k, v in serializer.errors.iteritems():
-            return self.error_response(k + " : " + v[0])
+            messages += "%s : %s\n" % (k, v[0])
+        return self.error_response({}, message=messages)
