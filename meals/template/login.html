@@ -43,13 +43,13 @@
                             user_id = data.data['user_id'];
                             company_id = data.data['company_id'];
                             if(admin_type == 0) {
-                                location.href = "/personnel/?user_id=" + user_id + "&company_id=" + company_id;
+                                location.href = "/personnel/index/?user_id=" + user_id + "&company_id=" + company_id;
                             } else if (admin_type == 1) {
-                                location.href = "/restaurant/?user_id=" + user_id + "&company_id=" + company_id;
+                                location.href = "/restaurant/index/?user_id=" + user_id + "&company_id=" + company_id;
                             } else if (admin_type == 2) {
-                                location.href = "/company/?user_id=" + user_id + "&company_id=" + company_id;
+                                location.href = "/company/index/?user_id=" + user_id + "&company_id=" + company_id;
                             } else if (admin_type == 3) {
-                                location.href = "/admin/?user_id=" + user_id + "&company_id=" + company_id;
+                                location.href = "/admin/index/?user_id=" + user_id + "&company_id=" + company_id;
                             } else {
                                 alert("用户类型错误");
                             }

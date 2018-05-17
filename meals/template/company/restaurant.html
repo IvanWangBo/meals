@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}
-公司主页
+公司-餐厅管理页
 {% endblock %}
 
 {% block css_block %}
-<link rel="stylesheet" type="text/css" href="/static/css/company/index.css"/>
+<link rel="stylesheet" type="text/css" href="/static/css/company/restaurant.css"/>
 
 {% endblock %}
 
@@ -16,8 +16,8 @@
         <i></i>企业团餐管理系统
     </div>
     <div class="top_tabs">
-        <a class="js_top_tab top_tab chosen_1" href="/company/index">账号管理</a>
-        <a class="js_top_tab top_tab" href="/company/restaurant">餐厅管理</a>
+        <a class="js_top_tab top_tab" href="/company/index">账号管理</a>
+        <a class="js_top_tab top_tab chosen_1" href="/company/restaurant">餐厅管理</a>
         <a class="js_top_tab top_tab" href="/company/order">订单管理</a>
     </div>
     <div class="js_main main">
@@ -36,7 +36,7 @@
                         员工姓名: <input class="real_name" type="text" name="real_name" required="required" placeholder="请输入">
                     </div>
                     <div class="add_info add_2">
-                        员工性别: <input class="gender" type="radio" name="gender" value="1" style="vertical-align: middle">&nbsp;男&nbsp;&nbsp;<input class="gender" type="radio" name="gender" value="2" style="vertical-align: middle">&nbsp;女
+                        员工性别: <input class="gender" type="text" name="gender" required="required" placeholder="请输入">
                     </div>
                     <div class="add_info add_3">
                         员工部门:
@@ -202,8 +202,6 @@
                 })
             }else {
                 alert("请填写部门名称！");
-                self.is_loading=false;
-                self.load_node.hide();
             }
         });
         self.body_node.delegate(".js_close","click",function () {
@@ -221,7 +219,7 @@
             self.is_loading=true;
             self.load_node.show();
             var real_name=$(".real_name").val();
-            var gender=$("input:radio:checked").val();
+            var gender=$(".gender").val();
             var department_id=$(".department_id").val();
             var phone_number=$(".phone_number").val();
             var user_name=$(".user_name").val();
@@ -256,8 +254,6 @@
                 })
             }else {
                 alert("请补全信息");
-                self.is_loading=false;
-                self.load_node.hide();
             }
         });
     }
