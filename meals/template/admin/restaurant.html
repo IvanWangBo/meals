@@ -32,15 +32,20 @@
             <div class="js_list_1 sec_list">
 
             </div>
-            <!--餐厅及餐品-->
+            <!--餐厅-->
             <div class="js_list_2 sec_list">
+
+            </div>
+            <!--餐品-->
+            <div class="js_list_3 sec_list">
 
             </div>
         </div>
     </div>
     <div class="loading" style="display: none"></div>
     <div class="js_cover cover" style="display: none"></div>
-    <div class="js_pop pop" style="display: none">
+    <!--添加用餐时段弹窗-->
+    <div class="js_add_time_rang_pop pop" style="display: none">
         <div class="pop_title">新建用餐时段</div>
         <div class="put_in">
             请输入名称：<input class="put_1" type="text" required="required" placeholder="请输入">
@@ -108,6 +113,23 @@
             <div class="btn js_close">取消</div>
         </div>
     </div>
+    <!--添加餐厅弹窗-->
+    <div class="js_add_restaurant_pop pop" style="display: none">
+        <div class="pop_title">添加餐厅</div>
+        <div class="put_in">
+            餐厅名称：<input class="put_4" type="text" required="required" placeholder="请输入">
+        </div>
+        <div class="put_in">
+            联系电话：<input class="put_5" type="text" required="required" placeholder="请输入">
+        </div>
+        <div class="put_in">
+            餐厅地址：<input class="put_6" type="text" required="required" placeholder="请输入">
+        </div>
+        <div class="btns">
+            <div class="btn js_add_restaurant_btn">添加</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -120,14 +142,24 @@
         self.is_loading=false;
         self.secs=$(".js_sec");
         self.cover=$(".js_cover");
-        self.pop=$(".js_pop");
+        self.add_time_rang_pop=$(".js_add_time_rang_pop");
+        self.add_restaurant_pop=$(".js_add_restaurant_pop");
         self.user_id="";
         var tpl_1='<div class="js_time_range_list time_range_list">\
                         <%for(var i=0;i<data.length;i++){%>\
                             <div class="time_range time_range_<%=data[i].time_range_id%>" tid="<%=data[i].time_range_id%>"><%=data[i].name%></div>\
                         <%}%>\
                     </div>\
-                    <div class="js_add_time_range add_time_range"><i>+</i>添加用餐时段</div>';
+                    <div class="js_add_time_range add_to_pop"><i>+</i>添加用餐时段</div>';
+        var tpl_2='<div class="js_restaurant_list restaurant_list">\
+                       <%for(var j=0;j<data.length;j++){%>\
+                            <div class="restaurant restaurant_<%=data[j].restaurant_id%>" rid="<%=data[j].restaurant_id%>">\
+                                <span class="name"><%=data[j].restaurant_name%></span>\
+                                <span class="js_edit edit">编辑</span>\
+                            </div>\
+                        <%}%>\
+                    </div>\
+                    <div class="js_add_restaurant add_to_pop"><i>+</i>添加商户</div>';
         //初始化用餐时段列表
         self.is_loading=true;
         self.load_node.show();
@@ -143,50 +175,15 @@
             self.is_loading=false;
             self.load_node.hide();
         });
-        $("#js_add_btn").on("click",function () {
-            if(self.is_loading){
-                return;
-            }
-            self.is_loading=true;
-            self.load_node.show();
-            var company_name=$(".company_name").val();
-            var province=$(".province").val();
-            var address=$(".address").val();
-            var phone_number=$(".phone_number").val();
-            if(company_name&&province&&address&&phone_number){
-                $.ajax({
-                    url: "/api/company/add/",
-                    type: "POST",
-                    data: {
-                        "company_name": company_name,
-                        "province": province,
-                        "address": address,
-                        "phone_number": phone_number
-                    },
-                    success: function (d) {
-                        if(d.code==200){
-                            $(".company_name").val("");
-                            $(".address").val("");
-                            $(".phone_number").val("");
-                            alert("公司管理员账号："+d.data.admin_name+",公司管理员密码："+d.data.password);
-                        }else {
-                            alert(d.message);
-                        }
-                        self.is_loading=false;
-                        self.load_node.hide();
-                    }
-                })
-            }else {
-                alert("请补全信息");
-            }
-        });
+        //点击添加用餐时段，弹窗
         self.body_node.delegate(".js_add_time_range","click",function () {
             if(self.is_loading){
                 return;
             }
             self.cover.show();
-            self.pop.show();
+            self.add_time_rang_pop.show();
         });
+        //点击确定添加，添加用餐时段
         self.body_node.delegate(".js_add_time_range_btn","click",function () {
             if(self.is_loading){
                 return;
@@ -221,7 +218,76 @@
                             $(".put_3").val("");
                             alert("添加成功");
                             self.cover.hide();
-                            self.pop.hide();
+                            self.add_time_rang_pop.hide();
+                        }else{
+                            alert(d.message);
+                        }
+                        self.is_loading=false;
+                        self.load_node.hide();
+                    }
+                })
+            }else{
+                alert("请填写完整信息");
+            }
+        });
+        //初始化餐厅列表
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/restaurant/list/",function (d) {
+            if(d.code==200){
+                var node = $(util.parse(tpl_2, {
+                    data: d.data,
+                    util: util
+                })).appendTo(".js_list_2");
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
+        //点击添加餐厅，弹窗
+        self.body_node.delegate(".js_add_restaurant","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            self.cover.show();
+            self.add_restaurant_pop.show();
+        });
+        //点击确定添加，添加餐厅
+        self.body_node.delegate(".js_add_restaurant_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var pwd_1=$(".put_4").val();
+            var pwd_2=$(".put_5").val();
+            var pwd_3=$(".put_6").val();
+            if(pwd_1&&pwd_2&&pwd_3){
+                self.is_loading=true;
+                self.load_node.show();
+                $.ajax({
+                    url: "/api/restaurant/add/",
+                    type: "POST",
+                    data: {
+                        "restaurant_name": pwd_1,
+                        "phone_number": pwd_2,
+                        "address":pwd_3
+                    },
+                    success: function (d) {
+                        if(d.code==200){
+                            //将用餐时段加入列表
+                            str='<div rid="'+d.data.restaurant_id+'" class="restaurant restaurant_'+d.data.restaurant_id+'">'
+                                    +'<span class="name">'+pwd_1+'</span>'
+                                    +'<span class="js_edit edit">'+'编辑'+'</span>'
+                                    +'</div>';
+                            var restaurant_1=$(str);
+                            restaurant_1.appendTo(".js_restaurant_list");
+                            //清除数据
+                            $(".put_4").val("");
+                            $(".put_5").val("");
+                            $(".put_6").val("");
+                            alert("添加成功");
+                            self.cover.hide();
+                            self.add_restaurant_pop.hide();
                         }else{
                             alert(d.message);
                         }
@@ -238,7 +304,7 @@
                 return;
             }
             self.cover.hide();
-            self.pop.hide();
+            self.add_time_rang_pop.hide();
         });
     }
     new addmin_index();
