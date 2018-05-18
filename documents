@@ -26,7 +26,7 @@ key | value | 备注
 ---|---|---
 url | api/user/reset/|
 method | post|
-request |```{"user_id": 1, "password": "123456", "new_password": "abcdefg"}```|
+request |```{"password": "123456", "new_password": "abcdefg"}```|
 response |```{}```|
 need permission| 0,1,2,3 |
 
@@ -73,7 +73,7 @@ key | value | 备注
 ---|---|---
 url | api/company/admin/reset/ |
 method | post |
-request |```{"user_id": 1, "password": "123456"}```|
+request |```{"password": "123456"}```|
 response |```{"user_id": 1, "password": "123456"}```|
 need permission| 3 |
 
@@ -93,6 +93,24 @@ url | api/company/department/list/ |
 method | get |
 request |```{"company_id": 1}```|
 response |```[{"department_id": 1, "department_name": "研发部"}, ...]```|
+need permission| 2, 3 |
+
+### 所有商家商家总订单信息
+key | value | 备注
+---|---|---
+url | api/company/order/summary/ |
+method | get |
+request |```{"company_id": 1, "month": 1}```| month 可为空，默认当前月份
+response |```[{"restaurant_id": 1, "restaurant_name": "XXX", "total_rmb": 20000}, ...]```|
+need permission| 2, 3 |
+
+# 商家日订单信息
+key | value | 备注
+---|---|---
+url | api/company/order/details/ |
+method | get |
+request |```{"company_id": 1, "month": 1, "restaurant_id": 1}```| month 可为空，默认当前月份
+response |```[{"create_date": "2018-05-01", "order_list": [{"dish_id": 1, "count": 2, "total_price": 200, "dish_name": "XXX"}, ...], "order_price": 200}, ...]```|
 need permission| 2, 3 |
 
 
@@ -122,6 +140,17 @@ method | post |
 request |```{"name": "狮子头", "price": 20.0, "restaurant_id": 1, "image_url": "", "support_times": "[1,2,3]"}```| support_times: 供餐时间段，时间段id的list
 response |```{"dish_id": 1, "name": "狮子头", "price": 20.0, "restaurant_id": 1, "image_url": "", "support_times": "[1,2,3]"}```|
 need permission| 3  |
+
+
+### 删除菜品
+key | value | 备注
+---|---|---
+url | api/restaurant/dish/delete/ |
+method | post |
+request |```{"dish_id": 1}```|
+response |```{}```|
+need permission| 3  |
+
 
 ### 菜品清单
 key | value | 备注
@@ -201,15 +230,27 @@ key | value | 备注
 ---|---|---
 url | api/user/meals/order/ |
 method | post |
-request |```{"user_id": 1, "order_list": "[{'dish_id': 1, 'count': 1}, ...]"}```|
+request |```{"order_list": "[{'dish_id': 1, 'count': 1}, ...]"}```|
 response |```{"user_id": 1, "order_id": 1, "order_list": "[{'dish_id': 1, 'count': 1}, ...]", "order_total_price": 99.99}```|
 need permission| 0,1,2,3  |
 
-###
+### 取消订单
 key | value | 备注
 ---|---|---
-url | |
-method | |
-request |```{}```|
+url | api/user/meals/cancel/ |
+method | post |
+request |```{"order_id": 1}```|
 response |```{}```|
-need permission|  |
+need permission| 0,1,2,3 |
+
+
+### 用户订单列表
+key | value | 备注
+---|---|---
+url | api/user/meals/list/ |
+method | get |
+request |```{"month": 1}```| month 若为空则默认当前月份
+response |```{"order_id": 1, "order_list": [{"dish_id": 1, "dish_name": "xxxx", "count": 20, "state": 1, "total_price": 200, "create_time": "2018-01-01"}, ...], "order_price": 200}```| state, -1:canceled, 0:created, 1:accepted, 2:sending, 3:finished, 4:settled
+need permission| 0,1,2,3 |
+
+

@@ -103,7 +103,8 @@ class ResetCompanyAdminView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user = Users.objects.get(id=data["user_id"])
+            user_id = self.get_login_user_id(request)
+            user = Users.objects.get(id=user_id)
             if not user:
                 return self.error_response({}, u'该管理员不存在')
             user.set_password(data["password"])
@@ -117,6 +118,8 @@ class DepartmentListView(HttpApiBaseView):
     def get(self, request):
         try:
             company_id = request.GET.get("company_id")
+            user_id = self.get_login_user_id(request)
+            self.check_user_company(user_id, company_id)
             if company_id is None:
                 return self.error_response(data={}, message=u"该公司不存在")
             departments = Departments.objects.filter(company_id=company_id)
@@ -136,6 +139,8 @@ class AddDepartmentView(HttpApiBaseView):
             data = serializer.data
             company_id = data["company_id"]
             name = data["department_name"]
+            user_id = self.get_login_user_id(request)
+            self.check_user_company(user_id, company_id)
             department = Departments.objects.create(name=name, company_id=company_id)
             department.save()
             return self.success_response({
@@ -157,6 +162,8 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
             data = serializer.data
             company_id = data["company_id"]
             month = data["month"]
+            user_id = self.get_login_user_id(request)
+            self.check_user_company(user_id, company_id)
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
             order_list = MealOrders.objects.filter(user_id__in=user_id_list, create_time__month=month)
@@ -201,16 +208,14 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
             company_id = data["company_id"]
             month = data["month"]
             restaurant_id = data["restaurant_id"]
+            user_id = self.get_login_user_id(request)
+            self.check_user_company(user_id, company_id)
             support_dishes = Dishes.objects.filter(restaurant_id=restaurant_id)
             dish_id_list = [dish.id for dish in support_dishes]
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
             order_list = MealOrders.objects.filter(user_id__in=user_id_list, create_time__month=month, dish_id__in=dish_id_list)
             result_map = {}
-
-
-            # 下面的都写错了！！！！！
-
 
             for order in order_list:
                 result_map[order.create_time.date()] = {}

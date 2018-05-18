@@ -52,6 +52,8 @@ class PersonnelListView(HttpApiBaseView):
             company_id = request.GET.get("company_id")
             if company_id is None:
                 return self.error_response(data={}, message=u"该公司不存在")
+            user_id = self.get_login_user_id(request)
+            self.check_user_company(user_id, company_id)
             personnel_list = Users.objects.filter(company_id=company_id)
             departments = Departments.objects.filter(company_id=company_id)
             department_map = {}
@@ -78,6 +80,8 @@ class AddPersonnelView(HttpApiBaseView):
         company_id = request.GET.get("company_id")
         if company_id is None:
             return self.error_response(data={}, message=u"该公司不存在")
+        user_id = self.get_login_user_id(request)
+        self.check_user_company(user_id, company_id)
         departments = Departments.objects.filter(company_id=company_id)
         results = [{"department_id": department.id, "department_name": department.name} for department in departments]
         return self.success_response(results)
@@ -89,6 +93,8 @@ class AddPersonnelView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
+            user_id = self.get_login_user_id(request)
+            self.check_user_company(user_id, data["company_id"])
             user = cacher.create_user(
                 user_name=data["user_name"],
                 password=data["password"],
@@ -122,7 +128,8 @@ class ResetUserView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user = Users.objects.get(id=data["user_id"])
+            user_id = self.get_login_user_id(request)
+            user = Users.objects.get(id=user_id)
             if not user:
                 return self.error_response({}, message=u"该用户不存在")
             if not user.check_password(data["password"]):
@@ -148,7 +155,7 @@ class MealsOrderView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user_id = data['user_id']
+            user_id = self.get_login_user_id(request)
             order_list = json.loads(data['order_list'])
             order_id = cacher.get_order_id()
             order_total_price = 0
@@ -186,7 +193,7 @@ class CancelMealsOrder(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user_id = data["user_id"]
+            user_id = self.get_login_user_id(request)
             order_id = data["order_id"]
             order_list = MealOrders.objects.filter(order_id=order_id)
             can_cancel = all([order.state in (OrderStatus.created, OrderStatus.accepted) for order in order_list])
@@ -211,7 +218,7 @@ class MealsOrderList(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user_id = data["user_id"]
+            user_id = self.get_login_user_id(request)
             month = data["month"]
             orders = MealOrders.objects.filter(user_id=user_id, create_time__month=month)
             result_map = {}

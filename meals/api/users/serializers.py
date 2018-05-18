@@ -24,20 +24,16 @@ class AddPersonnelSerializer(serializers.Serializer):
 
 
 class ResetUserSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField(allow_null=False)
     password = serializers.CharField(max_length=30, allow_blank=False)
     new_password = serializers.CharField(max_length=30, allow_blank=False)
 
 class MealsOrderSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField(allow_null=False)
     order_list = serializers.CharField(max_length=1024, allow_blank=False)
 
 
 class CancelMealsOrderSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField(allow_null=False)
     order_id = serializers.IntegerField(allow_null=False)
 
 
 class MealsOrderListSerializer(serializers.Serializer):
-    user_id = serializers.IntegerField(allow_null=False)
     month = serializers.IntegerField(allow_null=True, default=datetime.now().month)
