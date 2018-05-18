@@ -138,7 +138,7 @@ key | value | 备注
 url | api/restaurant/dish/add/ |
 method | post |
 request |```{"name": "狮子头", "price": 20.0, "restaurant_id": 1, "image_url": "", "support_times": "[1,2,3]"}```| support_times: 供餐时间段，时间段id的list
-response |```{"dish_id": 1, "name": "狮子头", "price": 20.0, "restaurant_id": 1, "image_url": "", "support_times": "[1,2,3]"}```|
+response |```{"dish_id": 1, "name": "狮子头", "price": 20.0, "restaurant_id": 1, "image_url": "", "support_times": [1,2,3]}```|
 need permission| 3  |
 
 
@@ -152,14 +152,25 @@ response |```{}```|
 need permission| 3  |
 
 
+### 编辑菜品信息
+key | value | 备注
+---|---|---
+url | api/restaurant/dish/modify/ |
+method | post |
+request |```{"dish_id": 1, "name": "XXX", "price": 17.0, "support_times": "[1,2,3]", "image_url": "XXXXX"}```|
+response |```{"dish_id": 1, "name": "XXX", "price": 17.0, "support_times": [1,2,3], "image_url": "XXXXX"}, ...]```|
+need permission| 3 |
+
+
 ### 菜品清单
 key | value | 备注
 ---|---|---
 url | api/restaurant/dish/list/ |
 method | get |
 request |```{"restaurant_id": 1, "time_range_id": 1}```|
-response |```[{"dish_id": 1, "name": "狮子头", "price": 20.0, "image_url": "", "support_times": "[1,2,3]"}, ...]```|
+response |```[{"dish_id": 1, "name": "狮子头", "price": 20.0, "image_url": "", "support_times": [1,2,3]}, ...]```|
 need permission| 0,1,2,3 |
+
 
 ### 查询用餐时间段
 key | value | 备注

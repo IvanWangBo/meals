@@ -14,6 +14,7 @@ from api.restaurants.serializers import ModifyTimeRangeSerializer
 from api.restaurants.serializers import DeleteDishSerializer
 from api.restaurants.serializers import DishesListSerializer
 from api.restaurants.serializers import AddRestaurantSerializer
+from api.restaurants.serializers import ModifyDishSerializer
 
 
 class AddDishView(HttpApiBaseView):
@@ -145,6 +146,45 @@ class EnableDishTimeView(HttpApiBaseView):
                 "image_url": dish.image_url,
                 "support_times": support_times
             }, message=u"应用用餐时段成功")
+
+
+class ModifyDishView(HttpApiBaseView):
+    @admin_required
+    def post(self, request):
+        try:
+            serializers = ModifyDishSerializer(data=request.data)
+            if not serializers.is_valid():
+                return self.serializer_invalid_response(serializers)
+            data = serializers.data
+            dish_id = data["dish_id"]
+            dish = Dishes.objects.get(id=dish_id)
+            dish_name = data.get("name")
+            if dish_name:
+                dish.name = dish_name
+            dish_price = data.get("price")
+            if dish_price:
+                dish.price = dish_price
+            support_times_str = data["support_times"]
+            image_url = data.get("image_url")
+            if image_url:
+                dish.image_url = image_url
+            if support_times_str:
+                try:
+                    support_times_str = json.loads(support_times_str)
+                except:
+                    return self.error_response({}, u"support_times 格式错误")
+                dish.support_times = support_times_str
+            dish.save()
+            return self.success_response({
+                "dish_id": dish.id,
+                "name": dish.name,
+                "price": dish.price,
+                "image_url": dish.image_url,
+                "support_times": json.loads(dish.support_times)
+            }, u"修改菜品信息成功!")
+
+        except Exception as err:
+            return self.error_response({}, u"修改菜品信息失败")
 
 
 class DisableDishTimeView(HttpApiBaseView):

@@ -28,6 +28,7 @@ from api.restaurants.views import DisableDishTimeView
 from api.restaurants.views import AddRestaurantView
 from api.restaurants.views import RestaurantListView
 from api.restaurants.views import DeleteRestaurantView
+from api.restaurants.views import ModifyDishView
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 
@@ -95,6 +96,8 @@ urlpatterns = [
     url(r"api/restaurant/dish/delete/$", DeleteDishView.as_view()),
     # 菜品清单
     url(r"api/restaurant/dish/list/$", DishesListView.as_view()),
+    # 修改菜品信息
+    url(r"api/restaurant/dish/modify/$", ModifyDishView.as_view()),
 
     # 查询用餐时间段
     url(r"api/restaurant/time_range/list/$", TimeRangeListView.as_view()),
