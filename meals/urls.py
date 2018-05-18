@@ -16,7 +16,10 @@ from api.companies.views import ResetCompanyAdminView
 from api.companies.views import AddDepartmentView
 from api.companies.views import CompanyListView
 from api.companies.views import DepartmentListView
+from api.companies.views import RestaurantOrdersSummaryView
+from api.companies.views import RestaurantOrdersDetailsView
 from api.restaurants.views import AddDishView
+from api.restaurants.views import DeleteDishView
 from api.restaurants.views import TimeRangeListView
 from api.restaurants.views import AddTimeRangeView
 from api.restaurants.views import DishesListView
@@ -73,6 +76,12 @@ urlpatterns = [
     # 部门列表 GET
     url(r'api/company/department/list/$', DepartmentListView.as_view()),
 
+    # 所有商家商家总订单信息
+    url(r"api/company/order/summary/$", RestaurantOrdersSummaryView.as_view()),
+
+    # 商家日订单信息
+    url(r"api/company/order/details/$", RestaurantOrdersDetailsView.as_view()),
+
 
     # 添加员工账号 POST
     url(r'api/user/add/$', AddPersonnelView.as_view()),
@@ -81,6 +90,8 @@ urlpatterns = [
 
     # 添加菜品
     url(r"api/restaurant/dish/add/$", AddDishView.as_view()),
+    # 删除菜品
+    url(r"api/restaurant/dish/delete/$", DeleteDishView.as_view()),
     # 菜品清单
     url(r"api/restaurant/dish/list/$", DishesListView.as_view()),
 

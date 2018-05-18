@@ -34,3 +34,7 @@ class AddRestaurantSerializer(serializers.Serializer):
 
 class DeleteRestaurantSerializer(serializers.Serializer):
     restaurant_id = serializers.IntegerField(allow_null=False)
+
+
+class DeleteDishSerializer(serializers.Serializer):
+    dish_id = serializers.IntegerField(allow_null=False)

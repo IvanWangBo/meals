@@ -11,6 +11,7 @@ from api.restaurants.serializers import DeleteRestaurantSerializer
 from api.restaurants.serializers import AddDishSerializer
 from api.restaurants.serializers import AddTimeRangeSerializer
 from api.restaurants.serializers import ModifyTimeRangeSerializer
+from api.restaurants.serializers import DeleteDishSerializer
 from api.restaurants.serializers import DishesListSerializer
 from api.restaurants.serializers import AddRestaurantSerializer
 
@@ -63,7 +64,7 @@ class DishesListView(HttpApiBaseView):
             data = serializers.data
             restaurant_id = data["restaurant_id"]
             time_range_id = data["time_range_id"]
-            all_dishes = Dishes.objects.filter(restaurant_id=restaurant_id)
+            all_dishes = Dishes.objects.filter(restaurant_id=restaurant_id, is_enabled=1)
             right_dishes = []
             for dish in all_dishes:
                 support_times = json.loads(dish.support_times)
@@ -228,7 +229,23 @@ class DeleteRestaurantView(HttpApiBaseView):
             restaurant = Restaurants.objects.get(id=restaurant_id)
             restaurant.is_enabled = 0
             restaurant.save()
+            return self.success_response({}, message=u"删除餐厅成功")
         except Exception as err:
             return self.error_response({}, message=u"删除餐厅失败")
-        else:
-            return self.success_response({}, message=u"删除餐厅成功")
+
+
+class DeleteDishView(HttpApiBaseView):
+    @admin_required
+    def post(self, request):
+        try:
+            serializers = DeleteDishSerializer(data=request.data)
+            if not serializers.is_valid():
+                return self.serializer_invalid_response(serializers)
+            data = serializers.data
+            dish_id = data["dish_id"]
+            dish = Dishes.objects.get(id=dish_id)
+            dish.is_enabled = 0
+            dish.save()
+            return self.success_response({}, message=u"删除菜品成功")
+        except Exception as err:
+            return self.error_response({}, message=u"删除菜品失败")
