@@ -40,6 +40,7 @@ urlpatterns = [
     #url(r'^admin/', admin.site.urls),
 
     # html
+    url(r"^$", TemplateView.as_view(template_name="login.html"), name="user_login_page"),
     url(r'^login/$', TemplateView.as_view(template_name="login.html"), name="user_login_page"),
 
     url(r'^personnel/index/$', TemplateView.as_view(template_name="personnel/index.html"), name="personnel_index_page"),
