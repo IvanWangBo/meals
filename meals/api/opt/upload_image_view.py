@@ -7,11 +7,11 @@ from django.core.files.uploadedfile import UploadedFile
 from rest_framework.request import Request
 from rest_framework.response import Response
 from serializers import UploadImageSerializer
-from settings import MEDIA_ROOT
+from settings import UPLOAD_ROOT
 
 
 class UploadImageView(HttpApiBaseView):
-    base_path = MEDIA_ROOT
+    base_path = UPLOAD_ROOT
 
     def _post_data(self, request):
         # type: (Request) -> Response

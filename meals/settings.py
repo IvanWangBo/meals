@@ -156,10 +156,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR , 'static')
+
+UPLOAD_ROOT = os.path.join(BASE_DIR, 'meals/uploads/')
+
 STATICFILES_DIRS = (
-     os.path.join(BASE_DIR, 'meals/static'),
+    os.path.join(BASE_DIR, 'meals/static'),
+    UPLOAD_ROOT,
 )
 
-# 动态文件的本地路径的绝对路径
-MEDIA_ROOT = os.path.join(STATIC_ROOT, "uploads")
-MEDIA_URL = '/media/'
