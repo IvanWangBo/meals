@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from rest_framework.views import APIView
 from rest_framework.views import Response
+from common.exceptions import RequestBaseException
 
 from api.users.models import Users
 
@@ -28,3 +29,9 @@ class HttpApiBaseView(APIView):
         user = Users.objects.get(id=user_id)
         if user.company_id != company_id:
             self.error_response({}, message=u"对不起，您查询的公司有误！")
+
+    def post(self, *args, **kwargs):
+        try:
+            return self._post_data(*args, **kwargs)
+        except RequestBaseException as e:
+            return e.json_response()

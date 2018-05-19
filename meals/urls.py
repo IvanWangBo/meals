@@ -31,6 +31,7 @@ from api.restaurants.views import DeleteRestaurantView
 from api.restaurants.views import ModifyDishView
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
+from api.opt.upload_image_view import UploadImageView
 
 
 # 通用返回格式：
@@ -122,5 +123,9 @@ urlpatterns = [
     url(r"api/user/meals/cancel/$", CancelMealsOrder.as_view()),
     # 查询订单
     url(r"api/user/meals/list/$", MealsOrderList.as_view()),
+
+    # opt
+    url(r"api/opt/upload_file/$", UploadImageView.as_view()),
+    url(r"api/opt/test_upload/$", TemplateView.as_view(template_name="test_upload.html"), name="test"),
 
 ]

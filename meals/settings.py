@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Django settings for meals project.
 
@@ -159,4 +160,6 @@ STATICFILES_DIRS = (
      os.path.join(BASE_DIR, 'meals/static'),
 )
 
+# 动态文件的本地路径的绝对路径
+MEDIA_ROOT = os.path.join(STATIC_ROOT, "uploads")
 MEDIA_URL = '/media/'
