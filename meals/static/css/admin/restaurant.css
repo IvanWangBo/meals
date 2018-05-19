@@ -84,10 +84,6 @@
     background-color: #fff;
     color:#000;
 }
-.tabs .chosen_2{
-    background-color: #fff;
-    color: #000;
-}
 .secs{
     margin-top: 15px;
     display:-webkit-box;
@@ -110,10 +106,11 @@
     height: 24px;
     line-height: 24px;
     border-bottom: 1px solid #a19f9f;
+    cursor: pointer;
 }
+
 .secs .sec_list .time_range_list .chosen_2{
-    background-color: #cccccc;
-    font-weight: bolder;
+    background-color:lightblue;
 }
 .secs .sec_list .add_to_pop{
     width: 100%;
@@ -150,6 +147,10 @@
     border:1px solid #4a77d4;
     border-radius: 5px;
     margin-bottom: 5px;
+    cursor: pointer;
+}
+.sec_list:nth-child(2) .restaurant_list .chosen_3{
+    background-color:lightblue;
 }
 .sec_list:nth-child(2) .restaurant_list .restaurant .name{
     max-width: 120px;
@@ -168,7 +169,12 @@
     font-size: 14px;
 
 }
-
+.sec_list:nth-child(3){
+    border-left: 2px dashed #2D2D3F;
+    border-right: 2px dashed #2D2D3F;
+    padding: 10px 5px;
+    background-color: #cccccc;
+}
 
 .pop{
     position: fixed;
@@ -195,7 +201,6 @@
     margin-bottom: 10px;
 }
 .pop .put_in{
-    height: 30px;
     line-height: 30px;
     margin-left: 70px;
 }
@@ -229,4 +234,28 @@
 input,select{
     height: 20px;
     border-radius: 3px;
+}
+.pop .time_range_support{
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+}
+.pop .choose_time{
+    width: 30px;
+    height: 22px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bolder;
+    border-radius: 5px;
+    background-color: #a29e9e;
+    color: #fff;
+    line-height: 22px;
+    margin: 0 5px 5px;
+    cursor: pointer;
+}
+.pop .put_in .chosen_4{
+    background-color: green;
 }
