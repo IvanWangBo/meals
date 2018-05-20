@@ -146,7 +146,7 @@
             菜品图片：
             <form id="js_upload_img" class="upload_img" enctype="multipart/form-data" method="post" >
                 <input class="put_9" type="file" required="required" name="image">
-                <span style="display: inline-block;margin-left:-120px;background-color:#fff;">当前菜品的图片:<img class="js_upload_img_url" src="" style="display: inline-block;width: 35px;height: 35px;border: 1px solid #ccc;vertical-align: middle"></span>
+                <span class="js_upload_img_seen" style="display: inline-block;margin-left:-120px;background-color:#fff;">当前菜品的图片:<img class="js_upload_img_url" src="" style="display: inline-block;width: 35px;height: 35px;border: 1px solid #ccc;vertical-align: middle"></span>
                 <button class="js_submit submit_button" id="image_button">提交</button>
             </form>
         </div>
@@ -226,8 +226,8 @@
                 success: function (d) {
                     if(d.code==200){
                         self.upload_img_path=d.data.path;
-                        console.log(d.data.path);
-                        $(".js_upload_img_url").attr("src","/static/"+d.data.path);
+                        $(".js_upload_img_seen").show();
+                        $(".js_upload_img_url").attr("src",d.data.path);
                         alert("上传成功");
                     }else{
                         alert(d.message);
@@ -483,6 +483,7 @@
                 str+='<div class="js_choose_time choose_time" tid="'+self.time_range_ids[i]+'">'+self.time_ranges[self.time_range_ids[i]]+'</div>'
             }
             $(str).appendTo(".js_time_range_support");
+            $(".js_upload_img_seen").hide();
             self.cover.show();
             self.add_dish_pop.show();
         });
@@ -510,7 +511,7 @@
             if(put_1&&put_2){
                 self.is_loading=true;
                 self.load_node.show();
-                if(!self.add_dish_pop.attr("d_id")){
+                if(self.add_dish_pop.attr("d_id")==0){
                     $.ajax({
                         url: "/api/restaurant/dish/add/",
                         type: "POST",
@@ -563,7 +564,7 @@
                                 var dish_lists=$(".js_dish_container");
                                 for(var i=0;i<dish_lists.length;i++){
                                     if($(dish_lists[i]).attr("d_id")==self.add_dish_pop.attr("d_id")){
-                                        $(dish_lists[i]).find("img").attr("src","/static/"+self.upload_img_path);
+                                        $(dish_lists[i]).find("img").attr("src",self.upload_img_path);
                                         $(dish_lists[i]).find(".name").html(put_1);
                                         $(dish_lists[i]).find(".price").html(put_2);
                                     }
