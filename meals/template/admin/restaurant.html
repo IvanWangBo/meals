@@ -37,7 +37,7 @@
 
             </div>
             <!--餐品-->
-            <div class="js_list_3 sec_list" style="display: none">
+            <div class="js_list_3 sec_list" style="display: none;margin-right:6%">
                 <div class="js_dish_list dish_list">
 
                 </div>
@@ -134,8 +134,8 @@
         </div>
     </div>
     <!--添加/编辑菜品弹窗-->
-    <div class="js_add_dish_pop pop" style="display: none">
-        <div class="pop_title">添加菜品</div>
+    <div class="js_add_dish_pop pop" style="display: none" d_id="0">
+        <div class="pop_title">编辑菜品</div>
         <div class="put_in">
             菜品名称：<input class="put_7" type="text" required="required" placeholder="请输入">
         </div>
@@ -143,14 +143,27 @@
             菜品价格：<input class="put_8" type="text" required="required" placeholder="请输入">
         </div>
         <div class="put_in">
-            菜品图片：<input class="put_9" type="text" required="required" placeholder="请输入">
+            菜品图片：
+            <form id="js_upload_img" class="upload_img" enctype="multipart/form-data" method="post" >
+                <input class="put_9" type="file" required="required" name="image">
+                <span style="display: inline-block;margin-left:-120px;background-color:#fff;">当前菜品的图片:<img class="js_upload_img_url" src="" style="display: inline-block;width: 35px;height: 35px;border: 1px solid #ccc;vertical-align: middle"></span>
+                <button class="js_submit submit_button" id="image_button">提交</button>
+            </form>
         </div>
         <div class="put_in support">
             <p>请选择支持点餐时段:</p>
             <div class="js_time_range_support time_range_support"></div>
         </div>
         <div class="btns">
-            <div class="btn js_add_restaurant_btn">确定</div>
+            <div class="btn js_add_dish_btn">确定</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
+    <!--添加菜品弹窗-->
+    <div class="js_delete_dish_pop pop" style="display: none">
+        <div class="pop_title">确认删除此菜品？</div>
+        <div class="btns">
+            <div class="btn js_delete_dish_btn">确定</div>
             <div class="btn js_close">取消</div>
         </div>
     </div>
@@ -169,11 +182,61 @@
         self.add_time_rang_pop=$(".js_add_time_rang_pop");
         self.add_restaurant_pop=$(".js_add_restaurant_pop");
         self.add_dish_pop=$(".js_add_dish_pop");
+        self.delete_dish_pop=$(".js_delete_dish_pop");
         self.time_ranges={};
         self.time_range_ids=[];
         self.user_id="";
         self.this_time_range_id="";
         self.this_resturant_id="";
+        self.delete_dish_id="";
+        self.upload_img_path="";
+        self.edit_dish={
+            "d_time":[],
+            "d_id":"",
+            "d_name":"",
+            "d_price":"",
+            "d_img":""
+        };
+        //懒加载
+        var h1=$(window).height();
+        function condition(node) {
+            var h=$(node).offset().top;
+            if(h<h1+200){
+                return true;
+            }
+            return false;
+        }
+        var ly = new lazyload(condition);
+        //上传图片方法
+        self.body_node.delegate(".js_submit","click",function (e) {
+            e.preventDefault();
+            var form = document.getElementById('js_upload_img'),
+                formData = new FormData(form);
+            if(self.is_loading){
+                return;
+            }
+            self.is_loading=true;
+            self.load_node.show();
+            $.ajax({
+                url: "/api/opt/upload_file/",
+                type: "POST",
+                data: formData,
+                processData:false,
+                contentType:false,
+                success: function (d) {
+                    if(d.code==200){
+                        self.upload_img_path=d.data.path;
+                        console.log(d.data.path);
+                        $(".js_upload_img_url").attr("src","/static/"+d.data.path);
+                        alert("上传成功");
+                    }else{
+                        alert(d.message);
+                    }
+                    self.is_loading=false;
+                    self.load_node.hide();
+                }
+            })
+        });
         var tpl_1='<div class="js_time_range_list time_range_list">\
                         <%for(var i=0;i<data.length;i++){%>\
                             <div class="js_time_range time_range time_range_<%=data[i].time_range_id%>" tid="<%=data[i].time_range_id%>"><%=data[i].name%></div>\
@@ -190,21 +253,37 @@
                     </div>\
                     <div class="js_add_restaurant add_to_pop"><i>+</i>添加商户</div>';
         var tpl_3='<%for(var k=0;k<data.length;k++){%>\
-                        <div class="dish_container">\
+                        <div class="js_dish_container dish_container" d_id="<%=data[k].dish_id%>" d_time="<%=data[k].support_times%>"  d_name="<%=data[k].name%>" d_price="<%=data[k].price%>">\
+                            <div class="js_delete_dish delete_dish_icon"></div>\
                             <div class="pic_outer">\
                                 <div class="pic_inner">\
-                                    <img src="/static/img/food.jpg" imgsrc="<%=data[k].image_url%>">\
+                                    <img src="/static/image/food.jpg" imgsrc="<%=data[k].image_url%>">\
                                 </div>\
                             </div>\
                             <div class="dish_info">\
                                 <div class="name"><%=data[k].name%></div>\
                                 <div class="info_bottom">\
-                                    <span class="price"><%=data[k].price%></span>\
+                                    <span class="price">¥<%=data[k].price%></span>\
                                     <span class="js_dish_edit dist_edit">编辑</span>\
                                 </div>\
                             </div>\
                         </div>\
                      <%}%>';
+        var tpl_4='<div class="js_dish_container dish_container" d_id="<%=data.dish_id%>" d_time="<%=data.support_times%>" d_name="<%=data.name%>" d_price="<%=data.price%>">\
+                        <div class="js_delete_dish delete_dish_icon"></div>\
+                        <div class="pic_outer">\
+                            <div class="pic_inner">\
+                                <img src="/static/image/food.jpg" imgsrc="<%=data.image_url%>">\
+                            </div>\
+                        </div>\
+                        <div class="dish_info">\
+                            <div class="name"><%=data.name%></div>\
+                            <div class="info_bottom">\
+                                <span class="price">¥<%=data.price%></span>\
+                                <span class="js_dish_edit dist_edit">编辑</span>\
+                            </div>\
+                        </div>\
+                    </div>';
         //初始化用餐时段列表
         self.is_loading=true;
         self.load_node.show();
@@ -258,7 +337,7 @@
                     success: function (d) {
                         if(d.code==200){
                             //将用餐时段加入列表
-                            var new_time_range=$('<div class="time_range">'+pwd_1+'</div>');
+                            var new_time_range=$('<div class="time_range">'+put_1+'</div>');
                             new_time_range.appendTo(".js_time_range_list");
                             new_time_range.addClass("time_range_"+d.data.time_range_id);
                             new_time_range.attr("tid",d.data.time_range_id);
@@ -297,6 +376,7 @@
                 if (d.code == 200) {
                     $(".js_list_2").html("");
                     $(".js_list_2").show();
+                    $(".js_dish_list").html("");
                     var node = $(util.parse(tpl_2, {
                         data: d.data,
                         util: util
@@ -338,7 +418,7 @@
                     success: function (d) {
                         if(d.code==200){
                             //将用餐时段加入列表
-                            str='<div rid="'+d.data.restaurant_id+'" class="restaurant restaurant_'+d.data.restaurant_id+'">'
+                            str='<div rid="'+d.data.restaurant_id+'" class="js_restaurant restaurant restaurant_'+d.data.restaurant_id+'">'
                                     +'<span class="name">'+pwd_1+'</span>'
                                     +'<span class="js_edit edit">'+'编辑'+'</span>'
                                     +'</div>';
@@ -381,6 +461,11 @@
                         data: d.data,
                         util: util
                     })).appendTo(".js_dish_list");
+                    node.find("img").each(function(i,v){
+                        var src=v.getAttribute("imgsrc");
+                        ly.add({node:v,imgurl:src,loaded:false});
+                    });
+                    ly.load();
                 }else{
                     alert(d.message);
                 }
@@ -393,17 +478,191 @@
             if(self.is_loading){
                 return;
             }
-            self.cover.show();
             var str='';
             for(var i=0;i<self.time_range_ids.length;i++){
                 str+='<div class="js_choose_time choose_time" tid="'+self.time_range_ids[i]+'">'+self.time_ranges[self.time_range_ids[i]]+'</div>'
             }
             $(str).appendTo(".js_time_range_support");
+            self.cover.show();
             self.add_dish_pop.show();
         });
         //点击选中支持的用餐时间段，变色
+        self.body_node.delegate(".js_choose_time","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            $(this).toggleClass("chosen_4");
+        });
+        //点击确定添加，添加菜品
+        self.body_node.delegate(".js_add_dish_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var put_1=$(".put_7").val();
+            var put_2=$(".put_8").val();
+            var support_times=[],chosen_times=$('.chosen_4');
+            if(chosen_times.length){
+                for(var i=0;i<chosen_times.length;i++){
+                    support_times.push($(chosen_times[i]).attr("tid"));
+                }
+            }
+            var arrstr='['+support_times.toString()+']';
+            if(put_1&&put_2){
+                self.is_loading=true;
+                self.load_node.show();
+                if(!self.add_dish_pop.attr("d_id")){
+                    $.ajax({
+                        url: "/api/restaurant/dish/add/",
+                        type: "POST",
+                        data: {
+                            "name": put_1,
+                            "price": put_2,
+                            "image_url":self.upload_img_path,
+                            "support_times":arrstr,
+                            "restaurant_id":self.this_resturant_id
+                        },
+                        success: function (d) {
+                            if(d.code==200){
+                                var node = $(util.parse(tpl_4, {
+                                    data: d.data,
+                                    util: util
+                                })).appendTo(".js_dish_list");
+                                node.find("img").each(function(i,v){
+                                    var src=v.getAttribute("imgsrc");
+                                    ly.add({node:v,imgurl:src,loaded:false});
+                                });
+                                ly.load();
+                                //清除数据
+                                $(".put_7").val("");
+                                $(".put_8").val("");
+                                $(".js_time_range_support").html("");
+                                alert("添加成功");
+                                self.cover.hide();
+                                self.add_dish_pop.hide();
+                            }else{
+                                alert(d.message);
+                            }
+                            self.is_loading=false;
+                            self.load_node.hide();
+                        }
+                    })
+                }else {
+                    $.ajax({
+                        url: "api/restaurant/dish/modify/",
+                        type: "POST",
+                        data: {
+                            "name": put_1,
+                            "price": put_2,
+                            "image_url":self.upload_img_path,
+                            "support_times":arrstr,
+                            "restaurant_id":self.this_resturant_id,
+                            "dish_id":self.add_dish_pop.attr("d_id")
+                        },
+                        success: function (d) {
+                            if(d.code==200){
+                                var dish_lists=$(".js_dish_container");
+                                for(var i=0;i<dish_lists.length;i++){
+                                    if($(dish_lists[i]).attr("d_id")==self.add_dish_pop.attr("d_id")){
+                                        $(dish_lists[i]).find("img").attr("src","/static/"+self.upload_img_path);
+                                        $(dish_lists[i]).find(".name").html(put_1);
+                                        $(dish_lists[i]).find(".price").html(put_2);
+                                    }
+                                }
+                                //清除数据
+                                $(".put_7").val("");
+                                $(".put_8").val("");
+                                $(".js_time_range_support").html("");
+                                $(".js_upload_img_url").attr("src","");
+                                alert("修改成功");
+                                self.cover.hide();
+                                self.add_dish_pop.hide();
+                            }else{
+                                alert(d.message);
+                            }
+                            self.is_loading=false;
+                            self.load_node.hide();
+                        }
+                    })
+                }
+            }else{
+                alert("请填写完整信息");
+            }
+        });
+        //点击删除菜品，删除弹窗出现
+        self.body_node.delegate(".js_delete_dish","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.delete_dish_id=$(this).closest(".js_dish_container").attr("d_id");
+            self.delete_dish_node=$(this).closest(".js_dish_container");
+            self.cover.show();
+            self.delete_dish_pop.show();
+        });
+        //点击确定删除，删除菜品
+        self.body_node.delegate(".js_delete_dish_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            self.is_loading=true;
+            self.load_node.show();
+            $.ajax({
+                url: "api/restaurant/dish/delete/",
+                type: "POST",
+                data: {
+                    "dish_id": self.delete_dish_id
+                },
+                success: function (d) {
+                    if(d.code==200){
+                        self.delete_dish_node.remove();
+                        alert("删除成功");
+                        self.cover.hide();
+                        self.delete_dish_pop.hide();
+                    }else{
+                        alert(d.message);
+                    }
+                    self.is_loading=false;
+                    self.load_node.hide();
+                }
+            })
+        });
+        //点击菜品编辑按钮，弹窗
+        self.body_node.delegate(".js_dish_edit","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            var dish_outer=$(this).closest(".js_dish_container");
+            self.edit_dish.d_time=dish_outer.attr("d_time").split(",");
+            self.edit_dish.d_id=dish_outer.attr("d_id");
+            self.edit_dish.d_name=dish_outer.attr("d_name");
+            self.edit_dish.d_price=dish_outer.attr("d_price");
+            self.edit_dish.d_img=dish_outer.find("img").attr("src");
+            $(".js_upload_img_url").attr("src",self.edit_dish.d_img);
+            self.upload_img_path=self.edit_dish.d_img;
+            var str='';
+            var flags=false;
+            for(var i=0;i<self.time_range_ids.length;i++){
+                for(var j=0;j<self.edit_dish.d_time.length;j++){
+                    if(self.time_range_ids[i]==self.edit_dish.d_time[j]){
+                        flags=true;
+                    }
+                }
+                if(!flags){
+                    str+='<div class="js_choose_time choose_time" tid="'+self.time_range_ids[i]+'">'+self.time_ranges[self.time_range_ids[i]]+'</div>'
+                }else {
+                    str+='<div class="js_choose_time choose_time chosen_4" tid="'+self.time_range_ids[i]+'">'+self.time_ranges[self.time_range_ids[i]]+'</div>'
+                    flags=false;
+                }
+            }
+            $(str).appendTo(".js_time_range_support");
+            self.add_dish_pop.attr('d_id',self.edit_dish.d_id);
+            self.cover.show();
+            self.add_dish_pop.show();
+            $(".put_7").val(self.edit_dish.d_name);
+            $(".put_8").val(self.edit_dish.d_price);
+            $(".js_upload_img_url").attr("src",self.edit_dish.d_img);
+        });
 
-        
+        //点击关闭按钮，关闭弹窗
         self.body_node.delegate(".js_close","click",function () {
             if (self.is_loading) {
                 return;
@@ -411,7 +670,20 @@
             self.cover.hide();
             self.add_time_rang_pop.hide();
             self.add_restaurant_pop.hide();
+            self.add_restaurant_pop.attr("d_id",0);
             self.add_dish_pop.hide();
+            self.delete_dish_pop.hide();
+            $(".put_1").val("");
+            $(".put_2").val("");
+            $(".put_3").val("");
+            $(".put_4").val("");
+            $(".put_5").val("");
+            $(".put_6").val("");
+            $(".put_7").val("");
+            $(".put_8").val("");
+            $(".put_9").val("");
+            $(".js_time_range_support").html("");
+            $(".js_upload_img_url").attr("src","");
         });
     }
     new addmin_index();

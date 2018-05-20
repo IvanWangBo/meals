@@ -181,7 +181,7 @@ class ModifyDishView(HttpApiBaseView):
                 "name": dish.name,
                 "price": dish.price,
                 "image_url": get_full_image_url(dish.image_url),
-                "support_times": json.loads(dish.support_times)
+                "support_times": json.dumps(dish.support_times)
             }, u"修改菜品信息成功!")
 
         except Exception as err:
