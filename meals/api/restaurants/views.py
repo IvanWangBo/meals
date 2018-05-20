@@ -21,7 +21,6 @@ class AddDishView(HttpApiBaseView):
     @admin_required
     def post(self, request):
         try:
-            import pdb; pdb.set_trace()
             serializers = AddDishSerializer(data=request.data)
             if not serializers.is_valid():
                 return self.serializer_invalid_response(serializers)
