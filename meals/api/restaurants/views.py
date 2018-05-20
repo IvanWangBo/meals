@@ -15,13 +15,13 @@ from api.restaurants.serializers import DeleteDishSerializer
 from api.restaurants.serializers import DishesListSerializer
 from api.restaurants.serializers import AddRestaurantSerializer
 from api.restaurants.serializers import ModifyDishSerializer
-from common.utils import get_full_image_url
 
 
 class AddDishView(HttpApiBaseView):
     @admin_required
     def post(self, request):
         try:
+            import pdb; pdb.set_trace()
             serializers = AddDishSerializer(data=request.data)
             if not serializers.is_valid():
                 return self.serializer_invalid_response(serializers)
@@ -51,7 +51,7 @@ class AddDishView(HttpApiBaseView):
                 "name": data["name"],
                 "price": data["price"],
                 "restaurant_id": data["restaurant_id"],
-                "image_url": get_full_image_url(data["image_url"]),
+                "image_url": data["image_url"],
                 "support_times": data["support_times"]
             }, message=u"新建菜品成功")
 
@@ -75,7 +75,7 @@ class DishesListView(HttpApiBaseView):
                         "dish_id": dish.id,
                         "name": dish.name,
                         "price": dish.price,
-                        "image_url": get_full_image_url(dish.image_url),
+                        "image_url": dish.image_url,
                         "support_times": support_times
                     })
             return self.success_response(right_dishes, message=u"查询菜单成功")
@@ -144,7 +144,7 @@ class EnableDishTimeView(HttpApiBaseView):
                 "dish_id": dish.id,
                 "name": dish.name,
                 "price": dish.price,
-                "image_url": get_full_image_url(dish.image_url),
+                "image_url": dish.image_url,
                 "support_times": support_times
             }, message=u"应用用餐时段成功")
 
@@ -180,7 +180,7 @@ class ModifyDishView(HttpApiBaseView):
                 "dish_id": dish.id,
                 "name": dish.name,
                 "price": dish.price,
-                "image_url": get_full_image_url(dish.image_url),
+                "image_url": dish.image_url,
                 "support_times": json.dumps(dish.support_times)
             }, u"修改菜品信息成功!")
 
@@ -212,7 +212,7 @@ class DisableDishTimeView(HttpApiBaseView):
                 "dish_id": dish.id,
                 "name": dish.name,
                 "price": dish.price,
-                "image_url": get_full_image_url(dish.image_url),
+                "image_url": dish.image_url,
                 "support_times": support_times
             }, message=u"取消用餐时段成功")
 

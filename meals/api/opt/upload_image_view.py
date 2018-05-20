@@ -20,7 +20,7 @@ class UploadImageView(HttpApiBaseView):
             data = serializer.validated_data
             image = data.get('image')
             path = self.save(image)
-            return self.success_response({'path': path, 'url_suffix': '/static/' + path})
+            return self.success_response({'path': path})
         return self.error_response({}, u"无效图片")
 
     def read_file_content(self, file):
@@ -50,5 +50,5 @@ class UploadImageView(HttpApiBaseView):
             os.makedirs(target_dir)
         with open(target_path, 'wb+') as target:
             target.write(content)
-        return file_name
+        return '/static/' + file_name
 
