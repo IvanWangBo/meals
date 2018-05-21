@@ -45,7 +45,8 @@ urlpatterns = [
     url(r"^$", TemplateView.as_view(template_name="login.html"), name="user_login_page"),
     url(r'^login/$', TemplateView.as_view(template_name="login.html"), name="user_login_page"),
 
-    url(r'^personnel/index/$', TemplateView.as_view(template_name="personnel/index.html"), name="personnel_index_page"),
+    url(r'^personal/index/$', TemplateView.as_view(template_name="personal/index.html"), name="personal_index_page"),
+    url(r'^personal/order/$', TemplateView.as_view(template_name="personal/order.html"), name="personal_order_page"),
 
     url(r'^admin/index/$', TemplateView.as_view(template_name="admin/index.html"), name="admin_index_page"),
     url(r'^admin/restaurant/$', TemplateView.as_view(template_name="admin/restaurant.html"), name="admin_restaurant_page"),

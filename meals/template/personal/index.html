@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}
-    管理员-餐厅管理
+用户-点餐
 {% endblock %}
 
 {% block css_block %}
-    <link rel="stylesheet" type="text/css" href="/static/css/admin/restaurant.css"/>
+<link rel="stylesheet" type="text/css" href="/static/css/personal/index.css"/>
 
 {% endblock %}
 
@@ -16,16 +16,11 @@
         <i></i>企业团餐管理系统
     </div>
     <div class="top_tabs">
-        <a class="js_top_tab top_tab" href="/admin/index">公司管理</a>
-        <a class="js_top_tab top_tab chosen_1" href="/admin/restaurant">餐厅管理</a>
-        <a class="js_top_tab top_tab" href="/admin/order">订单管理</a>
+        <a class="js_top_tab top_tab chosen_1" href="/personal/index">点餐</a>
+        <a class="js_top_tab top_tab" href="/personal/order">订单管理</a>
     </div>
     <div class="js_main main">
         <div class="line"></div>
-        <!--tab切换-->
-        <div class="tabs">
-            <div class="js_tab tab" tab_num="1">餐厅管理</div>
-        </div>
         <!--展示区-->
         <div class="js_secs secs">
             <!--用餐时间段-->
@@ -211,7 +206,7 @@
         self.body_node.delegate(".js_submit","click",function (e) {
             e.preventDefault();
             var form = document.getElementById('js_upload_img'),
-                formData = new FormData(form);
+                    formData = new FormData(form);
             if(self.is_loading){
                 return;
             }
