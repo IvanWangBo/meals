@@ -207,12 +207,15 @@
     -o-text-overflow:ellipsis;
     overflow:hidden;
 }
-.dish_list .dish_container .dish_info .info_bottom .dist_edit{
+.dish_list .dish_container .dish_info .info_bottom .dist_add{
     float: right;
-    padding: 2px 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
     font-size: 12px;
+    text-align: center;
+    line-height: 16px;
     background-color: green;
-    border-radius: 5px;
     display: inline-block;
     margin-top: -1px;
     color: #fff;
