@@ -12,8 +12,10 @@
 {% block body %}
 <!--logo头部-->
 <div class="whole">
-    <div class="top">
-        <i></i>企业团餐管理系统
+    <div class="top_banner">
+        <div class="top">
+            <i></i>企业团餐管理系统
+        </div>
     </div>
     <div class="top_tabs">
         <a class="js_top_tab top_tab chosen_1" href="/personal/index">点餐</a>
@@ -37,8 +39,16 @@
 
                 </div>
             </div>
-            <div class="js_list_4 sec_list">
-                <p style="font-size: 16px;font-weight: bolder;margin-bottom: 10px;">已选餐品：</p>
+            <div class="js_list_4 sec_list" style="display: none">
+                <p style="font-size: 16px;font-weight: bolder;margin-top: 10px;margin-bottom: 5px;">已选餐品：</p>
+                <div class="js_dish_add_list_container dish_add_list_container">
+
+                </div>
+                <div class="total_container">
+                    <div>合计&nbsp;&nbsp;<span style="font-weight: bolder">¥</span></div>
+                    <div class="js_total_money total_money" style="font-weight: bolder">0</div>
+                    <div class="js_confirm_order confirm_order">确认下单</div>
+                </div>
             </div>
         </div>
     </div>
@@ -132,10 +142,11 @@
         self.is_loading=false;
         self.secs=$(".js_sec");
         self.cover=$(".js_cover");
+        self.this_total_money=$(".js_total_money");
         self.user_id="";
         self.this_time_range_id="";
         self.this_resturant_id="";
-
+        self.every_first_add={};
         //懒加载
         var h1=$(window).height();
         function condition(node) {
@@ -176,16 +187,13 @@
                             </div>\
                         </div>\
                      <%}%>';
-        var tpl_4='<div class="js_add_dish_list add_dish_list" d_id="<%=data.dish_id%>"  d_name="<%=data.name%>" d_price="<%=data.price%>">\
-                        <div class="js_delete_dish delete_dish_icon"></div>\
+        var tpl_4='<div class="js_add_dish_list add_dish_list js_add_dish_list_<%=data.dish_id%>" d_id="<%=data.dish_id%>"  d_name="<%=data.name%>" d_price="<%=data.price%>">\
                         <div class="name"><%=data.name%></div>\
-                        <div class="add_info">\
-                            <div class="price">¥<%=data.price%></div>\
-                            <div class="js_dish_num_edit">\
-                                <i class="js_minus minus_icon"></i>\
-                                <span class="js_this_dish_num"><%=data.dish_num%></span>\
-                                <i class="js_plus plus_icon"></i>\
-                            </div>\
+                        ¥<div class="js_this_price price"><%=data.price%></div>\
+                        <div class="js_dish_num_edit">\
+                            <i class="js_minus icons" style="margin-right: 3px;" d_price="<%=data.price%>" d_id="<%=data.dish_id%>">-</i>\
+                            <span class="js_this_dish_num dish_num" style="font-weight: bolder"><%=data.dish_num%></span>\
+                            <i class="js_plus icons" style="margin-left: 3px;" d_price="<%=data.price%>" d_id="<%=data.dish_id%>">+</i>\
                         </div>\
                     </div>';
         //初始化用餐时段列表
@@ -258,14 +266,111 @@
                 self.load_node.hide();
             });
         });
+        //点击指定餐品的添加按钮，添加到待结算标签
+        self.body_node.delegate(".js_dish_edit","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var data={},this_dish_container=$(this).closest(".js_dish_container");
+            data.dish_id=this_dish_container.attr("d_id");
+            data.name=this_dish_container.attr("d_name");
+            data.price=this_dish_container.attr("d_price");
 
+            if(JSON.stringify(self.every_first_add)=="{}"){
+                $(".js_list_4").show();
+            }
+            if(!self.every_first_add[data.dish_id]){
+                data.dish_num=1;
+                var node = $(util.parse(tpl_4, {
+                    data: data,
+                    util: util
+                })).appendTo(".js_dish_add_list_container");
+                self.every_first_add[data.dish_id]=1;
+            }else {
+                ++self.every_first_add[data.dish_id];
+                var this_dish_list=$(".js_add_dish_list_"+data.dish_id);
+                this_dish_list.find(".js_this_dish_num").text(self.every_first_add[data.dish_id]);
+                this_dish_list.find(".js_this_price").html(self.every_first_add[data.dish_id]*data.price);
+            }
+            var now_total=Number(self.this_total_money.text());
+            self.this_total_money.text(now_total+Number(data.price));
+        });
+        //添加同一种菜品
+        self.body_node.delegate(".js_plus","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var dish_id=$(this).attr("d_id"),price=$(this).attr("d_price");
+            ++self.every_first_add[dish_id];
+            var this_dish_list=$(".js_add_dish_list_"+dish_id);
+            this_dish_list.find(".js_this_dish_num").text(self.every_first_add[dish_id]);
+            this_dish_list.find(".js_this_price").html(self.every_first_add[dish_id]*price);
+            var now_total=Number(self.this_total_money.text());
+            self.this_total_money.text(now_total+Number(price));
+        });
+        //减去同一种菜品
+        self.body_node.delegate(".js_minus","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var dish_id=$(this).attr("d_id"),price=$(this).attr("d_price");
+            var this_dish_list=$(".js_add_dish_list_"+dish_id);
+            --self.every_first_add[dish_id];
+            if(self.every_first_add[dish_id]){
+                this_dish_list.find(".js_this_dish_num").text(self.every_first_add[dish_id]);
+                this_dish_list.find(".js_this_price").html(self.every_first_add[dish_id]*price);
+            }else {
+                this_dish_list.remove();
+            }
+            var now_total=Number(self.this_total_money.text());
+            self.this_total_money.text(now_total-Number(price));
+        });
+        //下单
+        self.body_node.delegate(".js_confirm_order","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var dish_lists=$(".js_dish_add_list_container").find(".js_add_dish_list");
+            if(!dish_lists.length){
+                alert("请选择想要的菜品");
+            }else {
+                self.is_loading=true;
+                self.load_node.show();
+                var order_list=[];
+                for(var i=0;i<dish_lists.length;i++){
+                    var obj={};
+                    obj.dish_id=$(dish_lists[i]).attr("d_id");
+                    obj.count=$(dish_lists[i]).find(".js_this_dish_num").text();
+                    order_list.push(obj);
+                }
+                $.ajax({
+                    url: "api/user/meals/order/",
+                    type: "POST",
+                    data: {
+                        "order_list": "["+order_list.toString()+"]"
+                    },
+                    success: function (d) {
+                        if(d.code==200){
+                            //清除添加记忆
+                            self.every_first_add={};
+                            $(".js_dish_add_list_container").html();
+                            self.this_total_money.text(0);
+                            alert("下单成功");
+                        }else{
+                            alert(d.message);
+                        }
+                        self.is_loading=false;
+                        self.load_node.hide();
+                    }
+                })
+            }
+        });
         //点击关闭按钮，关闭弹窗
         self.body_node.delegate(".js_close","click",function () {
             if (self.is_loading) {
                 return;
             }
             self.cover.hide();
-
             self.delete_dish_pop.hide();
         });
     }
