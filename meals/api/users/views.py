@@ -222,6 +222,7 @@ class MealsOrderList(HttpApiBaseView):
             month = data["month"]
             orders = MealOrders.objects.filter(user_id=user_id, create_time__month=month)
             result_map = {}
+            extra_detail_map = {}
             for order in orders:
                 result_map[order.order_id] = []
             for order in orders:
@@ -229,16 +230,20 @@ class MealsOrderList(HttpApiBaseView):
                     'dish_id': order.dish_id,
                     'dish_name': Dishes.objects.get(id=order.dish_id).name,
                     'count': order.count,
-                    'state': order.state,
+                    'status': order.state,
                     'total_price': order.total_price,
                     'create_time': order.create_time
                 })
+                extra_detail_map[order.order_id]['create_time'] = order.create_time
+                extra_detail_map[order.order_id]['status'] = order.status
             result = []
             for order_id in result_map:
                 result.append({
                     'order_id': order_id,
                     'order_list': result_map[order_id],
-                    'order_price': self._get_order_price(result_map[order_id])
+                    'order_price': self._get_order_price(result_map[order_id]),
+                    'create_time': extra_detail_map.get(order_id, {}).get('create_time', ''),
+                    'status': extra_detail_map.get(order_id, {}).get('status', -2),
                 })
             return self.success_response(result, message=u"订单查询成功！")
         except Exception as err:

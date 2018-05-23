@@ -39,7 +39,7 @@ class MealOrders(models.Model):
     order_id = models.IntegerField(blank=False, default=0, db_index=True)
     dish_id = models.IntegerField(blank=False, default=0)
     count = models.IntegerField(blank=False, default=1)
-    state = models.IntegerField(blank=False, default=OrderStatus.created)
+    status = models.IntegerField(blank=False, default=OrderStatus.created)
     total_price = models.FloatField(blank=False, default=0.0)
     create_time = models.DateTimeField(auto_now_add=True, blank=False)
 
