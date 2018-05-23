@@ -23,7 +23,7 @@
     background: lightblue;
 }
 .top_tabs{
-    width: 240px;
+    width: 160px;
     height: 30px;
     font-size: 14px;
     line-height: 30px;
@@ -138,15 +138,6 @@
     overflow:hidden;
     display: inline-block;
 }
-.sec_list:nth-child(2) .restaurant_list .restaurant .edit{
-    float: right;
-    display: inline-block;
-    color: #fff;
-    background-color: green;
-    font-weight: bolder;
-    font-size: 14px;
-
-}
 .sec_list:nth-child(3){
     border-left: 2px dashed #2D2D3F;
     padding: 10px;
@@ -243,9 +234,7 @@
     background-color: #fff;
     border-radius: 2px;
     margin-top: 10px;
-    margin-left: -10px;
-    padding-left: 7px;
-    padding-right: 6px;
+    margin-bottom: 10px;
 }
 .sec_list:nth-child(4) .total_container .confirm_order{
     margin-left: auto;
@@ -261,6 +250,7 @@
     line-height: 25px;
     color: #fff;
     cursor: pointer;
+    margin-right: 5px;
 }
 .sec_list:nth-child(4) .add_dish_list{
     font-size: 14px;
@@ -300,97 +290,4 @@
     margin-top: -1px;
     color: #fff;
     cursor: pointer;
-}
-
-.pop{
-    position: fixed;
-    top:50%;
-    left:50%;
-    -webkit-transform: translate(-50%,-50%);
-    -moz-transform: translate(-50%,-50%);
-    -ms-transform: translate(-50%,-50%);
-    transform: translate(-50%,-50%);
-    width: 45%;
-    min-width: 400px;
-    background-color: #fff;
-    border-radius: 5px;
-    z-index: 11120;
-    padding: 20px 0;
-    font-size: 14px;
-}
-.pop .pop_title{
-    width: 100%;
-    color: red;
-    font-size: 16px;
-    font-weight: bolder;
-    text-align: center;
-    margin-bottom: 10px;
-}
-.pop .put_in{
-    line-height: 30px;
-    margin-left: 70px;
-}
-.pop .btns{
-    display:-webkit-box;
-    display:-moz-box;
-    display:-webkit-flex;
-    display:-moz-flex;
-    display:-ms-flexbox;
-    display:flex;
-    margin: 20px 70px 0;
-}
-.pop .btns .btn{
-    width: 100px;
-    height: 30px;
-    text-align: center;
-    font-weight: bolder;
-    line-height: 30px;
-    background-color: #000;
-    color: #fff;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.pop .btns .btn:active{
-    opacity: 0.7;
-}
-.pop .btns .btn:nth-child(1){
-    margin-right: auto;
-}
-input,select{
-    height: 20px;
-    border-radius: 3px;
-}
-.pop .time_range_support{
-    display:-webkit-box;
-    display:-moz-box;
-    display:-webkit-flex;
-    display:-moz-flex;
-    display:-ms-flexbox;
-    display:flex;
-}
-.pop .choose_time{
-    padding:0 3px;
-    height: 22px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bolder;
-    border-radius: 5px;
-    background-color: #a29e9e;
-    color: #fff;
-    line-height: 22px;
-    margin: 0 5px 5px;
-    cursor: pointer;
-}
-.pop .put_in .chosen_4{
-    background-color: green;
-}
-.put_9{
-    width: 180px;
-    margin-bottom: 8px;
-}
-.submit_button{
-    width: 41px;
-    background: #000;
-    color: #fff;
-    border-radius: 5px;
 }

@@ -246,8 +246,8 @@
         var tpl_2='<div class="js_restaurant_list restaurant_list">\
                        <%for(var j=0;j<data.length;j++){%>\
                             <div class="js_restaurant restaurant restaurant_<%=data[j].restaurant_id%>" rid="<%=data[j].restaurant_id%>">\
-                                <span class="name"><%=data[j].restaurant_name%></span>\
-                                <span class="js_edit edit">编辑</span>\
+                                <span class="js_restaurant_name name"><%=data[j].restaurant_name%></span>\
+                                <span class="js_delete_restaurant_btn delete_restaurant_icon">删除</span>\
                             </div>\
                         <%}%>\
                     </div>\
@@ -442,15 +442,50 @@
                 alert("请填写完整信息");
             }
         });
+        //删除按钮，删除餐厅
+        self.body_node.delegate(".js_delete_restaurant_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var this_restaurant=$(this).closest(".js_restaurant");
+            var rid=this_restaurant.attr("rid");
+            self.is_loading=true;
+            self.load_node.show();
+            $.ajax({
+                url: "/api/restaurant/delete/",
+                type: "POST",
+                data: {
+                    "restaurant_id": rid
+                },
+                success: function (d) {
+                    if(d.code==200){
+                        if(rid==self.this_resturant_id){
+                            this_restaurant.remove();
+                            $(".js_dish_list").html("");
+                            self.this_resturant_id="";
+                        }else {
+                            this_restaurant.remove();
+                            self.this_resturant_id="";
+                        }
+                        alert("删除成功");
+                    }else{
+                        alert(d.message);
+                    }
+                    self.is_loading=false;
+                    self.load_node.hide();
+                }
+            })
+        });
         //点击选中餐厅，查看当前餐厅供应的菜品
-        self.body_node.delegate(".js_restaurant","click",function () {
+        self.body_node.delegate(".js_restaurant_name","click",function () {
             if (self.is_loading) {
                 return;
             }
             self.is_loading=true;
             self.load_node.show();
-            var rid=$(this).attr("rid");
-            $(this).addClass("chosen_3").siblings(".js_restaurant").removeClass("chosen_3");
+            var this_restaurant=$(this).closest(".js_restaurant");
+            var rid=this_restaurant.attr("rid");
+            this_restaurant.addClass("chosen_3").siblings(".js_restaurant").removeClass("chosen_3");
             self.this_resturant_id=rid;
             $.getJSON("api/restaurant/dish/list/?restaurant_id="+rid+"&time_range_id="+self.this_time_range_id,function (d) {
                 if(d.code==200){
@@ -667,7 +702,6 @@
             $(".put_8").val(self.edit_dish.d_price);
             $(".js_upload_img_url").attr("src",self.edit_dish.d_img);
         });
-
         //点击关闭按钮，关闭弹窗
         self.body_node.delegate(".js_close","click",function () {
             if (self.is_loading) {

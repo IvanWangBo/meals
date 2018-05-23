@@ -153,26 +153,34 @@
     border-radius: 5px;
     margin-bottom: 5px;
     cursor: pointer;
+    overflow: hidden;
+    position: relative;
 }
 .sec_list:nth-child(2) .restaurant_list .chosen_3{
     background-color:lightblue;
 }
 .sec_list:nth-child(2) .restaurant_list .restaurant .name{
-    max-width: 120px;
+    width: 115px;
     white-space:nowrap;
     text-overflow:ellipsis;
     -o-text-overflow:ellipsis;
     overflow:hidden;
     display: inline-block;
 }
-.sec_list:nth-child(2) .restaurant_list .restaurant .edit{
-    float: right;
+.sec_list:nth-child(2) .restaurant_list .restaurant .delete_restaurant_icon{
     display: inline-block;
     color: #fff;
-    background-color: green;
+    background-color: rgba(0,0,0,0.7);
     font-weight: bolder;
-    font-size: 14px;
-
+    font-size: 12px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    position: absolute;
+    top:0;
+    right:0;
 }
 .sec_list:nth-child(3){
     border-left: 2px dashed #2D2D3F;

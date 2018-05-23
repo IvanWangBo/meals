@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}
+用户-订单管理
+{% endblock %}
+
+{% block css_block %}
+<link rel="stylesheet" type="text/css" href="/static/css/personal/order.css"/>
+
+{% endblock %}
+
+
+{% block body %}
+<!--logo头部-->
+<div class="whole">
+    <div class="top_banner">
+        <div class="top">
+            <i></i>企业团餐管理系统
+        </div>
+    </div>
+    <div class="top_tabs">
+        <a class="js_top_tab top_tab" href="/personal/index">点餐</a>
+        <a class="js_top_tab top_tab chosen_1" href="/personal/order">订单管理</a>
+    </div>
+    <div class="js_main main">
+        <div class="line"></div>
+        <!--展示区-->
+        <div class="js_secs secs">
+
+        </div>
+    </div>
+    <div class="loading" style="display: none"></div>
+    <div class="js_cover cover" style="display: none"></div>
+    <div class="js_detail_pop pop" style="display: none">
+        <div class="pop_title">订单详情</div>
+        <div class="js_detail_outer detail_outer">
+
+        </div>
+        <div class="btns">
+            <div class="btn js_close">确定</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript">
+    function order(){
+        var self=this;
+        self.body_node=$("body");
+        self.load_node=$(".loading");
+        self.detail_pop=$(".js_detail_pop");
+        self.is_loading=false;
+        self.cover=$(".js_cover");
+        self.user_id="";
+        var tpl_1='<table>\
+                            <tr>\
+                                <th>日期</th>\
+                                <th>订单编号</th>\
+                                <th>订单详情</th>\
+                                <th>订单总价</th>\
+                                <th>订单状态</th>\
+                            </tr>\
+                            <%for(var n=0;n<data.length;n++){%>\
+                                <tr>\
+                                    <td><%=util.format_date(data[n].order_list[0].create_time,"yyyy-MM-dd")%></td>\
+                                    <td><%=data[n].order_id%></td>\
+                                    <td><span class="js_order_detail order_detail" o_list=<%=JSON.stringify(data[n].order_list)%> >查看详情</span></td>\
+                                    <td><%=data[n].order_price%></td>\
+                                    <%var Arr=["已下单未完成","已完成"]%>\
+                                    <td>\
+                                        <%=Arr[data[n].order_status]%>\
+                                        <%if(data[n].order_status==0){%>\
+                                        <span class="js_cancel_order cancel_order" o_id="<%=data[n].order_id%>">取消订单</span>\
+                                        <%}%>\
+                                    </td>\
+                                </tr>\
+                            <%}%>\
+                        </table>';
+        var tpl_2='<table>\
+                            <tr>\
+                                <th>菜品名称</th>\
+                                <th>菜品数量</th>\
+                                <th>菜品总价</th>\
+                            </tr>\
+                            <%for(var k=0;k<data.length;k++){%>\
+                                <tr>\
+                                    <td><%=data[k].dish_name%></td>\
+                                    <td><%=data[k].count%></td>\
+                                    <td><%=data[k].total_price%></td>\
+                                </tr>\
+                            <%}%>\
+                        </table>';
+        //初始化订单列表
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/user/meals/list/",function (d) {
+            if(d.code==200){
+                //mock数据
+                d.data=[{
+                        "order_id": 1,
+                        "order_list": [{
+                                        "dish_id": 1,
+                                        "dish_name": "xxxx",
+                                        "count": 20,
+                                        "total_price": 200,
+                                        "create_time": 1527090252000
+                                    },{
+                                        "dish_id": 1,
+                                        "dish_name": "xxxx",
+                                        "count": 20,
+                                        "total_price": 200,
+                                        "create_time": 1527090252000
+                                    },{
+                                        "dish_id": 1,
+                                        "dish_name": "xxxx",
+                                        "count": 20,
+                                        "total_price": 200,
+                                        "create_time": 1527090252000
+                                    },{
+                                        "dish_id": 1,
+                                        "dish_name": "xxxx",
+                                        "count": 20,
+                                        "total_price": 200,
+                                        "create_time": 1527090252000
+                                    },{
+                                        "dish_id": 1,
+                                        "dish_name": "xxxx",
+                                        "count": 20,
+                                        "total_price": 200,
+                                        "create_time": 1527090252000
+                                    },{
+                                        "dish_id": 1,
+                                        "dish_name": "xxxx",
+                                        "count": 20,
+                                        "total_price": 200,
+                                        "create_time": 1527090252000
+                                    }
+                            ],
+                        "order_status":0,
+                        "order_price": 200
+                    }];
+                var node = $(util.parse(tpl_1, {
+                    data: d.data,
+                    util: util
+                })).appendTo(".js_secs");
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
+        //点击查看详情，弹窗
+        self.body_node.delegate(".js_order_detail","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.cover.show();
+            self.detail_pop.show();
+            var data_str=$(this).attr("o_list");
+            var node = $(util.parse(tpl_2, {
+                data: JSON.parse(data_str),
+                util: util
+            })).appendTo(".js_detail_outer");
+        });
+        //点击关闭按钮，关闭弹窗
+        self.body_node.delegate(".js_close","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.cover.hide();
+            self.detail_pop.hide();
+            $(".js_detail_outer").html("");
+        });
+        //点击关闭按钮，关闭弹窗
+        self.body_node.delegate(".js_cancel_order","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.is_loading=true;
+            self.load_node.show();
+            var o_id=$(this).attr("o_id");
+            var this_list=$(this).closest("tr");
+            $.ajax({
+                url: "/api/user/meals/cancel/",
+                type: "POST",
+                data: {
+                    "order_id": o_id,
+                    "user_id":self.user_id
+                },
+                success: function (d) {
+                    if(d.code==200){
+                        //清除添加记忆
+                        this_list.remove();
+                        alert("下单成功");
+                    }else{
+                        alert(d.message);
+                    }
+                    self.is_loading=false;
+                    self.load_node.hide();
+                }
+            })
+        });
+    }
+    new order();
+</script>
+{% endblock %}

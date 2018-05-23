@@ -175,14 +175,14 @@ class MealsOrderView(HttpApiBaseView):
                     total_price=total_price,
                 )
                 order.save()
-            self.success_response({
+            return self.success_response({
                 'user_id': user_id,
                 'order_id': order_id,
                 'order_list': order_list,
                 'order_total_price': order_total_price
             }, u"下单成功")
         except Exception as err:
-            return self.error_response({}, message=u"订餐成功")
+            return self.error_response({}, message=u"订餐失败")
 
 
 class CancelMealsOrder(HttpApiBaseView):

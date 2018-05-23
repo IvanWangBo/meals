@@ -135,7 +135,7 @@
         //初始化公司列表
         self.is_loading=true;
         self.load_node.show();
-        $.getJSON("api/company/admin",function (d) {
+        $.getJSON("/api/company/admin",function (d) {
             if(d.code==200){
                 var node = $(util.parse(tpl_1, {
                     data: d.data,
