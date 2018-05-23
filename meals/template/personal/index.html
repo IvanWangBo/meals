@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+{% block title %}
+用户-点餐
+{% endblock %}
+
+{% block css_block %}
+<link rel="stylesheet" type="text/css" href="/static/css/personal/index.css"/>
+
+{% endblock %}
+
+
+{% block body %}
+<!--logo头部-->
+<div class="whole">
+    <div class="top_banner">
+        <div class="top">
+            <i></i>企业团餐管理系统
+        </div>
+    </div>
+    <div class="top_tabs">
+        <a class="js_top_tab top_tab chosen_1" href="/personal/index">点餐</a>
+        <a class="js_top_tab top_tab" href="/personal/order">订单管理</a>
+    </div>
+    <div class="js_main main">
+        <div class="line"></div>
+        <!--展示区-->
+        <div class="js_secs secs">
+            <!--用餐时间段-->
+            <div class="js_list_1 sec_list">
+
+            </div>
+            <!--餐厅-->
+            <div class="js_list_2 sec_list" style="display: none">
+
+            </div>
+            <!--餐品-->
+            <div class="js_list_3 sec_list" style="display: none;">
+                <div class="js_dish_list dish_list">
+
+                </div>
+            </div>
+            <div class="js_list_4 sec_list" style="display: none">
+                <p style="font-size: 16px;font-weight: bolder;margin-top: 10px;margin-bottom: 5px;">已选餐品：</p>
+                <div class="js_dish_add_list_container dish_add_list_container">
+
+                </div>
+                <div class="total_container">
+                    <div>合计&nbsp;&nbsp;<span style="font-weight: bolder">¥</span></div>
+                    <div class="js_total_money total_money" style="font-weight: bolder">0</div>
+                    <div class="js_confirm_order confirm_order">确认下单</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="loading" style="display: none"></div>
+    <div class="js_cover cover" style="display: none"></div>
+    <!--添加用餐时段弹窗-->
+    <div class="js_add_time_rang_pop pop" style="display: none">
+        <div class="pop_title">新建用餐时段</div>
+        <div class="put_in">
+            请输入名称：<input class="put_1" type="text" required="required" placeholder="请输入">
+        </div>
+        <div class="put_in">
+            请输入开始时间：&nbsp;&nbsp;&nbsp;&nbsp;
+            <select class="put_2" name="put_2" id="put_2">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+            </select>点
+        </div>
+        <div class="put_in">
+            请输入结束时间：&nbsp;&nbsp;&nbsp;&nbsp;
+            <select class="put_3" name="put_3" id="put_3">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+            </select>点
+        </div>
+        <div class="btns">
+            <div class="btn js_add_time_range_btn">添加</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
+    <div class="js_delete_dish_pop pop" style="display: none">
+        <div class="pop_title">确认删除此菜品？</div>
+        <div class="btns">
+            <div class="btn js_delete_dish_btn">确定</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript">
+    function addmin_index(){
+        var self=this;
+        self.body_node=$("body");
+        self.load_node=$(".loading");
+        self.is_loading=false;
+        self.secs=$(".js_sec");
+        self.cover=$(".js_cover");
+        self.this_total_money=$(".js_total_money");
+        self.user_id="";
+        self.this_time_range_id="";
+        self.this_resturant_id="";
+        self.every_first_add={};
+        //懒加载
+        var h1=$(window).height();
+        function condition(node) {
+            var h=$(node).offset().top;
+            if(h<h1+200){
+                return true;
+            }
+            return false;
+        }
+        var ly = new lazyload(condition);
+
+        var tpl_1='<div class="js_time_range_list time_range_list">\
+                        <%for(var i=0;i<data.length;i++){%>\
+                            <div class="js_time_range time_range time_range_<%=data[i].time_range_id%>" tid="<%=data[i].time_range_id%>"><%=data[i].name%></div>\
+                        <%}%>\
+                    </div>';
+        var tpl_2='<div class="js_restaurant_list restaurant_list">\
+                       <%for(var j=0;j<data.length;j++){%>\
+                            <div class="js_restaurant restaurant restaurant_<%=data[j].restaurant_id%>" rid="<%=data[j].restaurant_id%>">\
+                                <span class="name"><%=data[j].restaurant_name%></span>\
+                                <span class="js_edit edit">编辑</span>\
+                            </div>\
+                        <%}%>\
+                    </div>';
+        var tpl_3='<%for(var k=0;k<data.length;k++){%>\
+                        <div class="js_dish_container dish_container" d_id="<%=data[k].dish_id%>" d_name="<%=data[k].name%>" d_price="<%=data[k].price%>">\
+                            <div class="pic_outer">\
+                                <div class="pic_inner">\
+                                    <img src="/static/image/food.jpg" imgsrc="<%=data[k].image_url%>">\
+                                </div>\
+                            </div>\
+                            <div class="dish_info">\
+                                <div class="name"><%=data[k].name%></div>\
+                                <div class="info_bottom">\
+                                    <span class="price">¥<%=data[k].price%></span>\
+                                    <span class="js_dish_edit dist_edit">+</span>\
+                                </div>\
+                            </div>\
+                        </div>\
+                     <%}%>';
+        var tpl_4='<div class="js_add_dish_list add_dish_list js_add_dish_list_<%=data.dish_id%>" d_id="<%=data.dish_id%>"  d_name="<%=data.name%>" d_price="<%=data.price%>">\
+                        <div class="name"><%=data.name%></div>\
+                        ¥<div class="js_this_price price"><%=data.price%></div>\
+                        <div class="js_dish_num_edit">\
+                            <i class="js_minus icons" style="margin-right: 3px;" d_price="<%=data.price%>" d_id="<%=data.dish_id%>">-</i>\
+                            <span class="js_this_dish_num dish_num" style="font-weight: bolder"><%=data.dish_num%></span>\
+                            <i class="js_plus icons" style="margin-left: 3px;" d_price="<%=data.price%>" d_id="<%=data.dish_id%>">+</i>\
+                        </div>\
+                    </div>';
+        //初始化用餐时段列表
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/restaurant/time_range/list/",function (d) {
+            if(d.code==200){
+                var node = $(util.parse(tpl_1, {
+                    data: d.data,
+                    util: util
+                })).appendTo(".js_list_1");
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
+        //点击用餐时段，获取对应的餐厅列表
+        self.body_node.delegate(".js_time_range","click",function () {
+            self.is_loading = true;
+            self.load_node.show();
+            tid=$(this).attr("tid");
+            $(this).addClass("chosen_2").siblings(".js_time_range").removeClass("chosen_2");
+            self.this_time_range_id=tid;
+            $.getJSON("/api/restaurant/list/?time_range_id="+self.this_time_range_id, function (d) {
+                if (d.code == 200) {
+                    var list_2=$(".js_list_2");
+                    list_2.html("");
+                    list_2.show();
+                    $(".js_dish_list").html("");
+                    var node = $(util.parse(tpl_2, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_list_2");
+                } else {
+                    alert(d.message);
+                }
+                self.is_loading = false;
+                self.load_node.hide();
+            });
+        });
+        //点击选中餐厅，查看当前餐厅供应的菜品
+        self.body_node.delegate(".js_restaurant","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.is_loading=true;
+            self.load_node.show();
+            var rid=$(this).attr("rid");
+            $(this).addClass("chosen_3").siblings(".js_restaurant").removeClass("chosen_3");
+            self.this_resturant_id=rid;
+            $.getJSON("api/restaurant/dish/list/?restaurant_id="+rid+"&time_range_id="+self.this_time_range_id,function (d) {
+                if(d.code==200){
+                    //显示餐品列表栏，并置空菜品列表
+                    $(".js_dish_list").html("");
+                    $(".js_list_3").show();
+                    var node = $(util.parse(tpl_3, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_dish_list");
+                    node.find("img").each(function(i,v){
+                        var src=v.getAttribute("imgsrc");
+                        ly.add({node:v,imgurl:src,loaded:false});
+                    });
+                    ly.load();
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
+        });
+        //点击指定餐品的添加按钮，添加到待结算标签
+        self.body_node.delegate(".js_dish_edit","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var data={},this_dish_container=$(this).closest(".js_dish_container");
+            data.dish_id=this_dish_container.attr("d_id");
+            data.name=this_dish_container.attr("d_name");
+            data.price=this_dish_container.attr("d_price");
+
+            if(JSON.stringify(self.every_first_add)=="{}"){
+                $(".js_list_4").show();
+            }
+            if(!self.every_first_add[data.dish_id]){
+                data.dish_num=1;
+                var node = $(util.parse(tpl_4, {
+                    data: data,
+                    util: util
+                })).appendTo(".js_dish_add_list_container");
+                self.every_first_add[data.dish_id]=1;
+            }else {
+                ++self.every_first_add[data.dish_id];
+                var this_dish_list=$(".js_add_dish_list_"+data.dish_id);
+                this_dish_list.find(".js_this_dish_num").text(self.every_first_add[data.dish_id]);
+                this_dish_list.find(".js_this_price").html(self.every_first_add[data.dish_id]*data.price);
+            }
+            var now_total=Number(self.this_total_money.text());
+            self.this_total_money.text(now_total+Number(data.price));
+        });
+        //添加同一种菜品
+        self.body_node.delegate(".js_plus","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var dish_id=$(this).attr("d_id"),price=$(this).attr("d_price");
+            ++self.every_first_add[dish_id];
+            var this_dish_list=$(".js_add_dish_list_"+dish_id);
+            this_dish_list.find(".js_this_dish_num").text(self.every_first_add[dish_id]);
+            this_dish_list.find(".js_this_price").html(self.every_first_add[dish_id]*price);
+            var now_total=Number(self.this_total_money.text());
+            self.this_total_money.text(now_total+Number(price));
+        });
+        //减去同一种菜品
+        self.body_node.delegate(".js_minus","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var dish_id=$(this).attr("d_id"),price=$(this).attr("d_price");
+            var this_dish_list=$(".js_add_dish_list_"+dish_id);
+            --self.every_first_add[dish_id];
+            if(self.every_first_add[dish_id]){
+                this_dish_list.find(".js_this_dish_num").text(self.every_first_add[dish_id]);
+                this_dish_list.find(".js_this_price").html(self.every_first_add[dish_id]*price);
+            }else {
+                this_dish_list.remove();
+            }
+            var now_total=Number(self.this_total_money.text());
+            self.this_total_money.text(now_total-Number(price));
+        });
+        //下单
+        self.body_node.delegate(".js_confirm_order","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var dish_lists=$(".js_dish_add_list_container").find(".js_add_dish_list");
+            if(!dish_lists.length){
+                alert("请选择想要的菜品");
+            }else {
+                self.is_loading=true;
+                self.load_node.show();
+                var order_list=[];
+                for(var i=0;i<dish_lists.length;i++){
+                    var obj={};
+                    obj.dish_id=$(dish_lists[i]).attr("d_id");
+                    obj.count=$(dish_lists[i]).find(".js_this_dish_num").text();
+                    order_list.push(obj);
+                }
+                $.ajax({
+                    url: "api/user/meals/order/",
+                    type: "POST",
+                    data: {
+                        "order_list": "["+order_list.toString()+"]"
+                    },
+                    success: function (d) {
+                        if(d.code==200){
+                            //清除添加记忆
+                            self.every_first_add={};
+                            $(".js_dish_add_list_container").html();
+                            self.this_total_money.text(0);
+                            alert("下单成功");
+                        }else{
+                            alert(d.message);
+                        }
+                        self.is_loading=false;
+                        self.load_node.hide();
+                    }
+                })
+            }
+        });
+        //点击关闭按钮，关闭弹窗
+        self.body_node.delegate(".js_close","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.cover.hide();
+            self.delete_dish_pop.hide();
+        });
+    }
+    new addmin_index();
+</script>
+{% endblock %}

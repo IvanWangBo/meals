@@ -2,9 +2,9 @@ function lazyload(condition, holder) {
     this.collection = [];
     this.holder = holder || "http://pic42.photophoto.cn/20170213/0005018358833690_b.jpg";
     this.condition = condition ||
-    function() {
-        return true
-    }
+        function() {
+            return true
+        }
 }
 lazyload.prototype.add = function(nodeobject) {
     nodeobject.count = 0;
@@ -32,11 +32,11 @@ lazyload.prototype.load = function() {
                 };
                 obj.node.onload = function() {
                     var _width = this.width,
-                    _height = this.height,
-                    p_width = this.parentNode.offsetWidth,
-                    p_height = this.parentNode.offsetHeight,
-                    img_percent = _width / _height,
-                    parent_percent = p_width / p_height;
+                        _height = this.height,
+                        p_width = this.parentNode.offsetWidth,
+                        p_height = this.parentNode.offsetHeight,
+                        img_percent = _width / _height,
+                        parent_percent = p_width / p_height;
                     if (img_percent > parent_percent) {
                         var w = p_height * img_percent;
                         this.style.height = p_height + "px";
