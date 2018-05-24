@@ -25,6 +25,9 @@ class HttpApiBaseView(APIView):
     def get_login_user_id(self, request):
         return request.user.id
 
+    def get_login_user_company_id(self, request):
+        return request.user.company_id
+
     def check_user_company(self, user_id, company_id):
         user = Users.objects.get(id=user_id)
         if user.company_id != company_id:

@@ -29,6 +29,7 @@ from api.restaurants.views import AddRestaurantView
 from api.restaurants.views import RestaurantListView
 from api.restaurants.views import DeleteRestaurantView
 from api.restaurants.views import ModifyDishView
+from api.restaurants.views import RestaurantRelationView
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 from api.opt.upload_image_view import UploadImageView
@@ -100,6 +101,8 @@ urlpatterns = [
     url(r"api/restaurant/dish/list/$", DishesListView.as_view()),
     # 修改菜品信息
     url(r"api/restaurant/dish/modify/$", ModifyDishView.as_view()),
+    # 查询餐厅启用状态/修改餐厅启用状态
+    url(r"api/restaurant/relation/", RestaurantRelationView.as_view()),
 
     # 查询用餐时间段
     url(r"api/restaurant/time_range/list/$", TimeRangeListView.as_view()),
