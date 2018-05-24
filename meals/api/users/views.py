@@ -196,14 +196,14 @@ class CancelMealsOrder(HttpApiBaseView):
             user_id = self.get_login_user_id(request)
             order_id = data["order_id"]
             order_list = MealOrders.objects.filter(order_id=order_id)
-            can_cancel = all([order.state in (OrderStatus.created, OrderStatus.accepted) for order in order_list])
+            can_cancel = all([order.status in (OrderStatus.created, OrderStatus.accepted) for order in order_list])
             if not can_cancel:
                 return self.error_response({},message=u"订单派送中，无法取消")
             is_owner = all([order.user_id == user_id for order in order_list])
             if not is_owner:
                 return self.error_response({},message=u"订单取消失败")
             for order in order_list:
-                order.state = OrderStatus.canceled
+                order.status = OrderStatus.canceled
                 order.save()
             return self.success_response({}, message=u"订单取消成功！")
         except Exception as err:
