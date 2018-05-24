@@ -29,6 +29,7 @@ class ResetUserSerializer(serializers.Serializer):
 
 class MealsOrderSerializer(serializers.Serializer):
     order_list = serializers.CharField(max_length=1024, allow_blank=False)
+    time_range = serializers.IntegerField(allow_null=False)
 
 
 class CancelMealsOrderSerializer(serializers.Serializer):
