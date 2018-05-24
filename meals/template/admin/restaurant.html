@@ -228,7 +228,7 @@
                         self.upload_img_path=d.data.path;
                         $(".js_upload_img_seen").show();
                         $(".js_upload_img_url").attr("src",d.data.path);
-                        alert("上传成功");
+                        alert(d.message);
                     }else{
                         alert(d.message);
                     }
@@ -351,7 +351,7 @@
                             $(".put_1").val("");
                             $(".put_2").val("");
                             $(".put_3").val("");
-                            alert("添加成功");
+                            alert(d.message);
                             self.cover.hide();
                             self.add_time_rang_pop.hide();
                         }else{
@@ -467,7 +467,7 @@
                             this_restaurant.remove();
                             self.this_resturant_id="";
                         }
-                        alert("删除成功");
+                        alert(d.message);
                     }else{
                         alert(d.message);
                     }
@@ -572,7 +572,7 @@
                                 $(".put_7").val("");
                                 $(".put_8").val("");
                                 $(".js_time_range_support").html("");
-                                alert("添加成功");
+                                alert(d.message);
                                 self.cover.hide();
                                 self.add_dish_pop.hide();
                             }else{
@@ -655,7 +655,7 @@
                 success: function (d) {
                     if(d.code==200){
                         self.delete_dish_node.remove();
-                        alert("删除成功");
+                        alert(d.message);
                         self.cover.hide();
                         self.delete_dish_pop.hide();
                     }else{

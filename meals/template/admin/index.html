@@ -187,7 +187,7 @@
                             $(".company_name").val("");
                             $(".address").val("");
                             $(".phone_number").val("");
-                            alert("公司管理员账号："+d.data.admin_name+",公司管理员密码："+d.data.password);
+                            alert(d.message);
                         }else {
                             alert(d.message);
                         }
@@ -230,7 +230,7 @@
                     },
                     success: function (d) {
                         if(d.code==200){
-                            alert("重置成功");
+                            alert(d.message);
                             self.cover.hide();
                             self.pop.hide();
                         }else{

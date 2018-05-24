@@ -95,50 +95,6 @@
         self.load_node.show();
         $.getJSON("/api/user/meals/list/",function (d) {
             if(d.code==200){
-                //mock数据
-                d.data=[{
-                        "order_id": 1,
-                        "order_list": [{
-                                        "dish_id": 1,
-                                        "dish_name": "xxxx",
-                                        "count": 20,
-                                        "total_price": 200,
-                                        "create_time": 1527090252000
-                                    },{
-                                        "dish_id": 1,
-                                        "dish_name": "xxxx",
-                                        "count": 20,
-                                        "total_price": 200,
-                                        "create_time": 1527090252000
-                                    },{
-                                        "dish_id": 1,
-                                        "dish_name": "xxxx",
-                                        "count": 20,
-                                        "total_price": 200,
-                                        "create_time": 1527090252000
-                                    },{
-                                        "dish_id": 1,
-                                        "dish_name": "xxxx",
-                                        "count": 20,
-                                        "total_price": 200,
-                                        "create_time": 1527090252000
-                                    },{
-                                        "dish_id": 1,
-                                        "dish_name": "xxxx",
-                                        "count": 20,
-                                        "total_price": 200,
-                                        "create_time": 1527090252000
-                                    },{
-                                        "dish_id": 1,
-                                        "dish_name": "xxxx",
-                                        "count": 20,
-                                        "total_price": 200,
-                                        "create_time": 1527090252000
-                                    }
-                            ],
-                        "order_status":0,
-                        "order_price": 200
-                    }];
                 var node = $(util.parse(tpl_1, {
                     data: d.data,
                     util: util
@@ -191,7 +147,7 @@
                     if(d.code==200){
                         //清除添加记忆
                         this_list.remove();
-                        alert("下单成功");
+                        alert(d.message);
                     }else{
                         alert(d.message);
                     }

@@ -194,7 +194,7 @@
                             var opt=$("<option class='now' selected='selected'>"+department_name+"</option>");
                             opt.appendTo("#department_id");
                             opt.attr("value",d.data.department_id);
-                            alert("部门添加成功");
+                            alert(d.message);
                             self.cover.hide();
                             self.pop.hide();
                         }else {
@@ -253,7 +253,7 @@
                             $(".user_name").val("");
                             $(".user_password").val("");
                             $(".email").val("");
-                            alert("添加成功");
+                            alert(d.message);
                         }else {
                             alert(d.message);
                         }
