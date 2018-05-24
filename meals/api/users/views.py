@@ -171,7 +171,7 @@ class MealsOrderView(HttpApiBaseView):
                     order_id=order_id,
                     dish_id=dish_id,
                     count=count,
-                    state=OrderStatus.created,
+                    status=OrderStatus.created,
                     total_price=total_price,
                 )
                 order.save()
@@ -182,7 +182,7 @@ class MealsOrderView(HttpApiBaseView):
                 'order_total_price': order_total_price
             }, u"下单成功")
         except Exception as err:
-            return self.error_response({}, message=u"订餐失败")
+            return self.error_response({}, message=u"订餐失败, err: %s" % err)
 
 
 class CancelMealsOrder(HttpApiBaseView):
@@ -205,9 +205,9 @@ class CancelMealsOrder(HttpApiBaseView):
             for order in order_list:
                 order.state = OrderStatus.canceled
                 order.save()
-            self.success_response({}, message=u"订单取消成功！")
+            return self.success_response({}, message=u"订单取消成功！")
         except Exception as err:
-            return self.error_response({}, message=u"取消订单失败")
+            return self.error_response({}, message=u"取消订单失败, err: %s" % err)
 
 
 class MealsOrderList(HttpApiBaseView):
@@ -230,7 +230,7 @@ class MealsOrderList(HttpApiBaseView):
                     'dish_id': order.dish_id,
                     'dish_name': Dishes.objects.get(id=order.dish_id).name,
                     'count': order.count,
-                    'status': order.state,
+                    'status': order.status,
                     'total_price': order.total_price,
                     'create_time': order.create_time
                 })
