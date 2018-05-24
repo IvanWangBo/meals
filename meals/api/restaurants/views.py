@@ -111,13 +111,17 @@ class DishesListView(HttpApiBaseView):
             else:
                 for dish in all_dishes:
                     support_times = json.loads(dish.support_times)
+                    support_times_name = []
+                    for support_time in support_times:
+                        support_times_name.append(TimeRange.objects.get(id=support_time).name[1])
                     if time_range_id in support_times:
                         right_dishes.append({
                             "dish_id": dish.id,
                             "name": dish.name,
                             "price": dish.price,
                             "image_url": dish.image_url,
-                            "support_times": support_times
+                            "support_times": support_times,
+                            "support_times_name": support_times_name,
                         })
             return self.success_response(right_dishes, message=u"查询菜单成功")
         except Exception as err:
