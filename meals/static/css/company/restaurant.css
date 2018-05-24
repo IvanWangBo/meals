@@ -1,0 +1,264 @@
+.whole{
+    width: 100%;
+    background-color: rgba(255,255,255,0.9);
+}
+.top_banner{
+    background-color: rgba(0, 0, 0, 0.09);
+}
+.top{
+    margin: 0 auto;
+    height:80px;
+    width: 88%;
+    line-height: 80px;
+    font-size: 24px;
+    font-weight: bolder;
+    color:#000;
+}
+.top i{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    vertical-align: middle;
+    background: lightblue;
+}
+.top_tabs{
+    width: 240px;
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+    margin-left: 6%;
+    padding: 4px;
+    margin-top: 5px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+}
+.top_tabs .top_tab{
+    width: 80px;
+    text-align: center;
+    color:#fff;
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+}
+.top_tabs .chosen_1{
+    font-size: 16px;
+    font-weight: bolder;
+    background-color: lightblue;
+    color:#000;
+    border-radius: 5px;
+}
+.main{
+    margin: 0 auto;
+    width: 88%;
+}
+.main .line{
+    border-top:2px dashed #ccc;
+    margin-top: 5px;
+    width: 88%;
+}
+.secs{
+    margin-top: 15px;
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+    width: 88%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.09);
+}
+.sec_list:nth-child(2){
+    padding: 10px;
+}
+.sec_list:nth-child(2) .restaurant_list .restaurant{
+    width: 150px;
+    height: 30px;
+    line-height: 30px;
+    background-color: #fff;
+    border:1px solid #4a77d4;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+.sec_list:nth-child(2) .restaurant_list .chosen_3{
+    background-color:lightblue;
+}
+.sec_list:nth-child(2) .restaurant_list .restaurant .name{
+    max-width: 120px;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+    display: inline-block;
+}
+.sec_list:nth-child(3){
+    border-left: 2px dashed #2D2D3F;
+    padding: 10px;
+    padding-right: 0;
+    width: 350px;
+}
+.dish_list{
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+    -webkit-flex-wrap: wrap;
+    -moz-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    -o-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.dish_list .dish_container{
+    margin-right: 13px;
+    margin-bottom: 6px;
+    width: 150px;
+    height: 50px;
+    background-color: #fff;
+    border:1px solid rgba(0,0,0,0.6);
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+    position: relative;
+    padding: 5px;
+    border-radius: 5px;
+}
+.dish_list .dish_container .pic_outer{
+    width:50px;
+    height:50px;
+    margin-right: auto;
+}
+.dish_list .dish_container .pic_outer .pic_inner{
+    width:50px;
+    height:50px;
+    overflow: hidden;
+}
+.dish_list .dish_container .pic_outer .pic_inner img{
+    width:100%;
+    vertical-align:middle;
+}
+.dish_list .dish_container .dish_info{
+    width: 95px;
+}
+.dish_list .dish_container .dish_info .name{
+    max-width: 90px;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+}
+.dish_list .dish_container .dish_info .dist_edit{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    font-size: 12px;
+    margin-right: 2px;
+    text-align: center;
+    line-height: 16px;
+    background-color: green;
+    display: inline-block;
+    color: #fff;
+}
+.sec_list:nth-child(4){
+    border-left: 2px dashed #2D2D3F;
+    padding-left: 10px;
+    padding-right: auto;
+    width: 200px;
+}
+.sec_list:nth-child(4) .total_container{
+    width: 210px;
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+    height: 35px;
+    line-height: 35px;
+    background-color: #fff;
+    border-radius: 2px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.sec_list:nth-child(4) .total_container .confirm_order{
+    margin-left: auto;
+    width: 60px;
+    height: 25px;
+    border:1px solid #ccc;
+    border-radius: 5px;
+    background-color: green;
+    margin-top: 5px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bolder;
+    line-height: 25px;
+    color: #fff;
+    cursor: pointer;
+    margin-right: 5px;
+}
+.sec_list:nth-child(4) .add_dish_list{
+    font-size: 14px;
+    width: 200px;
+    padding-top: 10px;
+    padding-bottom: 4px;
+    border-bottom: 2px dashed #000;
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+}
+.sec_list:nth-child(4) .add_dish_list .name{
+    width: 70px;
+    font-size: 12px;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow:hidden;
+    display: inline-block;
+}
+.sec_list:nth-child(4) .add_dish_list .js_dish_num_edit{
+    margin-left: auto;
+}
+.sec_list:nth-child(4) .add_dish_list .js_dish_num_edit .icons{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: bolder;
+    text-align: center;
+    line-height: 16px;
+    background-color: #008000ba;
+    display: inline-block;
+    margin-top: -1px;
+    color: #fff;
+    cursor: pointer;
+}
+.use_btn{
+    width: 300px;
+    margin-top: 15px;
+    font-weight: bolder;
+}
+.use_btn .btn{
+    margin-left: 20px;
+    width: 40px;
+    height: 20px;
+    text-align: center;
+    color: #fff;
+    line-height: 20px;
+    background-color: green;
+    display: inline-block;
+    border-radius: 3px;
+    border:1px solid #6f5f0b;
+    cursor: pointer;
+}
+.use_btn .btn:nth-child(3){
+    background-color: rgba(0, 0, 0, 0.75);
+}

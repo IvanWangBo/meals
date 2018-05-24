@@ -141,7 +141,7 @@
             tid=$(this).attr("tid");
             $(this).addClass("chosen_2").siblings(".js_time_range").removeClass("chosen_2");
             self.this_time_range_id=tid;
-            $.getJSON("/api/restaurant/list/?time_range_id="+self.this_time_range_id, function (d) {
+            $.getJSON("/api/restaurant/list/?is_order=1&time_range_id="+self.this_time_range_id, function (d) {
                 if (d.code == 200) {
                     var list_2=$(".js_list_2");
                     list_2.html("");
