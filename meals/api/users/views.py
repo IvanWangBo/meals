@@ -220,11 +220,16 @@ class MealsOrderList(HttpApiBaseView):
             data = serializer.data
             user_id = self.get_login_user_id(request)
             month = data["month"]
-            orders = MealOrders.objects.filter(user_id=user_id, create_time__month=month)
+            all_orders = MealOrders.objects.filter(user_id=user_id)
+            orders = []
+            for order in all_orders:
+                if order.create_time.month == month:
+                    orders.append(order)
             result_map = {}
             extra_detail_map = {}
             for order in orders:
                 result_map[order.order_id] = []
+                extra_detail_map[order.order_id] = {}
             for order in orders:
                 result_map[order.order_id].append({
                     'dish_id': order.dish_id,
