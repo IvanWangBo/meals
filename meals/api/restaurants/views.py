@@ -67,10 +67,10 @@ class RestaurantRelationView(HttpApiBaseView):
             data = serializers.data
             restaurant_id = data["restaurant_id"]
             try:
-                relation = RestaurantRelation.objects.get(restaurant_id=restaurant_id, company_id=company_id).is_enabled
+                is_enabled = RestaurantRelation.objects.get(restaurant_id=restaurant_id, company_id=company_id).is_enabled
             except Exception as err:
-                relation = 0
-            return self.success_response({'relation': relation}, message=u"查询成功")
+                is_enabled = 0
+            return self.success_response({'is_enabled': is_enabled}, message=u"查询成功")
         except Exception as err:
             return self.error_response({}, message=u"查询失败")
 
@@ -89,6 +89,7 @@ class RestaurantRelationView(HttpApiBaseView):
             except:
                 relation = RestaurantRelation.objects.create(restaurant_id=restaurant_id, company_id=company_id, is_enabled=is_enabled)
                 relation.save()
+            return self.success_response({}, u"修改成功")
         except Exception as err:
             return self.error_response({}, u"修改失败")
 
