@@ -66,10 +66,10 @@
                                     <td><%=data[n].order_id%></td>\
                                     <td><span class="js_order_detail order_detail" o_list=<%=JSON.stringify(data[n].order_list)%> >查看详情</span></td>\
                                     <td><%=data[n].order_price%></td>\
-                                    <%var Arr=["已下单未完成","已完成"]%>\
-                                    <td>\
-                                        <%=Arr[data[n].order_status]%>\
-                                        <%if(data[n].order_status==0){%>\
+                                    <%var Arr={"-1":"已取消","0":"已创建","1":"已接单","3":"已完成"}%>\
+                                    <td class="js_change_status">\
+                                        <%=Arr[data[n].status]%>\
+                                        <%if(data[n].status==0){%>\
                                         <span class="js_cancel_order cancel_order" o_id="<%=data[n].order_id%>">取消订单</span>\
                                         <%}%>\
                                     </td>\
@@ -146,7 +146,7 @@
                 success: function (d) {
                     if(d.code==200){
                         //清除添加记忆
-                        this_list.remove();
+                        this_list.find(".js_change_status").html("已取消");
                         alert(d.message);
                     }else{
                         alert(d.message);

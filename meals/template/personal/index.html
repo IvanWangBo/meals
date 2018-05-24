@@ -282,7 +282,8 @@
                     url: "api/user/meals/order/",
                     type: "POST",
                     data: {
-                        "order_list": JSON.stringify(order_list)
+                        "order_list": JSON.stringify(order_list),
+                        "time_range":self.this_time_range_id
                     },
                     success: function (d) {
                         if(d.code==200){

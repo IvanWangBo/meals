@@ -230,6 +230,8 @@
                     },
                     success: function (d) {
                         if(d.code==200){
+                            $(".put_1").val("");
+                            $(".put_2").val("");
                             alert(d.message);
                             self.cover.hide();
                             self.pop.hide();
@@ -250,6 +252,8 @@
             if (self.is_loading) {
                 return;
             }
+            $(".put_1").val("");
+            $(".put_2").val("");
             self.cover.hide();
             self.pop.hide();
         });

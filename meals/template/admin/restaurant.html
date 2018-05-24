@@ -326,13 +326,17 @@
             if(put_1&&put_2&&put_3){
                 self.is_loading=true;
                 self.load_node.show();
+                var end_time=put_3+":00:00";
+                if(put_3==24){
+                    end_time="23:59:59";
+                }
                 $.ajax({
                     url: "/api/restaurant/time_range/add/",
                     type: "POST",
                     data: {
                         "name": put_1,
                         "start_time": put_2+":00:00",
-                        "end_time":put_3+":00:00"
+                        "end_time":end_time
                     },
                     success: function (d) {
                         if(d.code==200){
@@ -419,8 +423,8 @@
                         if(d.code==200){
                             //将用餐时段加入列表
                             str='<div rid="'+d.data.restaurant_id+'" class="js_restaurant restaurant restaurant_'+d.data.restaurant_id+'">'
-                                    +'<span class="name">'+pwd_1+'</span>'
-                                    +'<span class="js_edit edit">'+'编辑'+'</span>'
+                                    +'<span class="js_restaurant_name name">'+pwd_1+'</span>'
+                                    +'<span class="js_delete_restaurant_btn delete_restaurant_icon">'+'删除'+'</span>'
                                     +'</div>';
                             var restaurant_1=$(str);
                             restaurant_1.appendTo(".js_restaurant_list");
@@ -546,6 +550,7 @@
             if(put_1&&put_2){
                 self.is_loading=true;
                 self.load_node.show();
+                console.log(self.add_dish_pop.attr("d_id"));
                 if(self.add_dish_pop.attr("d_id")==0){
                     $.ajax({
                         url: "/api/restaurant/dish/add/",
@@ -572,6 +577,7 @@
                                 $(".put_7").val("");
                                 $(".put_8").val("");
                                 $(".js_time_range_support").html("");
+                                self.add_dish_pop.attr("d_id",d.data.dish_id);
                                 alert(d.message);
                                 self.cover.hide();
                                 self.add_dish_pop.hide();
@@ -614,6 +620,7 @@
                                 $(".put_8").val("");
                                 $(".js_time_range_support").html("");
                                 $(".js_upload_img_url").attr("src","");
+                                self.add_dish_pop.attr("d_id","0");
                                 alert("修改成功");
                                 self.cover.hide();
                                 self.add_dish_pop.hide();
