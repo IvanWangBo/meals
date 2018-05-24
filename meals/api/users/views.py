@@ -220,12 +220,20 @@ class MealsOrderList(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user_id = self.get_login_user_id(request)
+            if data["user_id"] == -9:
+                user_id = self.get_login_user_id(request)
+            else:
+                user_id = data["user_id"]
+            status = data["status"]
+            year = data["year"]
             month = data["month"]
-            all_orders = MealOrders.objects.filter(user_id=user_id)
+            if status == -9:
+                all_orders = MealOrders.objects.filter(user_id=user_id)
+            else:
+                all_orders = MealOrders.objects.filter(user_id=user_id, status=status)
             orders = []
             for order in all_orders:
-                if order.create_time.month == month:
+                if order.create_time.month == month and order.create_time.year == year:
                     orders.append(order)
             result_map = {}
             extra_detail_map = {}

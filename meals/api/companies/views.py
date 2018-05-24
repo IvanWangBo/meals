@@ -12,7 +12,6 @@ from api.users.models import MealOrders
 from api.decorators import admin_required
 from api.decorators import company_required
 from common.constants import UserAdminType
-from django.contrib import auth
 from api.companies.serializers import AddCompanySerializer
 from api.companies.serializers import AddCompanyAdminSerializer
 from api.companies.serializers import ResetCompanyAdminSerializer
