@@ -157,6 +157,7 @@ class MealsOrderView(HttpApiBaseView):
             data = serializer.data
             user_id = self.get_login_user_id(request)
             order_list = json.loads(data['order_list'])
+            time_range = data["time_range"]
             order_id = cacher.get_order_id()
             order_total_price = 0
             for order in order_list:
@@ -172,6 +173,7 @@ class MealsOrderView(HttpApiBaseView):
                     dish_id=dish_id,
                     count=count,
                     status=OrderStatus.created,
+                    time_range=time_range,
                     total_price=total_price,
                 )
                 order.save()
