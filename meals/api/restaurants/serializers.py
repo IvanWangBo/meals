@@ -1,5 +1,6 @@
 # coding=utf-8
 from rest_framework import serializers
+from datetime import datetime
 
 
 class AddDishSerializer(serializers.Serializer):
@@ -51,3 +52,8 @@ class DeleteDishSerializer(serializers.Serializer):
 class RestaurantRelationSerializer(serializers.Serializer):
     restaurant_id = serializers.IntegerField(allow_null=False)
     is_enabled = serializers.IntegerField(allow_null=True, default=0)
+
+
+class OrderSummarySerializer(serializers.Serializer):
+    year = serializers.IntegerField(allow_null=False, default=datetime.now().year)
+    month = serializers.IntegerField(allow_null=False, default=datetime.now().month)

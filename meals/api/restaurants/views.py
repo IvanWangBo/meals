@@ -8,6 +8,8 @@ from api.decorators import company_required
 from api.restaurants.models import Dishes
 from api.restaurants.models import TimeRange
 from api.restaurants.models import Restaurants
+from api.users.models import MealOrders
+from common.constants import OrderStatus
 from api.companies.models import RestaurantRelation
 from api.restaurants.serializers import DeleteRestaurantSerializer
 from api.restaurants.serializers import AddDishSerializer
@@ -18,6 +20,7 @@ from api.restaurants.serializers import DishesListSerializer
 from api.restaurants.serializers import AddRestaurantSerializer
 from api.restaurants.serializers import ModifyDishSerializer
 from api.restaurants.serializers import RestaurantRelationSerializer
+from api.restaurants.serializers import OrderSummarySerializer
 
 
 class AddDishView(HttpApiBaseView):
@@ -350,3 +353,44 @@ class DeleteDishView(HttpApiBaseView):
             return self.success_response({}, message=u"删除菜品成功")
         except Exception as err:
             return self.error_response({}, message=u"删除菜品失败")
+
+
+class OrderSummary(HttpApiBaseView):
+    @company_required
+    def get(self, request):
+        try:
+            serializer = OrderSummarySerializer(data=request.data)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            month = data["month"]
+            year = data["year"]
+            all_order_list = MealOrders.objects.filter(status=OrderStatus.accepted)
+            order_list = []
+            for order in all_order_list:
+                if order.create_time.year == year and order.create_time.month == month:
+                    order_list.append(order)
+            restaurant_id_rmb_map = {}
+            order_info_list = []
+            for order in order_list:
+                order_info_list.append({
+                    'order_id': order.order_id,
+                    'dish_id': order.dish_id,
+                    'restaurant_id': Dishes.objects.get(id=order.dish_id).restaurant_id,
+                    'total_price': order.total_price,
+                    'create_time': order.create_time
+                })
+                restaurant_id_rmb_map[Dishes.objects.get(id=order.dish_id).restaurant_id] = 0
+
+            for order_info in order_info_list:
+                restaurant_id_rmb_map[order_info['restaurant_id']] += order_info['total_price']
+            result = []
+            for restaurant_id in restaurant_id_rmb_map:
+                result.append({
+                    'restaurant_id': restaurant_id,
+                    'restaurant_name': Restaurants.objects.get(id=restaurant_id).name,
+                    'total_rmb': restaurant_id_rmb_map[restaurant_id]
+                })
+            return self.success_response(result, message=u"订单查询成功")
+        except Exception as err:
+            return self.error_response({}, u"订单查询失败")
