@@ -356,7 +356,7 @@ class DeleteDishView(HttpApiBaseView):
 
 
 class OrderSummary(HttpApiBaseView):
-    @company_required
+    @admin_required
     def get(self, request):
         try:
             serializer = OrderSummarySerializer(data=request.data)

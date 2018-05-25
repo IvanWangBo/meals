@@ -19,6 +19,7 @@ from api.companies.serializers import ResetCompanyAdminSerializer
 from api.companies.serializers import AddDepartmentSerializer
 from api.companies.serializers import RestaurantOrdersSummarySerializer
 from api.companies.serializers import RestaurantOrdersDetailsSerializer
+from api.companies.serializers import OrderSummarySerializer
 from api.instances import cacher
 
 
@@ -260,3 +261,47 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
         for order in order_list:
             order_price += order['total_price']
         return order_price
+
+
+class OrderSummaryOfCompany(HttpApiBaseView):
+    @admin_required
+    def get(self, request):
+        try:
+            serializer = OrderSummarySerializer(data=request.data)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            month = data["month"]
+            year = data["year"]
+            all_order_list = MealOrders.objects.filter(status=OrderStatus.accepted)
+            order_list = []
+            for order in all_order_list:
+                if order.create_time.year == year and order.create_time.month == month:
+                    order_list.append(order)
+            company_id_rmb_map = {}
+            order_info_list = []
+            for order in order_list:
+                company_id = Users.objects.get(id=order.user_id).company_id
+                order_info_list.append({
+                    'order_id': order.order_id,
+                    'dish_id': order.dish_id,
+                    'user_id': order.user_id,
+                    'company_id': company_id,
+                    'restaurant_id': Dishes.objects.get(id=order.dish_id).restaurant_id,
+                    'total_price': order.total_price,
+                    'create_time': order.create_time
+                })
+                company_id_rmb_map[company_id] = 0
+
+            for order_info in order_info_list:
+                company_id_rmb_map[order_info['company_id']] += order_info['total_price']
+            result = []
+            for company_id in company_id_rmb_map:
+                result.append({
+                    'company_id': company_id,
+                    'company_name': Companies.objects.get(id=company_id).company_name,
+                    'total_rmb': company_id_rmb_map[company_id]
+                })
+            return self.success_response(result, message=u"订单查询成功")
+        except Exception as err:
+            return self.error_response({}, u"订单查询失败")
