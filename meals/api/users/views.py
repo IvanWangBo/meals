@@ -50,11 +50,7 @@ class PersonnelListView(HttpApiBaseView):
     @company_required
     def get(self, request):
         try:
-            company_id = request.GET.get("company_id")
-            if company_id is None:
-                return self.error_response(data={}, message=u"该公司不存在")
-            user_id = self.get_login_user_id(request)
-            self.check_user_company(user_id, company_id)
+            company_id = self.get_login_user_company_id(request)
             personnel_list = Users.objects.filter(company_id=company_id)
             departments = Departments.objects.filter(company_id=company_id)
             department_map = {}
