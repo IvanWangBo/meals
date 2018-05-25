@@ -8,6 +8,7 @@ from api.users.serializers import AddPersonnelSerializer
 from api.companies.models import Departments
 from api.users.models import MealOrders
 from api.restaurants.models import Dishes
+from api.restaurants.models import TimeRange
 from api.instances import cacher
 from api.users.models import Users
 from api.users.serializers import ResetUserSerializer
@@ -247,18 +248,25 @@ class MealsOrderList(HttpApiBaseView):
                     'count': order.count,
                     'status': order.status,
                     'total_price': order.total_price,
-                    'create_time': order.create_time
+                    'create_time': order.create_time,
                 })
                 extra_detail_map[order.order_id]['create_time'] = order.create_time
                 extra_detail_map[order.order_id]['status'] = order.status
+                extra_detail_map[order.order_id]['time_range'] = order.time_range
             result = []
             for order_id in result_map:
+                time_range_id = extra_detail_map.get(order_id,{}).get('time_range', 0)
+                try:
+                    time_range_name = TimeRange.objects.get(id=time_range_id).name
+                except:
+                    time_range_name = ""
                 result.append({
                     'order_id': order_id,
                     'order_list': result_map[order_id],
                     'order_price': self._get_order_price(result_map[order_id]),
                     'create_time': extra_detail_map.get(order_id, {}).get('create_time', ''),
                     'status': extra_detail_map.get(order_id, {}).get('status', -2),
+                    'time_range_name': time_range_name
                 })
             return self.success_response(result, message=u"订单查询成功！")
         except Exception as err:
