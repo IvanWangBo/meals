@@ -159,13 +159,18 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            company_id = data["company_id"]
+            company_id = self.get_login_user_company_id(request)
             month = data["month"]
+            year = data["year"]
             user_id = self.get_login_user_id(request)
             self.check_user_company(user_id, company_id)
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
-            order_list = MealOrders.objects.filter(user_id__in=user_id_list, create_time__month=month)
+            all_order_list = MealOrders.objects.filter(user_id__in=user_id_list)
+            order_list = []
+            for order in all_order_list:
+                if order.create_time.year == year and order.create_time.month == month:
+                    order_list.append(order)
 
             order_info_list = [
                 {
