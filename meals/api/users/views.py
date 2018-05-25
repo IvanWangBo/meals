@@ -260,7 +260,7 @@ class MealsOrderList(HttpApiBaseView):
                     time_range_name = TimeRange.objects.get(id=time_range_id).name
                 except:
                     time_range_name = ""
-                status = extra_detail_map.get(order_id, {}).get('status', -2),
+                status = extra_detail_map.get(order_id, {}).get('status', -2)
                 result.append({
                     'order_id': order_id,
                     'order_list': result_map[order_id],
