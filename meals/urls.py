@@ -30,6 +30,7 @@ from api.restaurants.views import RestaurantListView
 from api.restaurants.views import DeleteRestaurantView
 from api.restaurants.views import ModifyDishView
 from api.restaurants.views import RestaurantRelationView
+from api.restaurants.views import OrderSummary
 from api.users.views import AddPersonnelView
 from django.views.generic import TemplateView
 from api.opt.upload_image_view import UploadImageView
@@ -81,7 +82,7 @@ urlpatterns = [
     # 部门列表 GET
     url(r'api/company/department/list/$', DepartmentListView.as_view()),
 
-    # 所有商家商家总订单信息
+    # 公司所有餐厅商家总订单信息
     url(r"api/company/order/summary/$", RestaurantOrdersSummaryView.as_view()),
 
     # 商家日订单信息
@@ -131,5 +132,8 @@ urlpatterns = [
     # opt
     url(r"api/opt/upload_file/$", UploadImageView.as_view()),
     url(r"api/opt/test_upload/$", TemplateView.as_view(template_name="test_upload.html"), name="test"),
+
+    # 管理员查看所有餐厅订单汇总
+    url(r"api/restaurant/orders/summary/$", OrderSummary.as_view()),
 
 ]
