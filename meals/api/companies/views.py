@@ -163,8 +163,6 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
             company_id = self.get_login_user_company_id(request)
             month = data["month"]
             year = data["year"]
-            user_id = self.get_login_user_id(request)
-            self.check_user_company(user_id, company_id)
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
             all_order_list = MealOrders.objects.filter(user_id__in=user_id_list, status=OrderStatus.accepted)
@@ -172,22 +170,18 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
             for order in all_order_list:
                 if order.create_time.year == year and order.create_time.month == month:
                     order_list.append(order)
-
-            order_info_list = [
-                {
+            restaurant_id_rmb_map = {}
+            order_info_list = []
+            for order in order_list:
+                order_info_list.append({
                     'order_id': order.order_id,
                     'dish_id': order.dish_id,
                     'restaurant_id': Dishes.objects.get(id=order.dish_id).restaurant_id,
                     'total_price': order.total_price,
                     'create_time': order.create_time
-                } for order in order_list
-            ]
+                })
+                restaurant_id_rmb_map[Dishes.objects.get(id=order.dish_id).restaurant_id] = 0
 
-            restaurant_relation = RestaurantRelation.objects.filter(company_id=company_id, is_enabled=1)
-            restaurant_id_list = [r['restaurant_id'] for r in restaurant_relation]
-            restaurant_id_rmb_map = {}
-            for restaurant_id in restaurant_id_list:
-                restaurant_id_rmb_map[restaurant_id] = 0
             for order_info in order_info_list:
                 restaurant_id_rmb_map[order_info['restaurant_id']] += order_info['total_price']
             result = []
