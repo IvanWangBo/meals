@@ -156,7 +156,7 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
     @company_required
     def get(self, request):
         try:
-            serializer = RestaurantOrdersSummarySerializer(data=request.data)
+            serializer = RestaurantOrdersSummarySerializer(data=request.GET)
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
