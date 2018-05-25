@@ -238,14 +238,15 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
             for create_date in result_map:
                 daily_map = result_map[create_date]
                 for dish_id in daily_map:
-                    orders.append({
-                        'create_date': create_date,
-                        'dish_id': dish_id,
-                        'count': daily_map[dish_id]['count'],
-                        'total_price': daily_map[dish_id]['total_price'],
-                        'dish_name': Dishes.objects.get(id=dish_id).name,
-                    })
-                    total_rmb += daily_map[dish_id]['total_price']
+                    if daily_map[dish_id]['count']:
+                        orders.append({
+                            'create_date': create_date,
+                            'dish_id': dish_id,
+                            'count': daily_map[dish_id]['count'],
+                            'total_price': daily_map[dish_id]['total_price'],
+                            'dish_name': Dishes.objects.get(id=dish_id).name,
+                        })
+                        total_rmb += daily_map[dish_id]['total_price']
             result = {
                 'order_list': orders,
                 'total_rmb': total_rmb
