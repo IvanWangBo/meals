@@ -260,12 +260,14 @@ class MealsOrderList(HttpApiBaseView):
                     time_range_name = TimeRange.objects.get(id=time_range_id).name
                 except:
                     time_range_name = ""
+                status = extra_detail_map.get(order_id, {}).get('status', -2),
                 result.append({
                     'order_id': order_id,
                     'order_list': result_map[order_id],
                     'order_price': self._get_order_price(result_map[order_id]),
                     'create_time': extra_detail_map.get(order_id, {}).get('create_time', ''),
                     'status': extra_detail_map.get(order_id, {}).get('status', -2),
+                    'status_name': OrderStatus.map.get(status, ""),
                     'time_range_name': time_range_name
                 })
             return self.success_response(result, message=u"订单查询成功！")

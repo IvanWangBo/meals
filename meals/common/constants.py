@@ -28,3 +28,12 @@ class OrderStatus(object):
     sending = 2
     finished = 3
     settled = 4
+
+    map = {
+        canceled: u"取消",
+        created: u"创建",
+        accepted: u"接单",
+        sending: u"派送中",
+        finished: u"完成",
+        settled: u"已结算"
+    }
