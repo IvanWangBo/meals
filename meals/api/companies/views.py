@@ -11,6 +11,7 @@ from api.restaurants.models import Restaurants
 from api.users.models import MealOrders
 from api.decorators import admin_required
 from api.decorators import company_required
+from common.constants import OrderStatus
 from common.constants import UserAdminType
 from api.companies.serializers import AddCompanySerializer
 from api.companies.serializers import AddCompanyAdminSerializer
@@ -166,7 +167,7 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
             self.check_user_company(user_id, company_id)
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
-            all_order_list = MealOrders.objects.filter(user_id__in=user_id_list)
+            all_order_list = MealOrders.objects.filter(user_id__in=user_id_list, status=OrderStatus.accepted)
             order_list = []
             for order in all_order_list:
                 if order.create_time.year == year and order.create_time.month == month:
@@ -209,16 +210,21 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            company_id = data["company_id"]
+            company_id = self.get_login_user_company_id(request)
+            year = data["year"]
             month = data["month"]
             restaurant_id = data["restaurant_id"]
-            user_id = self.get_login_user_id(request)
-            self.check_user_company(user_id, company_id)
             support_dishes = Dishes.objects.filter(restaurant_id=restaurant_id)
             dish_id_list = [dish.id for dish in support_dishes]
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
-            order_list = MealOrders.objects.filter(user_id__in=user_id_list, create_time__month=month, dish_id__in=dish_id_list)
+
+            all_order_list = MealOrders.objects.filter(user_id__in=user_id_list, dish_id__in=dish_id_list, status=OrderStatus.accepted)
+            order_list = []
+            for order in all_order_list:
+                if order.create_time.year == year and order.create_time.month == month:
+                    order_list.append(order)
+
             result_map = {}
 
             for order in order_list:
@@ -233,22 +239,23 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
                 result_map[order.create_time.date()][order.dish_id]['count'] += order.count
                 result_map[order.create_time.date()][order.dish_id]['total_price'] += order.total_price
 
-            result = []
+            orders = []
+            total_rmb = 0
             for create_date in result_map:
                 daily_map = result_map[create_date]
-                dishes = []
                 for dish_id in daily_map:
-                    dishes.append({
+                    orders.append({
+                        'create_date': create_date,
                         'dish_id': dish_id,
                         'count': daily_map[dish_id]['count'],
                         'total_price': daily_map[dish_id]['total_price'],
-                        'dish_name': Dishes.objects.get(id=dish_id).name
+                        'dish_name': Dishes.objects.get(id=dish_id).name,
                     })
-                result.append({
-                    'create_date': create_date,
-                    'order_list': dishes,
-                    'order_price': self._get_order_price(dishes)
-                })
+                    total_rmb += daily_map[dish_id]['total_price']
+            result = {
+                'order_list': orders,
+                'total_rmb': total_rmb
+            }
             return self.success_response(result, message=u"订单查询成功")
         except Exception as err:
             return self.error_response({}, u"订单查询失败")

@@ -31,6 +31,6 @@ class RestaurantOrdersSummarySerializer(serializers.Serializer):
 
 
 class RestaurantOrdersDetailsSerializer(serializers.Serializer):
-    company_id = serializers.IntegerField(allow_null=False)
+    year = serializers.IntegerField(allow_null=True, default=datetime.now().year)
     month = serializers.IntegerField(allow_null=True, default=datetime.now().month)
     restaurant_id = serializers.IntegerField(allow_null=False)
