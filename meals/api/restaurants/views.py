@@ -64,6 +64,8 @@ class RestaurantRelationView(HttpApiBaseView):
         try:
             company_id = self.get_login_user_company_id(request)
             serializers = RestaurantRelationSerializer(data=request.GET)
+            if not serializers.is_valid():
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             restaurant_id = data["restaurant_id"]
             try:
@@ -78,7 +80,9 @@ class RestaurantRelationView(HttpApiBaseView):
     def post(self, request):
         try:
             company_id = self.get_login_user_company_id(request)
-            serializers = RestaurantRelationSerializer(data=request.GET)
+            serializers = RestaurantRelationSerializer(data=request.data)
+            if not serializers.is_valid():
+                return self.serializer_invalid_response(serializers)
             data = serializers.data
             restaurant_id = data["restaurant_id"]
             is_enabled = data["is_enabled"]
