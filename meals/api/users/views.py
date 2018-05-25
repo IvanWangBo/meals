@@ -217,7 +217,7 @@ class MealsOrderList(HttpApiBaseView):
     @login_required
     def get(self, request):
         try:
-            serializer = MealsOrderListSerializer(data=request.data)
+            serializer = MealsOrderListSerializer(data=request.GET)
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
