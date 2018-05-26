@@ -18,8 +18,9 @@ from api.companies.views import CompanyListView
 from api.companies.views import DepartmentListView
 from api.companies.views import RestaurantOrdersSummaryView
 from api.companies.views import RestaurantOrdersDetailsView
-from api.companies.views import OrderSummaryOfCompany
+from api.companies.views import OrderSummaryOfCompanyView
 from api.companies.views import OrderListOfCompanyView
+from api.companies.views import AcceptOrdersView
 from api.restaurants.views import AddDishView
 from api.restaurants.views import DeleteDishView
 from api.restaurants.views import TimeRangeListView
@@ -139,8 +140,11 @@ urlpatterns = [
     url(r"api/restaurant/orders/summary/$", OrderSummary.as_view()),
 
     # 管理员查看所有公司订单汇总
-    url(r"api/company/orders/summary/$", OrderSummaryOfCompany.as_view()),
+    url(r"api/company/orders/summary/$", OrderSummaryOfCompanyView.as_view()),
 
     # 管理员查看某公司某日订单
     url(r"api/company/orders/list/$", OrderListOfCompanyView.as_view()),
+
+    # 一键接单
+    url(r"api/company/orders/accept/$", AcceptOrdersView.as_view()),
 ]

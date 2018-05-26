@@ -46,3 +46,7 @@ class OrderDetailsSerializer(serializers.Serializer):
     year = serializers.IntegerField(allow_null=False, default=datetime.now().year)
     month = serializers.IntegerField(allow_null=False, default=datetime.now().month)
     day = serializers.IntegerField(allow_null=False, default=datetime.now().day)
+
+
+class AcceptOrdersSerializer(serializers.Serializer):
+    order_id_list = serializers.CharField(max_length=2000, allow_blank=False)

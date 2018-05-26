@@ -1,5 +1,6 @@
 #coding=utf-8
 import random
+import json
 
 from api.base_view import HttpApiBaseView
 from api.users.models import Users
@@ -265,7 +266,7 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
         return order_price
 
 
-class OrderSummaryOfCompany(HttpApiBaseView):
+class OrderSummaryOfCompanyView(HttpApiBaseView):
     @admin_required
     def get(self, request):
         try:
@@ -349,6 +350,27 @@ class OrderListOfCompanyView(HttpApiBaseView):
                     "time_range_name": time_range.name
                 })
                 total_rmb += order.total_price
-            return self.success_response(result, message=u"订单查询成功")
+            return self.success_response({"total_rmb": total_rmb, "order_List": result}, message=u"订单查询成功")
         except Exception as err:
             return self.error_response({}, message=u"订单查询失败")
+
+
+class AcceptOrdersView(HttpApiBaseView):
+    @admin_required
+    def post(self, request):
+        try:
+            serializer = OrderDetailsSerializer(data=request.data)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            try:
+                order_id_list = json.loads(data["order_id_list"])
+            except Exception as err:
+                return self.error_response({}, u"order_id_list 格式错误")
+            orders = MealOrders.objects.filter(order_id__in=order_id_list, status=OrderStatus.created)
+            for order in orders:
+                order.status = OrderStatus.accepted
+                order.save()
+            return self.success_response({}, u"接单成功")
+        except Exception as err:
+            return self.error_response({}, u"接单失败, error: %s" % err)
