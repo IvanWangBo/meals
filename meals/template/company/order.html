@@ -58,6 +58,7 @@
 {% block js_block %}
 <script type="text/javascript">
     var params=util.get_url_strs(window.location.href);
+    params.common_id=1;
     function company_order(){
         var self=this;
         self.params=params;
@@ -186,7 +187,7 @@
                     //初始化总账单
                     self.is_loading=true;
                     self.load_node.show();
-                    $.getJSON("/api/company/order/summary/?"+util.format(self.params),function (d) {
+                    $.getJSON("/api/company/order/summary/",function (d) {
                         if(d.code==200){
                             var node = $(util.parse(tpl_2, {
                                 data: d.data,
