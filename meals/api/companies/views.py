@@ -23,6 +23,7 @@ from api.companies.serializers import RestaurantOrdersSummarySerializer
 from api.companies.serializers import RestaurantOrdersDetailsSerializer
 from api.companies.serializers import OrderSummarySerializer
 from api.companies.serializers import OrderDetailsSerializer
+from api.companies.serializers import AcceptOrdersSerializer
 from api.instances import cacher
 
 
@@ -359,7 +360,7 @@ class AcceptOrdersView(HttpApiBaseView):
     @admin_required
     def post(self, request):
         try:
-            serializer = OrderDetailsSerializer(data=request.data)
+            serializer = AcceptOrdersSerializer(data=request.data)
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
