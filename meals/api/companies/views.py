@@ -8,6 +8,7 @@ from api.companies.models import Companies
 from api.companies.models import RestaurantRelation
 from api.restaurants.models import Dishes
 from api.restaurants.models import Restaurants
+from api.restaurants.models import TimeRange
 from api.users.models import MealOrders
 from api.decorators import admin_required
 from api.decorators import company_required
@@ -20,6 +21,7 @@ from api.companies.serializers import AddDepartmentSerializer
 from api.companies.serializers import RestaurantOrdersSummarySerializer
 from api.companies.serializers import RestaurantOrdersDetailsSerializer
 from api.companies.serializers import OrderSummarySerializer
+from api.companies.serializers import OrderDetailsSerializer
 from api.instances import cacher
 
 
@@ -267,7 +269,7 @@ class OrderSummaryOfCompany(HttpApiBaseView):
     @admin_required
     def get(self, request):
         try:
-            serializer = OrderSummarySerializer(data=request.data)
+            serializer = OrderSummarySerializer(data=request.GET)
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
@@ -305,3 +307,48 @@ class OrderSummaryOfCompany(HttpApiBaseView):
             return self.success_response(result, message=u"订单查询成功")
         except Exception as err:
             return self.error_response({}, u"订单查询失败")
+
+
+class OrderListOfCompanyView(HttpApiBaseView):
+    @admin_required
+    def get(self, request):
+        try:
+            serializer = OrderDetailsSerializer(data=request.GET)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            month = data["month"]
+            year = data["year"]
+            day = data["day"]
+            company_id = data["company_id"]
+            users = Users.objects.filter(company_id=company_id)
+            user_id_list = [user.id for user in users]
+            all_orders = MealOrders.objects.filter(user_id__in=user_id_list, status__in=[OrderStatus.accepted, OrderStatus.created])
+            orders = []
+            for order in all_orders:
+                if order.create_time.month == month and order.create_time.year == year and order.create_time.day == day:
+                    orders.append(order)
+
+            result = []
+            total_rmb = 0
+            for order in orders:
+                dish = Dishes.objects.get(id=order.dish_id)
+                restaurant = Restaurants.objects.get(id=dish.restaurant_id)
+                time_range = TimeRange.objects.get(id=order.time_range)
+                result.append({
+                    "order_id": order.order_id,
+                    "status_name": OrderStatus.map.get(order.status, ""),
+                    "status": order.status,
+                    "dish_id": order.dish_id,
+                    "dish_name": dish.name,
+                    "dish_count": order.count,
+                    "total_price": order.total_price,
+                    "restaurant_id": dish.restaurant_id,
+                    "restaurant_name": restaurant.name,
+                    "time_range": order.time_range,
+                    "time_range_name": time_range.name
+                })
+                total_rmb += order.total_price
+            return self.success_response(result, message=u"订单查询成功")
+        except Exception as err:
+            return self.error_response({}, message=u"订单查询失败")

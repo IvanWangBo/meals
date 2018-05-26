@@ -356,7 +356,7 @@ class OrderSummary(HttpApiBaseView):
     @admin_required
     def get(self, request):
         try:
-            serializer = OrderSummarySerializer(data=request.data)
+            serializer = OrderSummarySerializer(data=request.GET)
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
