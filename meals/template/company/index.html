@@ -82,6 +82,7 @@
 {% block js_block %}
 <script type="text/javascript">
     var params=util.get_url_strs(window.location.href);
+    params.common_id=1;
     function company_index(){
         var self=this;
         self.params=params;
@@ -109,7 +110,7 @@
                                     <td><%=data[n].real_name%></td>\
                                     <td><%=data[n].left_rmb%></td>\
                                     <td><%=data[n].to_settle%></td>\
-                                    <td><a href="/company/order/?user_id=<%=data[n].user_id%>" style="background: green;color:#fff;padding: 2px 3px;border-radius: 3px;">账号详情</a></td>\
+                                    <td><a href="/company/order/?user_id=<%=data[n].user_id%>" style="background: green;color:#fff;padding:3px;border:1px solid #000;border-radius: 3px;">员工订单详情</a></td>\
                                 </tr>\
                             <%}%>\
                         </table>';

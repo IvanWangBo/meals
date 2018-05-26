@@ -18,68 +18,48 @@
     <div class="top_tabs">
         <a class="js_top_tab top_tab" href="/company/index">账号管理</a>
         <a class="js_top_tab top_tab" href="/company/restaurant">餐厅管理</a>
-        <a class="js_top_tab top_tab chosen_1" href="/company/order">订单管理</a>
+        <a class="js_top_tab top_tab chosen_1">订单管理</a>
     </div>
     <div class="js_main main">
         <div class="line"></div>
         <!--tab切换-->
         <div class="tabs">
-            <div class="js_tab tab chosen_2" tab_num="1">账号管理</div>
-            <div class="js_tab tab" tab_num="2">添加员工账号</div>
+            <div class="js_tab tab chosen_2" tab_num="1">员工订单</div>
+            <div class="js_tab tab" tab_num="2">商家订单</div>
         </div>
         <!--展示区-->
         <div class="js_secs secs">
-            <div class="js_sec js_sec_1 sec"></div>
-            <div class="js_sec js_sec_2 sec" style="display: none">
-                <form id="js_add_user" action="" >
-                    <div class="add_info add_1">
-                        员工姓名: <input class="real_name" type="text" name="real_name" required="required" placeholder="请输入">
-                    </div>
-                    <div class="add_info add_2">
-                        员工性别: <input class="gender" type="text" name="gender" required="required" placeholder="请输入">
-                    </div>
-                    <div class="add_info add_3">
-                        员工部门:
-                        <select name="department_id" id="department_id" class="department_id" required="required" placeholder="请选择">
+            <div class="js_sec js_sec_1 sec">
+                <div class="selector">
+                    <span class="user">请输入员工ID：<input id="user_id" type="text" name="user_id"></span>
+                    <span class="date" style="margin-left: 20px;">请选择查询周期：<input type="month" name="date" id="year_month"></span>
+                    <div class="js_search_btn search_btn">查询</div>
+                </div>
+                <div class="js_result_container result_container">
 
-                        </select>
-                        <div class="js_add_department add_department">
-                            <i>+</i>添加部门
-                        </div>
-                    </div>
-                    <div class="add_info add_4">
-                        联系电话: <input class="phone_number" type="text" name="phone_number" required="required" placeholder="请输入">
-                    </div>
-                    <div class="add_info add_5">
-                        员工账号: <input class="user_name" type="text" name="user_name" required="required" placeholder="请输入">
-                    </div>
-                    <div class="add_info add_6">
-                        初始密码: <input class="user_password" type="text" name="user_password" required="required" placeholder="请输入">
-                    </div>
-                    <div id="js_add_btn" class="btn">添加</div>
-                </form>
+                </div>
+            </div>
+            <div class="js_sec js_sec_2 sec" style="display: none">
+                <div class="selector">
+                    <span class="date" style="margin-left: 20px;">请选择查询周期：<input type="month" name="date" id="this_bill_date"></span>
+                    <div class="js_total_bill_btn search_btn">查询</div>
+                </div>
+                <p style="margin-top: 20px;margin-bottom: -10px;font-weight: bolder">各供应商的月度账单如下：</p>
+                <div class="js_total_restaurant_bill"></div>
+                <div class="js_this_restaurant_bill"></div>
             </div>
         </div>
     </div>
     <div class="loading" style="display: none"></div>
     <div class="js_cover cover" style="display: none"></div>
-    <div class="js_pop pop" style="display: none">
-        <div class="pop_title">添加部门</div>
-        <div class="put_in">
-            请输入部门名字：<input class="put_1" type="text" required="required" placeholder="请输入">
-        </div>
-        <div class="btns">
-            <div class="btn js_add_department_btn">确认</div>
-            <div class="btn js_close">取消</div>
-        </div>
-    </div>
 </div>
 {% endblock %}
 
 {% block js_block %}
 <script type="text/javascript">
     var params=util.get_url_strs(window.location.href);
-    function company_index(){
+    params.common_id=1;
+    function company_order(){
         var self=this;
         self.params=params;
         self.body_node=$("body");
@@ -89,44 +69,106 @@
         self.cover=$(".js_cover");
         self.pop=$(".js_pop");
         self.user_id="";
+        self.result_container=$(".js_result_container");
         self.tab_loaded=false;
         var tpl_1='<table>\
                             <tr>\
-                                <th>员工ID</th>\
-                                <th>部门</th>\
-                                <th>姓名</th>\
-                                <th>本月余额</th>\
-                                <th>待结算</th>\
-                                <th></th>\
+                                <th>订单号</th>\
+                                <th>日期</th>\
+                                <th>订单</th>\
+                                <th>价格</th>\
+                                <th>用餐时段</th>\
+                                <th>订单状态</th>\
                             </tr>\
                             <%for(var n=0;n<data.length;n++){%>\
                                 <tr>\
-                                    <td><%=data[n].user_id%></td>\
-                                    <td><%=data[n].department_name%></td>\
-                                    <td><%=data[n].real_name%></td>\
-                                    <td><%=data[n].left_rmb%></td>\
-                                    <td><%=data[n].to_settle%></td>\
-                                    <td><a href="/company/order/?user_id=<%=data[n].user_id%>">账号详情</a></td>\
+                                    <td><%=data[n].order_id%></td>\
+                                    <td><%=util.format_date(data[n].create_time,"yyyy-MM-dd")%></td>\
+                                    <% var str="";if(data[n].order_list){for(var k=0;k<data[n].order_list.length;k++){ str+="<div>"+data[n].order_list[k].dish_name+" * "+data[n].order_list[k].count+"份</div>";}}%>\
+                                    <td><%=str%></td>\
+                                    <td><%=data[n].order_price%></td>\
+                                    <td><%=data[n].time_range_name%></td>\
+                                    <td><%=data[n].status_name%></td>\
                                 </tr>\
                             <%}%>\
                         </table>';
-        var tpl_2='<%for(var m=0;m<data.length;m++){%>\
-                        <option value="<%=data[m].department_id%>"><%=data[m].department_name%></option>\
-                   <%}%>';
-        //初始化员工列表
-        self.is_loading=true;
-        self.load_node.show();
-        $.getJSON("/api/user/list/?"+util.format(self.params),function (d) {
-            if(d.code==200){
-                var node = $(util.parse(tpl_1, {
-                    data: d.data,
-                    util: util
-                })).appendTo(".js_sec_1");
-            }else{
-                alert(d.message);
+        var tpl_2='<table>\
+                        <tr>\
+                            <%for(var q=0;q<data.length;q++){%>\
+                                <th><%=data[q].restaurant_name%></th>\
+                            <%}%>\
+                        </tr>\
+                        <tr>\
+                            <%for(var q=0;q<data.length;q++){%>\
+                                <td><%=data[q].total_rmb%></td>\
+                            <%}%>\
+                        </tr>\
+                        <tr>\
+                            <%for(var q=0;q<data.length;q++){%>\
+                                <td rid="<%=data[q].restaurant_id%>" class="aaa" r_name="<%=data[q].restaurant_name%>"><span this_year="<%=year%>" class="js_month_bill month_bill" this_month="<%=month%>">查看账单详情</span></td>\
+                            <%}%>\
+                        </tr>\
+                    </table>';
+        var tpl_3='<p style="margin-top: 20px;margin-bottom: -10px;"><%=reataurant_name%>详细账单如下:</p>\
+                    <table class="js_this_bill">\
+                            <tr>\
+                                <th>日期</th>\
+                                <th>菜名</th>\
+                                <th>份数</th>\
+                                <th>总价</th>\
+                            </tr>\
+                            <%for(var n=0;n<data.order_list.length;n++){%>\
+                                <tr>\
+                                    <td><%=util.format_date(data.order_list[n].create_date,"yyyy-MM-dd")%></td>\
+                                    <td><%=data.order_list[n].dish_name%></td>\
+                                    <td><%=data.order_list[n].count%></td>\
+                                    <td><%=data.order_list[n].total_price%></td>\
+                                </tr>\
+                            <%}%>\
+                        </table>';
+        if(params.user_id){
+            //初始化订单列表
+            self.is_loading=true;
+            self.load_node.show();
+            $.getJSON("/api/user/meals/list/?"+util.format(self.params),function (d) {
+                if(d.code==200){
+                    self.result_container.html("");
+                    var node = $(util.parse(tpl_1, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_result_container");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
+        }
+        self.body_node.delegate(".js_search_btn","click",function () {
+            if(self.is_loading){
+                return;
             }
-            self.is_loading=false;
-            self.load_node.hide();
+            var user_id=$("#user_id").val();
+            var year_month=$("#year_month").val().split("-");
+            //初始化订单列表
+            self.is_loading=true;
+            self.load_node.show();
+            self.params.user_id=user_id;
+            self.params.year=year_month[0];
+            self.params.month=Number(year_month[1]);
+            $.getJSON("/api/user/meals/list/?"+util.format(self.params),function (d) {
+                if(d.code==200){
+                    self.result_container.html("");
+                    var node = $(util.parse(tpl_1, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_result_container");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
         });
         //切换tab
         $(".js_tab").on("click",function () {
@@ -142,15 +184,17 @@
                 self.secs.hide();
                 $(self.secs[this_tab-1]).show();
                 if(!self.tab_loaded){
-                    //初始化部门列表
+                    //初始化总账单
                     self.is_loading=true;
                     self.load_node.show();
-                    $.getJSON("api/company/department/list/?"+util.format(self.params),function (d) {
+                    $.getJSON("/api/company/order/summary/",function (d) {
                         if(d.code==200){
                             var node = $(util.parse(tpl_2, {
                                 data: d.data,
-                                util: util
-                            })).appendTo("#department_id");
+                                util: util,
+                                year:"0",
+                                month:"0"
+                            })).appendTo(".js_total_restaurant_bill");
                         }else{
                             alert(d.message);
                         }
@@ -161,102 +205,65 @@
                 }
             }
         });
-        //点击添加部门按钮
-        self.body_node.delegate(".js_add_department","click",function () {
+        //查看月度账单
+        self.body_node.delegate(".js_month_bill","click",function () {
             if(self.is_loading){
                 return;
             }
-            self.cover.show();
-            self.pop.show();
-        });
-        //添加部门
-        self.body_node.delegate(".js_add_department_btn","click",function () {
-            if(self.is_loading){
-                return;
+            var param={};
+            var this_year=$(this).attr("this_year");
+            var this_month=$(this).attr("this_month");
+            param.restaurant_id=$(this).closest("td").attr("rid");
+            var reataurant_name=$(this).closest("td").attr("r_name");
+            if(this_year!=0){
+                param.year=this_year;
+            }
+            if(this_month!=0){
+                param.month=this_month;
             }
             self.is_loading=true;
             self.load_node.show();
-            var department_name=$(".put_1").val();
-            if(department_name){
-                $.ajax({
-                    url: "/api/company/department/add/",
-                    type: "POST",
-                    data: {
-                        "company_id": self.params.company_id
-                    },
-                    success: function (d) {
-                        if(d.code==200){
-                            //将新添加的部门显示到select框
-                            var opt=$("<option class='now' selected='selected'>"+department_name+"</option>");
-                            opt.appendTo("#department_id");
-                            opt.attr("value",d.data.department_id);
-                            alert(d.message);
-                            self.cover.hide();
-                            self.pop.hide();
-                        }else {
-                            alert(d.message);
-                        }
-                        self.is_loading=false;
-                        self.load_node.hide();
-                    }
-                })
-            }else {
-                alert("请填写部门名称！");
-            }
+            $(".js_this_restaurant_bill").html("");
+            $.getJSON("/api/company/order/details/?"+util.format(param),function (d) {
+                if(d.code==200){
+                    var node = $(util.parse(tpl_3, {
+                        data: d.data,
+                        util: util,
+                        reataurant_name:reataurant_name
+                    })).appendTo(".js_this_restaurant_bill");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
         });
-        self.body_node.delegate(".js_close","click",function () {
-            if (self.is_loading) {
-                return;
-            }
-            self.cover.hide();
-            self.pop.hide();
-        });
-        //添加员工
-        $("#js_add_btn").on("click",function () {
+        //查询指定日期的所有表单
+        self.body_node.delegate(".js_total_bill_btn","click",function () {
             if(self.is_loading){
                 return;
             }
-            self.is_loading=true;
-            self.load_node.show();
-            var real_name=$(".real_name").val();
-            var gender=$(".gender").val();
-            var department_id=$(".department_id").val();
-            var phone_number=$(".phone_number").val();
-            var user_name=$(".user_name").val();
-            var user_password=$(".user_password").val();
-            if(real_name&&gender&&department_id&&phone_number&&user_name&&user_password){
-                $.ajax({
-                    url: "/api/user/add/",
-                    type: "POST",
-                    data: {
-                        "real_name": real_name,
-                        "gender": gender,
-                        "department_id": department_id,
-                        "phone_number": phone_number,
-                        "user_name":user_name,
-                        "user_password":user_password,
-                        "company_id": self.params.company_id
-                    },
-                    success: function (d) {
-                        if(d.code==200){
-                            $(".real_name").val("");
-                            $(".gender").val("");
-                            $(".phone_number").val("");
-                            $(".user_name").val("");
-                            $(".user_password").val("");
-                            alert(d.message);
-                        }else {
-                            alert(d.message);
-                        }
-                        self.is_loading=false;
-                        self.load_node.hide();
-                    }
-                })
-            }else {
-                alert("请补全信息");
-            }
+            var year_month=$("#this_bill_date").val().split("-");
+            self.params.year=year_month[0];
+            self.params.month=Number(year_month[1]);
+            $.getJSON("/api/company/order/summary/?"+util.format(self.params),function (d) {
+                if(d.code==200){
+                    $(".js_total_restaurant_bill").html("");
+                    $(".js_this_restaurant_bill").html("");
+                    var node = $(util.parse(tpl_2, {
+                        data: d.data,
+                        util: util,
+                        year:self.params.year,
+                        month:self.params.month
+                    })).appendTo(".js_total_restaurant_bill");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
         });
     }
-    new company_index();
+    new company_order();
 </script>
 {% endblock %}

@@ -49,6 +49,7 @@
 {% block js_block %}
 <script type="text/javascript">
     var params=util.get_url_strs(window.location.href);
+    params.common_id=1;
     function index(){
         var self=this;
         self.body_node=$("body");

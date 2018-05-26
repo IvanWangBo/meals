@@ -66,9 +66,8 @@
                                     <td><%=data[n].order_id%></td>\
                                     <td><span class="js_order_detail order_detail" o_list=<%=JSON.stringify(data[n].order_list)%> >查看详情</span></td>\
                                     <td><%=data[n].order_price%></td>\
-                                    <%var Arr={"-1":"已取消","0":"已创建","1":"已接单","3":"已完成"}%>\
                                     <td class="js_change_status">\
-                                        <%=Arr[data[n].status]%>\
+                                        <%=data[n].status_name%>\
                                         <%if(data[n].status==0){%>\
                                         <span class="js_cancel_order cancel_order" o_id="<%=data[n].order_id%>">取消订单</span>\
                                         <%}%>\
