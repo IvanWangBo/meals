@@ -1,0 +1,161 @@
+.whole{
+    width: 100%;
+    background-color: rgba(255,255,255,0.9);
+}
+.top{
+    height:80px;
+    width: 100%;
+    line-height: 80px;
+    font-size: 24px;
+    font-weight: bolder;
+    color:#000;
+    padding-left: 6%;
+    background-color: rgba(0, 0, 0, 0.09);
+}
+.top i{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    vertical-align: middle;
+    background: lightblue;
+}
+.top_tabs{
+    width: 240px;
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+    margin-left: 6%;
+    padding: 4px;
+    margin-top: 5px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+}
+.top_tabs .top_tab{
+    width: 80px;
+    text-align: center;
+    color:#fff;
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+}
+.top_tabs .chosen_1{
+    font-size: 16px;
+    font-weight: bolder;
+    background-color: lightblue;
+    color:#000;
+    border-radius: 5px;
+}
+.main{
+    width: 100%;
+    padding-left: 6%;
+}
+.main .line{
+    border-top:2px dashed #ccc;
+    margin-top: 5px;
+    width: 88%;
+}
+.tabs{
+    width: 88%;
+    border-radius: 5px;
+    height: 45px;
+    margin-top: 5px;
+    background: lightgray;
+    display:-webkit-box;
+    display:-moz-box;
+    display:-webkit-flex;
+    display:-moz-flex;
+    display:-ms-flexbox;
+    display:flex;
+}
+.tabs .tab{
+    margin: 0 auto;
+    display: inline-block;
+    width: 49%;
+    height: 35px;
+    margin-top: 5px;
+    text-align: center;
+    border-radius: 5px;
+    color: #333;
+    line-height: 35px;
+    cursor: pointer;
+}
+.tabs .tab:nth-child(1){
+    margin-left: 5px;
+}
+.tabs .tab:nth-child(2){
+    margin-right: 5px;
+}
+.tabs .chosen_2{
+    background-color: #fff;
+    color: #000;
+}
+.sec:nth-child(1){
+    margin-bottom: 30px;
+}
+.sec .selector{
+    margin-top: 10px;
+    font-weight: bolder;
+}
+.sec .selector .search_btn{
+    display: inline-block;
+    width: 45px;
+    height: 22px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin-left: 40px;
+    background-color: green;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    line-height: 22px;
+}
+table{
+    border-collapse: collapse;
+    width: 60%;
+    margin-top: 10px;
+    margin-left: 0;
+}
+table tr,th,td{
+    font-size: 12px;
+    text-align: center;
+    height: 25px;
+    line-height: 25px;
+    border:1px solid #000;
+}
+table tr div{
+    height: 16px;
+    line-height: 16px;
+}
+table th{
+    background: lightgray;
+    font-weight: bolder;
+    height: 30px;
+    line-height: 30px;
+}
+table td .month_bill{
+    color: #fff;
+    padding: 0 3px;
+    border-radius: 5px;
+    background-color: green;
+    display: inline-block;
+    cursor: pointer;
+    vertical-align: middle;
+}
+input,select{
+    height: 20px;
+    border-radius: 3px;
+}
+.order_btn{
+    width: 60px;
+    height: 25px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-top: 10px;
+    background-color: green;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    line-height: 25px;
+}

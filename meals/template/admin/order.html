@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+{% block title %}
+公司-订单管理页
+{% endblock %}
+
+{% block css_block %}
+<link rel="stylesheet" type="text/css" href="/static/css/admin/order.css"/>
+
+{% endblock %}
+
+
+{% block body %}
+<!--logo头部-->
+<div class="whole">
+    <div class="top">
+        <i></i>企业团餐管理系统
+    </div>
+    <div class="top_tabs">
+        <a class="js_top_tab top_tab" href="/admin/index">账号管理</a>
+        <a class="js_top_tab top_tab" href="/admin/restaurant">餐厅管理</a>
+        <a class="js_top_tab top_tab chosen_1">订单管理</a>
+    </div>
+    <div class="js_main main">
+        <div class="line"></div>
+        <!--tab切换-->
+        <div class="tabs">
+            <div class="js_tab tab chosen_2" tab_num="1">公司订单</div>
+            <div class="js_tab tab" tab_num="2">商家订单</div>
+        </div>
+        <!--展示区-->
+        <div class="js_secs secs">
+            <div class="js_sec js_sec_1 sec">
+                <div class="selector" style="margin-bottom: -5px;">
+                    <span class="date">请选择查询周期：<input type="month" name="date" id="year_month"></span>
+                    <div class="js_search_btn search_btn">查询</div>
+                </div>
+                <div class="js_company_total_container result_container">
+
+                </div>
+                <div class="js_this_company_day_bill">
+
+                </div>
+            </div>
+            <div class="js_sec js_sec_2 sec" style="display: none">
+                <div class="selector">
+                    <span class="date" style="margin-left: 20px;">请选择查询周期：<input type="month" name="date" id="this_bill_date"></span>
+                    <div class="js_total_bill_btn search_btn">查询</div>
+                </div>
+                <div class="js_total_restaurant_bill">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="loading" style="display: none"></div>
+    <div class="js_cover cover" style="display: none"></div>
+</div>
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript">
+    var params=util.get_url_strs(window.location.href);
+    params.common_id=1;
+    function admin_order(){
+        var self=this;
+        self.params=params;
+        self.body_node=$("body");
+        self.load_node=$(".loading");
+        self.is_loading=false;
+        self.secs=$(".js_sec");
+        self.cover=$(".js_cover");
+        self.pop=$(".js_pop");
+        self.user_id="";
+        self.tab_loaded=false;
+        var tpl_1='<%if(data.length){%>\
+                        <table>\
+                            <tr>\
+                                <%for(var q=0;q<data.length;q++){%>\
+                                    <th><%=data[q].company_name%></th>\
+                                <%}%>\
+                            </tr>\
+                            <tr>\
+                                <%for(var q=0;q<data.length;q++){%>\
+                                    <td><%=data[q].total_rmb%></td>\
+                                <%}%>\
+                            </tr>\
+                        </table>\
+                        <div class="selector" style="margin-top: 30px;margin-bottom: -5px;">\
+                            <span>\
+                                请选择查询公司名：\
+                                <select name="company_id" id="select_company_name">\
+                                <%for(var q=0;q<data.length;q++){%>\
+                                        <option value="<%=data[q].company_id%>"><%=data[q].company_name%></option>\
+                                    <%}%>\
+                                </select>\
+                            </span>\
+                            <span style="margin-left: 30px;">请选择查询日期：<input type="date" name="search_date" id="day_bill_date"></span>\
+                            <div class="js_company_day_bill_btn search_btn">查询</div>\
+                        </div>\
+                    <%}else{%>\
+                        <p style="height:40px;font-weight:bolder;line-height:40px;color:#b3afaf;">无数据</p>\
+                    <%}%>';
+        var tpl_2='<%if(data.length){%>\
+                        <table>\
+                            <tr>\
+                                <%for(var q=0;q<data.length;q++){%>\
+                                    <th><%=data[q].restaurant_name%></th>\
+                                <%}%>\
+                            </tr>\
+                            <tr>\
+                                <%for(var q=0;q<data.length;q++){%>\
+                                    <td><%=data[q].total_rmb%></td>\
+                                <%}%>\
+                            </tr>\
+                        </table>\
+                    <%}else{%>\
+                        <p style="height:40px;font-weight:bolder;line-height:40px;color:#b3afaf;">无数据</p>\
+                    <%}%>';
+        var tpl_3='<%if(data.order_List.length){%>\
+                        <table class="js_this_bill">\
+                            <tr>\
+                                <th>订单号</th>\
+                                <th>菜名</th>\
+                                <th>份数</th>\
+                                <th>总价</th>\
+                                <th>餐厅名称</th>\
+                                <th>时段类别</th>\
+                            </tr>\
+                            <%if(data.order_List.length){%>\
+                                <%for(var n=0;n<data.order_List.length;n++){%>\
+                                    <tr>\
+                                        <td><%=data.order_List[n].order_id%></td>\
+                                        <td><%=data.order_List[n].dish_name%></td>\
+                                        <td><%=data.order_List[n].dish_count%></td>\
+                                        <td><%=data.order_List[n].total_price%></td>\
+                                        <td><%=data.order_List[n].restaurant_name%></td>\
+                                        <td><%=data.order_List[n].time_range_name%></td>\
+                                    </tr>\
+                                <%}%>\
+                            <%}%>\
+                        </table>\
+                        <%var arr=[];for(var n=0;n<data.order_List.length;n++){arr.push(data.order_List[i].order_id); }%>\
+                        <div class="js_get_order order_btn" ids="<%=JSON.stringify(arr)%>">一键接单</div>\
+                    <%}else{%>\
+                        <p style="height:40px;font-weight:bolder;line-height:40px;color:#b3afaf;">无数据</p>\
+                    <%}%>';
+        //初始化公司订单列表
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/company/orders/summary/?"+util.format(self.params),function (d) {
+            if(d.code==200){
+                $(".js_company_total_container").html("");
+                var node = $(util.parse(tpl_1, {
+                    data: d.data,
+                    util: util
+                })).appendTo(".js_company_total_container");
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
+        //切换公司总订单的查询周期
+        self.body_node.delegate(".js_search_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var param={};
+            var this_date=$("#year_month").val();
+            if(!this_date){
+                alert("请选择查询时间");
+                return
+            }
+            param.year=util.format_date(this_date,"yyyy");
+            param.month=util.format_date(this_date,"M");
+            self.is_loading=true;
+            self.load_node.show();
+            $.getJSON("/api/company/orders/summary/?"+util.format(param)+"&"+util.format(self.params),function (d) {
+                if(d.code==200){
+                    $(".js_company_total_container").html("");
+                    $(".js_this_company_day_bill").html("");
+                    var node = $(util.parse(tpl_1, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_company_total_container");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
+        });
+        //查看指定公司的日订单
+        self.body_node.delegate(".js_company_day_bill_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var param={};
+            param.company_id=$("#select_company_name").val();
+            if(!param.company_id){
+                alert("请选择查询公司名");
+                return
+            }
+            var this_date=$("#day_bill_date").val();
+            if(!this_date){
+                alert("请选择查询时间");
+                return
+            }
+            param.year=util.format_date(this_date,"yyyy");
+            param.month=util.format_date(this_date,"M");
+            param.day=util.format_date(this_date,"d");
+            self.is_loading=true;
+            self.load_node.show();
+            $(".js_this_restaurant_bill").html("");
+            $.getJSON("/api/company/orders/list/?"+util.format(param)+"&"+util.format(self.params),function (d) {
+                if(d.code==200){
+                    $(".js_this_company_day_bill").html("");
+                    var node = $(util.parse(tpl_3, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_this_company_day_bill");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
+        });
+        //一键接单
+        self.body_node.delegate(".js_get_order","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            var order_id_list=$(this).attr("ids");
+            self.is_loading=true;
+            self.load_node.show();
+            $.ajax({
+                url: "api/company/orders/accept/",
+                type: "POST",
+                data: {
+                    "order_id_list": order_id_list
+                },
+                success: function (d) {
+                    if(d.code==200){
+                        alert(d.message);
+                    }else{
+                        alert(d.message);
+                    }
+                    self.is_loading=false;
+                    self.load_node.hide();
+                }
+            })
+        });
+        //切换tab
+        $(".js_tab").on("click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var node=this;
+            this_tab=$(node).attr("tab_num");
+            if(this_tab==1){
+                window.location.reload();
+            }else{
+                $(node).addClass("chosen_2").siblings(".js_tab").removeClass("chosen_2");
+                self.secs.hide();
+                $(self.secs[this_tab-1]).show();
+                if(!self.tab_loaded){
+                    //初始化总账单
+                    self.is_loading=true;
+                    self.load_node.show();
+                    $.getJSON("api/restaurant/orders/summary/?"+util.format(self.params),function (d) {
+                        if(d.code==200){
+                            var node = $(util.parse(tpl_2, {
+                                data: d.data,
+                                util: util
+                            })).appendTo(".js_total_restaurant_bill");
+                        }else{
+                            alert(d.message);
+                        }
+                        self.is_loading=false;
+                        self.load_node.hide();
+                    });
+                    self.tab_loaded=true;
+                }
+            }
+        });
+        //查询指定日期的商家表单
+        self.body_node.delegate(".js_total_bill_btn","click",function () {
+            if(self.is_loading){
+                return;
+            }
+            var param={};
+            var this_date=$("#this_bill_date").val();
+            if(!this_date){
+                alert("请选择查询时间");
+                return
+            }
+            param.year=util.format_date(this_date,"yyyy");
+            param.month=util.format_date(this_date,"M");
+            self.is_loading=true;
+            self.load_node.show();
+            $.getJSON("api/restaurant/orders/summary/?"+util.format(param)+"&"+util.format(self.params),function (d) {
+                if(d.code==200){
+                    $(".js_total_restaurant_bill").html("");
+                    var node = $(util.parse(tpl_2, {
+                        data: d.data,
+                        util: util
+                    })).appendTo(".js_total_restaurant_bill");
+                }else{
+                    alert(d.message);
+                }
+                self.is_loading=false;
+                self.load_node.hide();
+            });
+        });
+    }
+    new admin_order();
+</script>
+{% endblock %}
