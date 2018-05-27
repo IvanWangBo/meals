@@ -139,7 +139,7 @@ class AddDepartmentView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            company_id = data["company_id"]
+            company_id = self.get_login_user_company_id(request)
             name = data["department_name"]
             user_id = self.get_login_user_id(request)
             self.check_user_company(user_id, company_id)
