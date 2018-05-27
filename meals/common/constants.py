@@ -31,8 +31,8 @@ class OrderStatus(object):
 
     map = {
         canceled: u"取消",
-        created: u"创建",
-        accepted: u"接单",
+        created: u"未接单",
+        accepted: u"已接单",
         sending: u"派送中",
         finished: u"完成",
         settled: u"已结算"
