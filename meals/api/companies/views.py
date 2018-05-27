@@ -123,11 +123,7 @@ class DepartmentListView(HttpApiBaseView):
     @company_required
     def get(self, request):
         try:
-            company_id = request.GET.get("company_id")
-            user_id = self.get_login_user_id(request)
-            self.check_user_company(user_id, company_id)
-            if company_id is None:
-                return self.error_response(data={}, message=u"该公司不存在")
+            company_id = self.get_login_user_company_id(request)
             departments = Departments.objects.filter(company_id=company_id)
             results = [{"department_id": department.id, "department_name": department.name} for department in departments]
             return self.success_response(results, message=u"获取部门列表成功")
