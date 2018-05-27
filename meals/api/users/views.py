@@ -74,11 +74,7 @@ class PersonnelListView(HttpApiBaseView):
 class AddPersonnelView(HttpApiBaseView):
     @company_required
     def get(self, request):
-        company_id = request.GET.get("company_id")
-        if company_id is None:
-            return self.error_response(data={}, message=u"该公司不存在")
-        user_id = self.get_login_user_id(request)
-        self.check_user_company(user_id, company_id)
+        company_id = self.get_login_user_company_id(request)
         departments = Departments.objects.filter(company_id=company_id)
         results = [{"department_id": department.id, "department_name": department.name} for department in departments]
         return self.success_response(results)
