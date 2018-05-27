@@ -147,7 +147,7 @@ input,select{
     border-radius: 3px;
 }
 .order_btn{
-    width: 60px;
+    width: 70px;
     height: 25px;
     border: 1px solid #000;
     border-radius: 5px;
@@ -158,4 +158,5 @@ input,select{
     cursor: pointer;
     text-align: center;
     line-height: 25px;
+    display: inline-block;
 }

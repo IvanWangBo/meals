@@ -116,7 +116,7 @@
                     <%}else{%>\
                         <p style="height:40px;font-weight:bolder;line-height:40px;color:#b3afaf;">无数据</p>\
                     <%}%>';
-        var tpl_3='<%if(data.order_List.length){%>\
+        var tpl_3='<%if(data.order_list.length){%>\
                         <table class="js_this_bill">\
                             <tr>\
                                 <th>订单号</th>\
@@ -126,21 +126,22 @@
                                 <th>餐厅名称</th>\
                                 <th>时段类别</th>\
                             </tr>\
-                            <%if(data.order_List.length){%>\
-                                <%for(var n=0;n<data.order_List.length;n++){%>\
-                                    <tr>\
-                                        <td><%=data.order_List[n].order_id%></td>\
-                                        <td><%=data.order_List[n].dish_name%></td>\
-                                        <td><%=data.order_List[n].dish_count%></td>\
-                                        <td><%=data.order_List[n].total_price%></td>\
-                                        <td><%=data.order_List[n].restaurant_name%></td>\
-                                        <td><%=data.order_List[n].time_range_name%></td>\
-                                    </tr>\
-                                <%}%>\
+                            <%for(var n=0;n<data.order_list.length;n++){%>\
+                                <tr>\
+                                    <td><%=data.order_list[n].order_id%></td>\
+                                    <td><%=data.order_list[n].dish_name%></td>\
+                                    <td><%=data.order_list[n].dish_count%></td>\
+                                    <td><%=data.order_list[n].total_price%></td>\
+                                    <td><%=data.order_list[n].restaurant_name%></td>\
+                                    <td><%=data.order_list[n].time_range_name%></td>\
+                                </tr>\
                             <%}%>\
                         </table>\
-                        <%var arr=[];for(var n=0;n<data.order_List.length;n++){arr.push(data.order_List[i].order_id); }%>\
-                        <div class="js_get_order order_btn" ids="<%=JSON.stringify(arr)%>">一键接单</div>\
+                        <%var arr=[];for(var i=0;i<data.order_list.length;i++){arr.push(data.order_list[i].order_id); }%>\
+                        <div class="daily_total_rmb">\
+                            <span style="margin-right:40px"><%=util.format_date(date,"yyyy年MM月dd日")%>订单总金额：<i style="font-weight:bolder"><%=data.total_rmb%></i>元</span>\
+                           <span class="js_get_order order_btn" ids="<%=JSON.stringify(arr)%>">一键接单</div>\
+                        </div>\
                     <%}else{%>\
                         <p style="height:40px;font-weight:bolder;line-height:40px;color:#b3afaf;">无数据</p>\
                     <%}%>';
@@ -217,7 +218,8 @@
                     $(".js_this_company_day_bill").html("");
                     var node = $(util.parse(tpl_3, {
                         data: d.data,
-                        util: util
+                        util: util,
+                        date:this_date
                     })).appendTo(".js_this_company_day_bill");
                 }else{
                     alert(d.message);
