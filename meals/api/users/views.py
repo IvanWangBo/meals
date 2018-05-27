@@ -1,5 +1,6 @@
 #coding=utf-8
 import json
+from datetime import datetime
 
 from api.base_view import HttpApiBaseView
 from django.contrib import auth
@@ -57,6 +58,16 @@ class PersonnelListView(HttpApiBaseView):
             for department in departments:
                 department_map[department.id] = department.name
             results = []
+            user_id_list = [user.id for user in personnel_list]
+            all_orders = MealOrders.objects.filter(user_id__in=user_id_list)
+            to_settle_map = {}
+            for order in all_orders:
+                if order.create_time.year == datetime.now().year and order.create_time.month == datetime.now().month:
+                    if order.status == OrderStatus.accepted:
+                        if order.user_id in to_settle_map:
+                            to_settle_map[order.user_id] += order.total_price
+                        else:
+                            to_settle_map[order.user_id] = order.total_price
             for user in personnel_list:
                 results.append({
                     'user_id': user.id,
@@ -64,7 +75,7 @@ class PersonnelListView(HttpApiBaseView):
                     'department_name': department_map.get(user.department_id, ''),
                     'real_name': user.real_name,
                     'left_rmb': 0,
-                    'to_settle': 0
+                    'to_settle': to_settle_map.get(user.id, 0)
                 })
             return self.success_response(results, message=u"获取员工列表成功")
         except Exception as err:
