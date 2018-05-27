@@ -301,9 +301,13 @@ class OrderSummaryOfCompanyView(HttpApiBaseView):
                 company_id_rmb_map[order_info['company_id']] += order_info['total_price']
             result = []
             for company_id in company_id_rmb_map:
+                try:
+                    company_name = Companies.objects.get(id=company_id).company_name
+                except:
+                    company_name = u"公司不存在"
                 result.append({
                     'company_id': company_id,
-                    'company_name': Companies.objects.get(id=company_id).company_name,
+                    'company_name': company_name,
                     'total_rmb': company_id_rmb_map[company_id]
                 })
             return self.success_response(result, message=u"订单查询成功")
@@ -351,7 +355,7 @@ class OrderListOfCompanyView(HttpApiBaseView):
                     "time_range_name": time_range.name
                 })
                 total_rmb += order.total_price
-            return self.success_response({"total_rmb": total_rmb, "order_List": result}, message=u"订单查询成功")
+            return self.success_response({"total_rmb": total_rmb, "order_list": result}, message=u"订单查询成功")
         except Exception as err:
             return self.error_response({}, message=u"订单查询失败")
 
