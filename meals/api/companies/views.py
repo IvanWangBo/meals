@@ -297,6 +297,14 @@ class OrderSummaryOfCompanyView(HttpApiBaseView):
             for order_info in order_info_list:
                 company_id_rmb_map[order_info['company_id']] += order_info['total_price']
             result = []
+            company_list = Companies.objects.all()
+            for company in company_list:
+                if company.id not in company_id_rmb_map:
+                    result.append({
+                        'company_id': company.id,
+                        'company_name': company.company_name,
+                        'total_rmb': 0
+                    })
             for company_id in company_id_rmb_map:
                 try:
                     company_name = Companies.objects.get(id=company_id).company_name
