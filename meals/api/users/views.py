@@ -82,17 +82,16 @@ class AddPersonnelView(HttpApiBaseView):
     @company_required
     def post(self, request):
         try:
+            company_id = self.get_login_user_company_id(request)
             serializer = AddPersonnelSerializer(data=request.data)
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user_id = self.get_login_user_id(request)
-            self.check_user_company(user_id, data["company_id"])
             user = cacher.create_user(
                 user_name=data["user_name"],
                 password=data["password"],
                 real_name=data["real_name"],
-                company_id=data["company_id"],
+                company_id=company_id,
                 department_id=data["department_id"],
                 gender=data["gender"],
                 phone_number=data["phone_number"],

@@ -13,7 +13,6 @@ class UserListSerializer(serializers.Serializer):
 
 
 class AddPersonnelSerializer(serializers.Serializer):
-    company_id = serializers.IntegerField(allow_null=False)
     user_name = serializers.CharField(max_length=30, allow_blank=False)
     real_name = serializers.CharField(max_length=30, allow_blank=False)
     password = serializers.CharField(max_length=30, allow_blank=False)
