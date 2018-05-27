@@ -65,7 +65,7 @@ class AddCompanyView(HttpApiBaseView):
             phone_number = data["phone_number"]
             company_admin = cacher.create_user(admin_name, password, admin_type=UserAdminType.company, company_id=company.id, phone_number=phone_number)
             company.save()
-            return self.success_response({"company_id": company.id, "admin_name": admin_name, "password": password}, message=u'公司创建成功')
+            return self.success_response({"company_id": company.id, "admin_name": admin_name, "password": password}, message=u'公司创建成功，管理员账号: %s, 初始密码: %s， 请牢记初始密码，或可在账号管理重置管理员密码。' % (admin_name, password))
         except Exception as err:
             return self.error_response({}, message=u'公司创建失败')
 
