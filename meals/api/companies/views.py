@@ -108,11 +108,12 @@ class ResetCompanyAdminView(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            user_id = self.get_login_user_id(request)
+            user_id = data['user_id']
             user = Users.objects.get(id=user_id)
             if not user:
                 return self.error_response({}, u'该管理员不存在')
             user.set_password(data["password"])
+            user.save()
             return self.success_response({'password': data["password"]}, u"密码设置成功")
         except Exception as err:
             return self.error_response({}, u"密码重置失败")

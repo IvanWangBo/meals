@@ -132,6 +132,7 @@ class ResetUserView(HttpApiBaseView):
             if not user.check_password(data["password"]):
                 return self.error_response({}, message=u"原密码输入错误!")
             user.set_password(data["new_password"])
+            user.save()
             return self.success_response({}, message=u"用户密码修改成功")
         except Exception as err:
             return self.error_response({}, message=u"用户修改密码失败")

@@ -17,6 +17,7 @@ class AddCompanyAdminSerializer(serializers.Serializer):
 
 
 class ResetCompanyAdminSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField(allow_null=False)
     password = serializers.CharField(max_length=30, allow_blank=False)
 
 
