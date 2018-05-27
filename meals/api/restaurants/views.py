@@ -382,6 +382,14 @@ class OrderSummary(HttpApiBaseView):
             for order_info in order_info_list:
                 restaurant_id_rmb_map[order_info['restaurant_id']] += order_info['total_price']
             result = []
+            restaurants = Restaurants.objects.all()
+            for restaurant in restaurants:
+                if restaurant.id not in restaurant_id_rmb_map:
+                    result.append({
+                        'restaurant_id': restaurant.id,
+                        'restaurant_name': restaurant.name,
+                        'total_rmb': 0
+                    })
             for restaurant_id in restaurant_id_rmb_map:
                 result.append({
                     'restaurant_id': restaurant_id,
