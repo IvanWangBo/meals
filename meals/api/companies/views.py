@@ -305,6 +305,7 @@ class OrderSummaryOfCompanyView(HttpApiBaseView):
                     company_name = Companies.objects.get(id=company_id).company_name
                 except:
                     company_name = u"公司不存在"
+                    continue
                 result.append({
                     'company_id': company_id,
                     'company_name': company_name,
