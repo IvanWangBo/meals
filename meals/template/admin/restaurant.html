@@ -159,11 +159,19 @@
             <div class="btn js_close">取消</div>
         </div>
     </div>
-    <!--添加菜品弹窗-->
+    <!--删除菜品弹窗-->
     <div class="js_delete_dish_pop pop" style="display: none">
         <div class="pop_title">确认删除此菜品？</div>
         <div class="btns">
             <div class="btn js_delete_dish_btn">确定</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
+    <!--删除餐厅弹窗-->
+    <div class="js_delete_restaurant_pop pop" style="display: none">
+        <div class="pop_title">确认删除此餐厅？</div>
+        <div class="btns">
+            <div class="btn js_delete_restaurant_pop_btn">确定</div>
             <div class="btn js_close">取消</div>
         </div>
     </div>
@@ -181,6 +189,7 @@
         self.cover=$(".js_cover");
         self.add_time_rang_pop=$(".js_add_time_rang_pop");
         self.add_restaurant_pop=$(".js_add_restaurant_pop");
+        self.delete_restaurant_pop=$(".js_delete_restaurant_pop");
         self.add_dish_pop=$(".js_add_dish_pop");
         self.delete_dish_pop=$(".js_delete_dish_pop");
         self.time_ranges={};
@@ -189,6 +198,7 @@
         self.this_time_range_id="";
         self.this_resturant_id="";
         self.delete_dish_id="";
+        self.delete_restaurant_id="";
         self.upload_img_path="";
         self.edit_dish={
             "d_time":[],
@@ -446,31 +456,40 @@
                 alert("请填写完整信息");
             }
         });
-        //删除按钮，删除餐厅
+        //删除按钮，弹出删除餐厅弹窗
         self.body_node.delegate(".js_delete_restaurant_btn","click",function () {
+            if (self.is_loading) {
+                return;
+            }
+            self.delete_restaurant_id=$(this).closest(".js_restaurant").attr("rid");
+            self.cover.show();
+            self.delete_restaurant_pop.show();
+        });
+        //删除按钮，删除餐厅
+        self.body_node.delegate(".js_delete_restaurant_pop_btn","click",function () {
             if(self.is_loading){
                 return;
             }
-            var this_restaurant=$(this).closest(".js_restaurant");
-            var rid=this_restaurant.attr("rid");
             self.is_loading=true;
             self.load_node.show();
             $.ajax({
                 url: "/api/restaurant/delete/",
                 type: "POST",
                 data: {
-                    "restaurant_id": rid
+                    "restaurant_id": self.delete_restaurant_id
                 },
                 success: function (d) {
                     if(d.code==200){
-                        if(rid==self.this_resturant_id){
-                            this_restaurant.remove();
+                        if(self.delete_restaurant_id==self.this_resturant_id){
+                            $(".restaurant_"+self.delete_restaurant_id).remove();
                             $(".js_dish_list").html("");
                             self.this_resturant_id="";
                         }else {
-                            this_restaurant.remove();
+                            $(".restaurant_"+self.delete_restaurant_id).remove();
                             self.this_resturant_id="";
                         }
+                        self.cover.hide();
+                        self.delete_restaurant_pop.hide();
                         alert(d.message);
                     }else{
                         alert(d.message);
@@ -720,6 +739,7 @@
             self.add_restaurant_pop.attr("d_id",0);
             self.add_dish_pop.hide();
             self.delete_dish_pop.hide();
+            self.delete_restaurant_pop.hide();
             $(".put_1").val("");
             $(".put_2").val("");
             $(".put_3").val("");

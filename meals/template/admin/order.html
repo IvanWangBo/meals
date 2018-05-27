@@ -135,14 +135,14 @@
                                     <td><%=data.order_list[n].total_price%></td>\
                                     <td><%=data.order_list[n].restaurant_name%></td>\
                                     <td><%=data.order_list[n].time_range_name%></td>\
-                                    <td><%=data.order_list[n].status_name%></td>\
+                                    <td class="js_reset_status"><%=data.order_list[n].status_name%></td>\
                                 </tr>\
                             <%}%>\
                         </table>\
-                        <%var arr=[];for(var i=0;i<data.order_list.length;i++){arr.push(data.order_list[i].order_id); }%>\
+                        <%var arr=[];for(var i=0;i<data.order_list.length;i++){arr.push(data.order_list[i].order_id);}%>\
                         <div class="daily_total_rmb">\
                             <span style="margin-right:40px"><%=util.format_date(date,"yyyy年MM月dd日")%>订单总金额：<i style="font-weight:bolder"><%=data.total_rmb%></i>元</span>\
-                           <span class="js_get_order order_btn" ids="<%=JSON.stringify(arr)%>">一键接单</div>\
+                            <span class="js_get_order order_btn" ids="<%=JSON.stringify(arr)%>">一键接单</div>\
                         </div>\
                     <%}else{%>\
                         <p style="height:40px;font-weight:bolder;line-height:40px;color:#b3afaf;">无数据</p>\
@@ -246,6 +246,7 @@
                 },
                 success: function (d) {
                     if(d.code==200){
+                        $(".js_reset_status").html("已接单");
                         alert(d.message);
                     }else{
                         alert(d.message);
