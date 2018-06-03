@@ -13,6 +13,7 @@ from api.restaurants.models import TimeRange
 from api.users.models import MealOrders
 from api.decorators import admin_required
 from api.decorators import company_required
+from api.decorators import login_required
 from common.constants import OrderStatus
 from common.constants import UserAdminType
 from api.companies.serializers import AddCompanySerializer
@@ -410,3 +411,17 @@ class ModifyCompanyImageView(HttpApiBaseView):
             return self.success_response({}, u"修改公司图片成功！")
         except Exception as err:
             return self.error_response({}, u"修改公司图片失败！")
+
+
+class CompanyInfoView(HttpApiBaseView):
+    @login_required
+    def get(self, request):
+        company_id = self.get_login_user_company_id(request)
+        result = {'image_url': '', 'company_name': ''}
+        try:
+            company = Companies.objects.get(id=company_id)
+        except Exception as err:
+            return self.success_response(result, message=u"公司不存在")
+        result['company_name'] = company.company_name
+        result['image_url'] = company.image_url
+        return self.success_response(result)

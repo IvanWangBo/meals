@@ -55,4 +55,3 @@ class AcceptOrdersSerializer(serializers.Serializer):
 class ModifyCompanyImageSerializer(serializers.Serializer):
     image_url = serializers.CharField(allow_blank=False, default='')
 
-
