@@ -75,7 +75,8 @@ class PersonnelListView(HttpApiBaseView):
                     'department_name': department_map.get(user.department_id, ''),
                     'real_name': user.real_name,
                     'left_rmb': 0,
-                    'to_settle': to_settle_map.get(user.id, 0)
+                    'to_settle': to_settle_map.get(user.id, 0),
+                    'admin_type': user.admin_type
                 })
             return self.success_response(results, message=u"获取员工列表成功")
         except Exception as err:
