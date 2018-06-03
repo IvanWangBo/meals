@@ -31,7 +31,7 @@
         <div class="js_secs secs">
             <div class="js_sec js_sec_1 sec">
                 <div class="selector" style="margin-bottom: -5px;">
-                    <span class="date">请选择查询周期：<input type="month" name="date" id="year_month"></span>
+                    <span class="date">请选择查询周期：<input type="text" name="date" id="year_month"></span>
                     <div class="js_search_btn search_btn">查询</div>
                 </div>
                 <div class="js_company_total_container result_container">
@@ -43,7 +43,7 @@
             </div>
             <div class="js_sec js_sec_2 sec" style="display: none">
                 <div class="selector">
-                    <span class="date" style="margin-left: 20px;">请选择查询周期：<input type="month" name="date" id="this_bill_date"></span>
+                    <span class="date" style="margin-left: 20px;">请选择查询周期：<input type="text" name="date" id="this_bill_date"></span>
                     <div class="js_total_bill_btn search_btn">查询</div>
                 </div>
                 <div class="js_total_restaurant_bill">
@@ -59,6 +59,18 @@
 
 {% block js_block %}
 <script type="text/javascript">
+    $(function () {
+        $("#year_month").datepicker({
+            dateFormat: 'yy-mm',//日期格式
+            monthNames: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+            dayNamesMin: ['日','一','二','三','四','五','六']
+        });
+        $("#this_bill_date").datepicker({
+            dateFormat: 'yy-mm-dd',//日期格式
+            monthNames: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+            dayNamesMin: ['日','一','二','三','四','五','六']
+        })
+    });
     var params=util.get_url_strs(window.location.href);
     params.common_id=1;
     function admin_order(){
@@ -94,7 +106,7 @@
                                     <%}%>\
                                 </select>\
                             </span>\
-                            <span style="margin-left: 30px;">请选择查询日期：<input type="date" name="search_date" id="day_bill_date"></span>\
+                            <span style="margin-left: 30px;">请选择查询日期：<input type="text" name="search_date" id="day_bill_date"></span>\
                             <div class="js_company_day_bill_btn search_btn">查询</div>\
                         </div>\
                     <%}else{%>\
@@ -157,6 +169,11 @@
                     data: d.data,
                     util: util
                 })).appendTo(".js_company_total_container");
+                $("#day_bill_date").datepicker({
+                    dateFormat: 'yy-mm-dd',//日期格式
+                    monthNames: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+                    dayNamesMin: ['日','一','二','三','四','五','六']
+                })
             }else{
                 alert(d.message);
             }
@@ -186,6 +203,11 @@
                         data: d.data,
                         util: util
                     })).appendTo(".js_company_total_container");
+                    $("#day_bill_date").datepicker({
+                        dateFormat: 'yy-mm-dd',//日期格式
+                        monthNames: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'],
+                        dayNamesMin: ['日','一','二','三','四','五','六']
+                    })
                 }else{
                     alert(d.message);
                 }

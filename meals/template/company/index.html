@@ -110,7 +110,11 @@
                                     <td><%=data[n].real_name%></td>\
                                     <td><%=data[n].left_rmb%></td>\
                                     <td><%=data[n].to_settle%></td>\
+                                    <%if(data[n].admin_type!=3){%>\
                                     <td><a href="/company/order/?user_id=<%=data[n].user_id%>" style="background: green;color:#fff;padding:3px;border:1px solid #000;border-radius: 3px;">员工订单详情</a></td>\
+                                    <%}else{%>\
+                                    <td></td>\
+                                    <%}%>\
                                 </tr>\
                             <%}%>\
                         </table>';

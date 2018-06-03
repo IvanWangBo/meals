@@ -39,6 +39,13 @@
             <div class="btn js_close">确定</div>
         </div>
     </div>
+    <div class="js_cancel_order_pop cancel_pop" style="display: none">
+        <div class="pop_title">确认取消此订单？</div>
+        <div class="btns">
+            <div class="btn js_cancel_order_btn">确认</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
@@ -49,9 +56,12 @@
         self.body_node=$("body");
         self.load_node=$(".loading");
         self.detail_pop=$(".js_detail_pop");
+        self.cancel_order_pop=$(".js_cancel_order_pop");
         self.is_loading=false;
         self.cover=$(".js_cover");
         self.user_id="";
+        self.cancel_order_id='';
+        self.cancel_order_list="";
         var tpl_1='<table>\
                             <tr>\
                                 <th>日期</th>\
@@ -124,28 +134,40 @@
             }
             self.cover.hide();
             self.detail_pop.hide();
+            self.cancel_order_pop.hide();
+            self.cancel_order_id="";
+            self.cancel_order_list="";
             $(".js_detail_outer").html("");
         });
-        //点击关闭按钮，关闭弹窗
+        //点击取消按钮，弹出确认取消弹窗
         self.body_node.delegate(".js_cancel_order","click",function () {
             if (self.is_loading) {
                 return;
             }
+            self.cover.show();
+            self.cancel_order_pop.show();
+            self.cancel_order_id=$(this).attr("o_id");
+            self.cancel_order_list=$(this).closest("tr");
+        });
+        //点击确认按钮，取消订单
+        self.body_node.delegate(".js_cancel_order_btn","click",function () {
             self.is_loading=true;
             self.load_node.show();
-            var o_id=$(this).attr("o_id");
-            var this_list=$(this).closest("tr");
             $.ajax({
                 url: "/api/user/meals/cancel/",
                 type: "POST",
                 data: {
-                    "order_id": o_id,
+                    "order_id": self.cancel_order_id,
                     "user_id":self.user_id
                 },
                 success: function (d) {
                     if(d.code==200){
                         //清除添加记忆
-                        this_list.find(".js_change_status").html("已取消");
+                        self.cancel_order_list.find(".js_change_status").html("已取消");
+                        self.cover.hide();
+                        self.cancel_order_pop.hide();
+                        self.cancel_order_id="";
+                        self.cancel_order_list="";
                         alert(d.message);
                     }else{
                         alert(d.message);
@@ -154,7 +176,7 @@
                     self.load_node.hide();
                 }
             })
-        });
+        })
     }
     new order();
 </script>

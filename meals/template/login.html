@@ -9,13 +9,17 @@
 
 
 {% block body %}
-    <div id="login">
-        <h1>Login</h1>
-        <input type="text" required="required" placeholder="用户名" id="user_name">
-        <input type="password" required="required" placeholder="密码" id="password">
-        <button class="button" type="submit" id="button">登录</button>
+    <div class="whole">
+        <div class="img_outer">
+            <div class="img"></div>
+        </div>
+        <div id="login">
+            <h1>账号登录</h1>
+            <input type="text" required="required" placeholder="用户名" id="user_name">
+            <input type="password" required="required" placeholder="密码" id="password">
+            <button class="button" type="submit" id="button">登录</button>
+        </div>
     </div>
-
 {% endblock %}
 
 {% block js_block %}

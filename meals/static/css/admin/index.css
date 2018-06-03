@@ -139,6 +139,7 @@ table td .reset_pwd:active{
     background-color: lightblue;
     border-radius: 5px;
     margin-top: 20px;
+    border:1px solid #ccc;
 }
 .pop{
     position: fixed;
@@ -188,6 +189,7 @@ table td .reset_pwd:active{
     background-color: #000;
     color: #fff;
     border-radius: 5px;
+    border:1px solid #ccc;
     cursor: pointer;
 }
 .pop .btns .btn:active{

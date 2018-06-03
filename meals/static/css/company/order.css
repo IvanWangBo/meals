@@ -146,3 +146,11 @@ input,select{
     height: 20px;
     border-radius: 3px;
 }
+.no_data{
+    padding: 20px 10px;
+    font-size: 16px;
+    font-weight: bolder;
+    color: #ccc;
+    width: 100%;
+    text-align: center;
+}

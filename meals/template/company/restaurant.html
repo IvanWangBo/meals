@@ -178,7 +178,7 @@
                 }
             });
         });
-        //下单
+        //启用/停用餐厅
         self.body_node.delegate(".js_use","click",function () {
             if(self.is_loading){
                 return;
@@ -193,7 +193,7 @@
                 },
                 success: function (d) {
                     if(d.code==200){
-                        if(is_enabled==0){
+                        if(is_enabled==1){
                             $(".js_use_font").html("当前餐厅状态：已启用");
                             $(".js_disable").show();
                             $(".js_enable").hide();
