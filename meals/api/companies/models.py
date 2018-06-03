@@ -6,6 +6,7 @@ class Companies(models.Model):
     company_name = models.CharField(max_length=128, blank=False)
     province = models.CharField(max_length=30, blank=False, default='Beijing')
     address = models.CharField(max_length=256, blank=False, default='')
+    image_url = models.CharField(max_length=256, blank=False, default='')
     is_enabled = models.IntegerField(default=1, blank=False)
     create_time = models.DateTimeField(auto_now_add=True, blank=False)
 

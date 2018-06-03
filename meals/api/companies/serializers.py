@@ -50,3 +50,9 @@ class OrderDetailsSerializer(serializers.Serializer):
 
 class AcceptOrdersSerializer(serializers.Serializer):
     order_id_list = serializers.CharField(max_length=2000, allow_blank=False)
+
+
+class ModifyCompanyImageSerializer(serializers.Serializer):
+    image_url = serializers.CharField(allow_blank=False, default='')
+
+

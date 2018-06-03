@@ -20,6 +20,7 @@ from common.constants import UserAdminType
 from common.constants import OrderStatus
 from api.decorators import login_required
 from api.decorators import company_required
+from api.companies.models import Companies
 
 
 class LoginView(HttpApiBaseView):
@@ -35,13 +36,14 @@ class LoginView(HttpApiBaseView):
         data = serializer.data
         user = auth.authenticate(username=data["user_name"], password=data["password"])
         # 用户名或密码错误的话 返回None
-        print user
+        company = Companies.objects.get(id=user.company_id)
         if user:
             auth.login(request, user)
             return self.success_response(data={
                 'admin_type': user.admin_type,
                 'user_id': user.id,
-                'company_id': user.company_id
+                'company_id': user.company_id,
+                'compang_image_url': company.image_url
             }, message=u"登录成功")
         else:
             return self.error_response(data={}, message=u"用户名或密码错误")
