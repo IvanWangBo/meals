@@ -51,3 +51,6 @@ class Cacher(object):
             self.dal.update('order_id', {'now_id': now_id + 1}, where={'now_id': now_id})
         self.dal.commit()
         return now_id
+
+    def get_screen_order_id(self, order_id, user_id, company_id, year, month, day, time_range):
+        return '%2d%2d%2d%2d%d%3d%4d' % (company_id, year % 100, month, day, time_range, user_id, order_id)

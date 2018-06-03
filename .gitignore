@@ -10,3 +10,4 @@ meals/.DS_Store
 pip-selfcheck.json
 *.xml
 meals/uploads
+log/*

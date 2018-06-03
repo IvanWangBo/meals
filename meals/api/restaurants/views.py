@@ -10,6 +10,7 @@ from api.restaurants.models import TimeRange
 from api.restaurants.models import Restaurants
 from api.users.models import MealOrders
 from common.constants import OrderStatus
+from common.utils import log_error
 from api.companies.models import RestaurantRelation
 from api.restaurants.serializers import DeleteRestaurantSerializer
 from api.restaurants.serializers import AddDishSerializer
@@ -49,6 +50,7 @@ class AddDishView(HttpApiBaseView):
             )
             dish.save()
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"新建菜品失败")
         else:
             return self.success_response({
@@ -77,6 +79,7 @@ class RestaurantRelationView(HttpApiBaseView):
                 is_enabled = 0
             return self.success_response({'is_enabled': is_enabled}, message=u"查询成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"查询失败")
 
     @company_required
@@ -98,6 +101,7 @@ class RestaurantRelationView(HttpApiBaseView):
                 relation.save()
             return self.success_response({}, u"修改成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"修改失败")
 
 
@@ -129,6 +133,7 @@ class DishesListView(HttpApiBaseView):
                     })
             return self.success_response(right_dishes, message=u"查询菜单成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"查询菜单失败")
 
 
@@ -147,6 +152,7 @@ class TimeRangeListView(HttpApiBaseView):
                 })
             return self.success_response(result, message=u"获取用餐时段成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"获取用餐时段失败")
 
 
@@ -164,6 +170,7 @@ class AddTimeRangeView(HttpApiBaseView):
             time_range = TimeRange.objects.create(name=name, start_time=start_time, end_time=end_time)
             time_range.save()
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"新建用餐时段失败")
         else:
             return self.success_response({'time_range_id': time_range.id, 'start_time': start_time, 'end_time': end_time}, message=u"新建用餐时间段成功")
@@ -187,6 +194,7 @@ class EnableDishTimeView(HttpApiBaseView):
                 dish.support_times = json.dumps(support_times)
                 dish.save()
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"应用用餐时段失败")
         else:
             return self.success_response({
@@ -234,6 +242,7 @@ class ModifyDishView(HttpApiBaseView):
             }, u"修改菜品信息成功!")
 
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"修改菜品信息失败")
 
 
@@ -255,6 +264,7 @@ class DisableDishTimeView(HttpApiBaseView):
                 dish.support_times = json.dumps(support_times)
                 dish.save()
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"取消用餐时段失败")
         else:
             return self.success_response({
@@ -280,6 +290,7 @@ class AddRestaurantView(HttpApiBaseView):
             restaurant = Restaurants.objects.create(name=name, address=address, phone_number=phone_number, is_enabled=1)
             restaurant.save()
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"创建餐厅失败")
         else:
             return self.success_response({
@@ -315,6 +326,7 @@ class RestaurantListView(HttpApiBaseView):
             return self.success_response(results, message=u"获取餐厅列表成功")
 
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"获取餐厅列表失败")
 
 
@@ -332,6 +344,7 @@ class DeleteRestaurantView(HttpApiBaseView):
             restaurant.save()
             return self.success_response({}, message=u"删除餐厅成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"删除餐厅失败")
 
 
@@ -349,6 +362,7 @@ class DeleteDishView(HttpApiBaseView):
             dish.save()
             return self.success_response({}, message=u"删除菜品成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"删除菜品失败")
 
 
@@ -398,4 +412,5 @@ class OrderSummary(HttpApiBaseView):
                 })
             return self.success_response(result, message=u"订单查询成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"订单查询失败")
