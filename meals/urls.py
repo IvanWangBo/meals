@@ -21,6 +21,7 @@ from api.companies.views import RestaurantOrdersDetailsView
 from api.companies.views import OrderSummaryOfCompanyView
 from api.companies.views import OrderListOfCompanyView
 from api.companies.views import AcceptOrdersView
+from api.companies.views import ModifyCompanyImageView
 from api.restaurants.views import AddDishView
 from api.restaurants.views import DeleteDishView
 from api.restaurants.views import TimeRangeListView
@@ -147,4 +148,7 @@ urlpatterns = [
 
     # 一键接单
     url(r"api/company/orders/accept/$", AcceptOrdersView.as_view()),
+
+    # 修改公司图片
+    url(r"api/company/modify_image/$", ModifyCompanyImageView.as_view()),
 ]

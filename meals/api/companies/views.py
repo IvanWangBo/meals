@@ -24,6 +24,7 @@ from api.companies.serializers import RestaurantOrdersDetailsSerializer
 from api.companies.serializers import OrderSummarySerializer
 from api.companies.serializers import OrderDetailsSerializer
 from api.companies.serializers import AcceptOrdersSerializer
+from api.companies.serializers import ModifyCompanyImageSerializer
 from api.instances import cacher
 
 
@@ -384,3 +385,23 @@ class AcceptOrdersView(HttpApiBaseView):
             return self.success_response({}, u"接单成功")
         except Exception as err:
             return self.error_response({}, u"接单失败, error: %s" % err)
+
+class ModifyCompanyImageView(HttpApiBaseView):
+    @company_required
+    def post(self, request):
+        try:
+            serializer = ModifyCompanyImageSerializer(data=request.data)
+            company_id = self.get_login_user_company_id(request)
+            if not serializer.is_valid():
+                return self.serializer_invalid_response(serializer)
+            data = serializer.data
+            image_url = data['image_url']
+            try:
+                company = Companies.objects.get(id=company_id)
+            except Exception as err:
+                return self.error_response({}, u"您所在的公司不存在！")
+            company.image_url = image_url
+            company.save()
+            return self.success_response({}, u"修改公司图片成功！")
+        except Exception as err:
+            return self.error_response({}, u"修改公司图片失败！")
