@@ -61,7 +61,7 @@ class AddCompanyView(HttpApiBaseView):
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
             company = Companies.objects.create(company_name=data["company_name"], province=data["province"], address=data["address"], is_enabled=1)
-            admin_name = 'admin%03d' % company.id
+            admin_name = 'BJ%03d' % company.id
             password = random.randint(10000000, 99999999)
             phone_number = data["phone_number"]
             company_admin = cacher.create_user(admin_name, password, admin_type=UserAdminType.company, company_id=company.id, phone_number=phone_number, real_name=u"管理员")
@@ -335,6 +335,9 @@ class OrderListOfCompanyView(HttpApiBaseView):
             company_id = data["company_id"]
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
+            user_id_name_map = {}
+            for user in users:
+                user_id_name_map[user.id] = user.real_name
             all_orders = MealOrders.objects.filter(user_id__in=user_id_list, status__in=[OrderStatus.accepted, OrderStatus.created])
             orders = []
             for order in all_orders:
@@ -349,6 +352,8 @@ class OrderListOfCompanyView(HttpApiBaseView):
                 time_range = TimeRange.objects.get(id=order.time_range)
                 result.append({
                     "order_id": order.order_id,
+                    "user_id": order.user_id,
+                    "user_real_name": user_id_name_map.get(order.user_id, ""),
                     "status_name": OrderStatus.map.get(order.status, ""),
                     "status": order.status,
                     "dish_id": order.dish_id,
