@@ -132,6 +132,8 @@
                         <table class="js_this_bill">\
                             <tr>\
                                 <th>订单号</th>\
+                                <th>员工姓名</th>\
+                                <th>员工ID</th>\
                                 <th>菜名</th>\
                                 <th>份数</th>\
                                 <th>总价</th>\
@@ -142,6 +144,8 @@
                             <%for(var n=0;n<data.order_list.length;n++){%>\
                                 <tr>\
                                     <td><%=data.order_list[n].order_id%></td>\
+                                    <td><%=data.order_list[n].user_real_name%></td>\
+                                    <td><%=data.order_list[n].user_id%></td>\
                                     <td><%=data.order_list[n].dish_name%></td>\
                                     <td><%=data.order_list[n].dish_count%></td>\
                                     <td><%=data.order_list[n].total_price%></td>\

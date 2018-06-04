@@ -66,6 +66,7 @@
                             <tr>\
                                 <th>日期</th>\
                                 <th>订单编号</th>\
+                                <th>用餐时段</th>\
                                 <th>订单详情</th>\
                                 <th>订单总价</th>\
                                 <th>订单状态</th>\
@@ -74,6 +75,7 @@
                                 <tr>\
                                     <td><%=util.format_date(data[n].order_list[0].create_time,"yyyy-MM-dd")%></td>\
                                     <td><%=data[n].order_id%></td>\
+                                    <td><%=data[n].time_range_name%></td>\
                                     <td><span class="js_order_detail order_detail" o_list=<%=JSON.stringify(data[n].order_list)%> >查看详情</span></td>\
                                     <td><%=data[n].order_price%></td>\
                                     <td class="js_change_status">\

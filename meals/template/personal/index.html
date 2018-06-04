@@ -23,6 +23,7 @@
     </div>
     <div class="js_main main">
         <div class="line"></div>
+        <div class="js_notice"></div>
         <!--展示区-->
         <div class="js_secs secs">
             <!--用餐时间段-->
@@ -82,7 +83,7 @@
         }
         var ly = new lazyload(condition);
 
-        var tpl_1='<div class="js_time_range_list time_range_list">\
+        var tpl_1=' <div class="js_time_range_list time_range_list">\
                         <%for(var i=0;i<data.length;i++){%>\
                             <div class="js_time_range time_range time_range_<%=data[i].time_range_id%>" tid="<%=data[i].time_range_id%>"><%=data[i].name%></div>\
                         <%}%>\
@@ -128,6 +129,8 @@
                     data: d.data,
                     util: util
                 })).appendTo(".js_list_1");
+                var ele='<p style="padding-top: 15px;font-weight: bolder;font-size: 16px;">注意：您目前预定的是明天('+util.format_date(new Date().getTime()+24*60*60*1000,"yyyy年MM月dd日")+')的餐品</p>'
+                $(ele).appendTo(".js_notice");
             }else{
                 alert(d.message);
             }
