@@ -14,7 +14,7 @@
 <div class="whole">
     <div class="top_banner">
         <div class="top">
-            <i></i>企业团餐管理系统
+            <i class="js_logo"></i>企业团餐管理系统
         </div>
     </div>
     <div class="top_tabs">
@@ -120,6 +120,20 @@
                             <i class="js_plus icons" style="margin-left: 3px;" d_price="<%=data.price%>" d_id="<%=data.dish_id%>">+</i>\
                         </div>\
                     </div>';
+        //获取公司logo
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/company/info/?"+util.format(self.params),function (d) {
+            if(d.code==200){
+                if(d.data.image_url){
+                    $(".js_logo").html('<img src="'+d.data.image_url+'" style="width: 100%;height: 100%;">');
+                }
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
         //初始化用餐时段列表
         self.is_loading=true;
         self.load_node.show();

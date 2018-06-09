@@ -12,7 +12,7 @@
 <!--logo头部-->
 <div class="whole">
     <div class="top">
-        <i></i>企业团餐管理系统
+        <i class="js_logo"></i>企业团餐管理系统
     </div>
     <div class="top_tabs">
         <a class="js_top_tab top_tab" href="/company/index">账号管理</a>
@@ -156,6 +156,20 @@
                 self.load_node.hide();
             });
         }
+        //获取公司logo
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/company/info/?"+util.format(self.params),function (d) {
+            if(d.code==200){
+                if(d.data.image_url){
+                    $(".js_logo").html('<img src="'+d.data.image_url+'" style="width: 100%;height: 100%;">');
+                }
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
         self.body_node.delegate(".js_search_btn","click",function () {
             if(self.is_loading){
                 return;
