@@ -318,9 +318,7 @@ class RestaurantListView(HttpApiBaseView):
                 has_orders = MealOrders.objects.filter(order_date=order_date, time_range=time_range_id,
                                                        status=OrderStatus.created)
                 if has_orders:
-                    can_order = 0
-                else:
-                    can_order = 1
+                    return self.error_response([], message=u"该时间段已点过餐，请在【订单管理】确认，取消后可再次点餐！")
                 for dish in dishes:
                     support_times = json.loads(dish.support_times)
                     for t in support_times:
@@ -335,9 +333,7 @@ class RestaurantListView(HttpApiBaseView):
                             restaurants.append(restaurant)
             else:
                 restaurants = all_restaurants
-                can_order = 0
             results = [{
-                'can_order': can_order,
                 'restaurant_id': restaurant.id,
                 'restaurant_name': restaurant.name,
                 'address': restaurant.address,
