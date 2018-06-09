@@ -1,5 +1,7 @@
 #coding=utf-8
 import json
+from datetime import datetime
+from datetime import timedelta
 
 from api.base_view import HttpApiBaseView
 from api.decorators import admin_required
@@ -11,6 +13,7 @@ from api.restaurants.models import Restaurants
 from api.users.models import MealOrders
 from common.constants import OrderStatus
 from common.utils import log_error
+from common.utils import date_to_str
 from api.companies.models import RestaurantRelation
 from api.restaurants.serializers import DeleteRestaurantSerializer
 from api.restaurants.serializers import AddDishSerializer
@@ -311,6 +314,13 @@ class RestaurantListView(HttpApiBaseView):
                 time_range_id = request.GET.get('time_range_id', 0)
                 dishes = Dishes.objects.filter(is_enabled=1)
                 flag_map = {}
+                order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
+                has_orders = MealOrders.objects.filter(order_date=order_date, time_range=time_range_id,
+                                                       status=OrderStatus.created)
+                if has_orders:
+                    can_order = 0
+                else:
+                    can_order = 1
                 for dish in dishes:
                     support_times = json.loads(dish.support_times)
                     for t in support_times:
@@ -325,7 +335,9 @@ class RestaurantListView(HttpApiBaseView):
                             restaurants.append(restaurant)
             else:
                 restaurants = all_restaurants
+                can_order = 0
             results = [{
+                'can_order': can_order,
                 'restaurant_id': restaurant.id,
                 'restaurant_name': restaurant.name,
                 'address': restaurant.address,

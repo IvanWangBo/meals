@@ -177,11 +177,6 @@ class MealsOrderView(HttpApiBaseView):
                                                          datetime.now().month, datetime.now().day, time_range)
             order_total_price = 0
             order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
-            has_orders = MealOrders.objects.filter(order_date=order_date, time_range=time_range)
-            if has_orders:
-                can_order = 0
-            else:
-                can_order = 1
             for order in order_list:
                 dish_id = order['dish_id']
                 count = order['count']
@@ -202,7 +197,6 @@ class MealsOrderView(HttpApiBaseView):
                 )
                 order.save()
             return self.success_response({
-                'can_order': can_order,
                 'user_id': user_id,
                 'order_id': order_id,
                 'screen_order_id': screen_order_id,
