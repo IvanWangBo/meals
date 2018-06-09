@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}
+公司-logo管理
+{% endblock %}
+
+{% block css_block %}
+<link rel="stylesheet" type="text/css" href="/static/css/company/logo.css"/>
+
+{% endblock %}
+
+
+{% block body %}
+<!--logo头部-->
+<div class="whole">
+    <div class="top">
+        <i></i>企业团餐管理系统
+    </div>
+    <div class="top_tabs">
+        <a class="js_top_tab top_tab " href="/company/index">账号管理</a>
+        <a class="js_top_tab top_tab" href="/company/restaurant">餐厅管理</a>
+        <a class="js_top_tab top_tab" href="/company/order">订单管理</a>
+        <a class="js_top_tab top_tab chosen_1">logo管理</a>
+    </div>
+    <div class="js_main main">
+        <div class="line"></div>
+        <form id="js_upload_img" class="upload_img" enctype="multipart/form-data" method="post" >
+            <input class="put_9" type="file" required="required" name="image">
+            <button class="js_submit submit_button" id="image_button">上传图片</button>
+        </form>
+    </div>
+    <div class="loading" style="display: none"></div>
+    <div class="js_cover cover" style="display: none"></div>
+    <div class="js_pop pop" style="display: none">
+        <div class="pop_title">添加部门</div>
+        <div class="put_in">
+            请输入部门名字：<input class="put_1" type="text" required="required" placeholder="请输入">
+        </div>
+        <div class="btns">
+            <div class="btn js_add_department_btn">确认</div>
+            <div class="btn js_close">取消</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js_block %}
+<script type="text/javascript">
+    var params=util.get_url_strs(window.location.href);
+    params.common_id=1;
+    function company_logo(){
+        var self=this;
+        self.params=params;
+        self.body_node=$("body");
+        self.load_node=$(".loading");
+        self.is_loading=false;
+        self.cover=$(".js_cover");
+        self.pop=$(".js_pop");
+
+
+        //上传图片方法
+        self.body_node.delegate(".js_submit","click",function (e) {
+            e.preventDefault();
+            var form = document.getElementById('js_upload_img'),
+                    formData = new FormData(form);
+            if(self.is_loading){
+                return;
+            }
+            self.is_loading=true;
+            self.load_node.show();
+            $.ajax({
+                url: "/api/opt/upload_file/",
+                type: "POST",
+                data: formData,
+                processData:false,
+                contentType:false,
+                success: function (d) {
+                    if(d.code==200){
+                        self.upload_img_path=d.data.path;
+                        //修改公司logo
+                        $.ajax({
+                            url: "api/company/modify_image/",
+                            type: "POST",
+                            data: {
+                                "image_url":d.data.path
+                            },
+                            success: function (d) {
+                                if(d.code==200){
+                                    window.location.reload();
+                                }else{
+                                    alert(d.message);
+                                }
+                                self.is_loading=false;
+                                self.load_node.hide();
+                            }
+                        })
+                    }else{
+                        alert(d.message);
+                    }
+                }
+            })
+        });
+
+
+    }
+    new company_index();
+</script>
+{% endblock %}

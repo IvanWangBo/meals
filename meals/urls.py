@@ -61,6 +61,7 @@ urlpatterns = [
     url(r'^company/index/$', TemplateView.as_view(template_name="company/index.html"), name="company_index_page"),
     url(r'^company/restaurant/$', TemplateView.as_view(template_name="company/restaurant.html"), name="company_restaurant_page"),
     url(r'^company/order/$', TemplateView.as_view(template_name="company/order.html"), name="company_order_page"),
+    url(r'^company/logo/$', TemplateView.as_view(template_name="company/logo.html"), name="company_logo_page"),
 
     url(r'^restaurant/index/$', TemplateView.as_view(template_name="restaurant/index.html"), name="restaurant_index_page"),
 
