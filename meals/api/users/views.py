@@ -242,34 +242,22 @@ class MealsOrderList(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            search_user_id = 0
+            real_name = data["real_name"]
             if data["user_id"] == -9:
-                user_id = self.get_login_user_id(request)
+                if real_name:
+                    users = Users.objects.filter(real_name=real_name)
+                    user_id_list = [user.id for user in users]
+                else:
+                    user_id_list = [self.get_login_user_id(request)]
             else:
-                search_user_id = 1
-                user_id = data["user_id"]
+                user_id_list = [data["user_id"]]
             status = data["status"]
             year = data["year"]
             month = data["month"]
-            real_name = data["real_name"]
             if status == -9:
-                if search_user_id and real_name:
-                    all_orders = MealOrders.objects.filter(real_name=real_name)
-                elif search_user_id:
-                    all_orders = MealOrders.objects.filter(user_id=user_id)
-                elif real_name:
-                    all_orders = MealOrders.objects.filter(real_name=real_name)
-                else:
-                    all_orders = []
+                all_orders = MealOrders.objects.filter(user_id__in=user_id_list)
             else:
-                if search_user_id and real_name:
-                    all_orders = MealOrders.objects.filter(real_name=real_name, status=status)
-                elif search_user_id:
-                    all_orders = MealOrders.objects.filter(user_id=user_id, status=status)
-                elif real_name:
-                    all_orders = MealOrders.objects.filter(real_name=real_name, status=status)
-                else:
-                    all_orders = []
+                all_orders = MealOrders.objects.filter(user_id=user_id_list, status=status)
             orders = []
             for order in all_orders:
                 if order.create_time.month == month and order.create_time.year == year:
