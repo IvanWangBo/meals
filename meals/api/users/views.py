@@ -172,16 +172,16 @@ class MealsOrderView(HttpApiBaseView):
             company_id = self.get_login_user_company_id(request)
             order_list = json.loads(data['order_list'])
             time_range = data["time_range"]
+            order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
+            has_orders = MealOrders.objects.filter(user_id=user_id, order_date=order_date, time_range=time_range,
+                                                   status=OrderStatus.created)
+            if has_orders:
+                return self.error_response([], message=u"该时间段已点过餐，请在【订单管理】确认，取消后可再次点餐！")
             order_id = cacher.get_order_id()
             screen_order_id = cacher.get_screen_order_id(order_id, user_id, company_id, datetime.now().year,
                                                          datetime.now().month, datetime.now().day, time_range)
             order_total_price = 0
             order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
-            has_orders = MealOrders.objects.filter(order_date=order_date, time_range=time_range)
-            if has_orders:
-                can_order = 0
-            else:
-                can_order = 1
             for order in order_list:
                 dish_id = order['dish_id']
                 count = order['count']
@@ -202,7 +202,6 @@ class MealsOrderView(HttpApiBaseView):
                 )
                 order.save()
             return self.success_response({
-                'can_order': can_order,
                 'user_id': user_id,
                 'order_id': order_id,
                 'screen_order_id': screen_order_id,
@@ -249,7 +248,7 @@ class MealsOrderList(HttpApiBaseView):
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
             real_name = data["real_name"]
-            if not data["user_id"]:
+            if not data["user_id"] or data["user_id"] == -9:
                 if real_name:
                     users = Users.objects.filter(real_name=real_name)
                     user_id_list = [user.id for user in users]

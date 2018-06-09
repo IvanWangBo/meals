@@ -1,5 +1,7 @@
 #coding=utf-8
 import json
+from datetime import datetime
+from datetime import timedelta
 
 from api.base_view import HttpApiBaseView
 from api.decorators import admin_required
@@ -11,6 +13,7 @@ from api.restaurants.models import Restaurants
 from api.users.models import MealOrders
 from common.constants import OrderStatus
 from common.utils import log_error
+from common.utils import date_to_str
 from api.companies.models import RestaurantRelation
 from api.restaurants.serializers import DeleteRestaurantSerializer
 from api.restaurants.serializers import AddDishSerializer
@@ -309,8 +312,14 @@ class RestaurantListView(HttpApiBaseView):
             all_restaurants = Restaurants.objects.filter(is_enabled=1)
             if is_order:
                 time_range_id = request.GET.get('time_range_id', 0)
+                user_id = self.get_login_user_id(request)
                 dishes = Dishes.objects.filter(is_enabled=1)
                 flag_map = {}
+                order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
+                has_orders = MealOrders.objects.filter(user_id=user_id, order_date=order_date, time_range=time_range_id,
+                                                       status=OrderStatus.created)
+                if has_orders:
+                    return self.error_response([], message=u"该时间段已点过餐，请在【订单管理】确认，取消后可再次点餐！")
                 for dish in dishes:
                     support_times = json.loads(dish.support_times)
                     for t in support_times:
@@ -331,6 +340,8 @@ class RestaurantListView(HttpApiBaseView):
                 'address': restaurant.address,
                 'phone_number': restaurant.phone_number
             } for restaurant in restaurants]
+            if not results:
+                return self.error_response(results, message=u"该时间段没有可供选择的餐厅")
             return self.success_response(results, message=u"获取餐厅列表成功")
 
         except Exception as err:
