@@ -243,7 +243,7 @@ class MealsOrderList(HttpApiBaseView):
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
             real_name = data["real_name"]
-            if not data["user_id"]:
+            if not data["user_id"] or data["user_id"] == -9:
                 if real_name:
                     users = Users.objects.filter(real_name=real_name)
                     user_id_list = [user.id for user in users]
