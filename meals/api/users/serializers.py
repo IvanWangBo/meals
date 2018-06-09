@@ -37,6 +37,7 @@ class CancelMealsOrderSerializer(serializers.Serializer):
 
 class MealsOrderListSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(allow_null=True, default=-9)
+    real_name = serializers.CharField(allow_null=True, default='', max_length=60)
     year = serializers.IntegerField(allow_null=True, default=datetime.now().year)
     month = serializers.IntegerField(allow_null=True, default=datetime.now().month)
     status = serializers.IntegerField(allow_null=True, default=-9)

@@ -32,6 +32,7 @@
             <div class="js_sec js_sec_1 sec">
                 <div class="selector">
                     <span class="user">请输入员工ID：<input id="user_id" type="text" name="user_id"></span>
+                    <span class="user">请输入员工姓名：<input id="real_name" type="text" name="real_name"></span>
                     <span class="date" style="margin-left: 20px;">请选择查询周期：<input type="text" name="date" id="year_month"></span>
                     <div class="js_search_btn search_btn">查询</div>
                 </div>
@@ -175,11 +176,13 @@
                 return;
             }
             var user_id=$("#user_id").val();
+            var real_name=$("#real_name").val();
             var year_month=$("#year_month").val().split("-");
             //初始化订单列表
             self.is_loading=true;
             self.load_node.show();
             self.params.user_id=user_id;
+            self.params.real_name=real_name;
             self.params.year=year_month[0];
             self.params.month=Number(year_month[1]);
             $.getJSON("/api/user/meals/list/?"+util.format(self.params),function (d) {
