@@ -22,6 +22,7 @@ from api.companies.views import OrderSummaryOfCompanyView
 from api.companies.views import OrderListOfCompanyView
 from api.companies.views import AcceptOrdersView
 from api.companies.views import ModifyCompanyImageView
+from api.companies.views import CompanyInfoView
 from api.restaurants.views import AddDishView
 from api.restaurants.views import DeleteDishView
 from api.restaurants.views import TimeRangeListView
@@ -152,4 +153,7 @@ urlpatterns = [
 
     # 修改公司图片
     url(r"api/company/modify_image/$", ModifyCompanyImageView.as_view()),
+
+    # 查看公司信息
+    url(r"api/company/info/$", CompanyInfoView.as_view()),
 ]

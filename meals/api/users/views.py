@@ -18,6 +18,7 @@ from api.users.serializers import CancelMealsOrderSerializer
 from api.users.serializers import MealsOrderListSerializer
 from common.constants import UserAdminType
 from common.constants import OrderStatus
+from common.utils import log_error
 from api.decorators import login_required
 from api.decorators import company_required
 from api.companies.models import Companies
@@ -82,6 +83,7 @@ class PersonnelListView(HttpApiBaseView):
                 })
             return self.success_response(results, message=u"获取员工列表成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"获取员工列表失败")
 
 
@@ -123,6 +125,7 @@ class AddPersonnelView(HttpApiBaseView):
                 "password": user.password
             }, message=u"新建员工账号成功!")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"新建员工账号失败!")
 
 
@@ -144,6 +147,7 @@ class ResetUserView(HttpApiBaseView):
             user.save()
             return self.success_response({}, message=u"用户密码修改成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"用户修改密码失败")
 
 
@@ -163,6 +167,7 @@ class MealsOrderView(HttpApiBaseView):
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
             user_id = self.get_login_user_id(request)
+            company_id = self.get_login_user_company_id(request)
             order_list = json.loads(data['order_list'])
             time_range = data["time_range"]
             order_id = cacher.get_order_id()
@@ -184,6 +189,7 @@ class MealsOrderView(HttpApiBaseView):
                     total_price=total_price,
                 )
                 order.save()
+                screen_order_id = cacher.get_screen_order_id(order_id, user_id, company_id, order.create_time.year, order.create_time.month, order.create_time.day, time_range)
             return self.success_response({
                 'user_id': user_id,
                 'order_id': order_id,
@@ -191,6 +197,7 @@ class MealsOrderView(HttpApiBaseView):
                 'order_total_price': order_total_price
             }, u"下单成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"订餐失败, err: %s" % err)
 
 
@@ -216,6 +223,7 @@ class CancelMealsOrder(HttpApiBaseView):
                 order.save()
             return self.success_response({}, message=u"订单取消成功！")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"取消订单失败, err: %s" % err)
 
 
@@ -278,6 +286,7 @@ class MealsOrderList(HttpApiBaseView):
                 })
             return self.success_response(result, message=u"订单查询成功！")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"")
 
     def _get_order_price(self, order_list):

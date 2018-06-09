@@ -13,8 +13,10 @@ from api.restaurants.models import TimeRange
 from api.users.models import MealOrders
 from api.decorators import admin_required
 from api.decorators import company_required
+from api.decorators import login_required
 from common.constants import OrderStatus
 from common.constants import UserAdminType
+from common.utils import log_error
 from api.companies.serializers import AddCompanySerializer
 from api.companies.serializers import AddCompanyAdminSerializer
 from api.companies.serializers import ResetCompanyAdminSerializer
@@ -68,6 +70,7 @@ class AddCompanyView(HttpApiBaseView):
             company.save()
             return self.success_response({"company_id": company.id, "admin_name": admin_name, "password": password}, message=u'公司创建成功，管理员账号: %s, 初始密码: %s， 请牢记初始密码，或可在账号管理重置管理员密码。' % (admin_name, password))
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u'公司创建失败')
 
 
@@ -98,6 +101,7 @@ class AddCompanyAdminView(HttpApiBaseView):
             company_admin = cacher.create_user(data["admin_name"], data["password"], admin_type=UserAdminType.company, company_id=company.id)
             return self.success_response({'company_id': company.id, 'admin_name': company_admin.user_name, 'password': data["password"]}, u"公司管理员创建成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u'公司管理员创建失败')
 
 
@@ -117,6 +121,7 @@ class ResetCompanyAdminView(HttpApiBaseView):
             user.save()
             return self.success_response({'password': data["password"]}, u"密码设置成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"密码重置失败")
 
 
@@ -152,6 +157,7 @@ class AddDepartmentView(HttpApiBaseView):
                 'company_id': department.company_id
             }, u"创建部门成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"创建部门失败")
 
 
@@ -196,6 +202,7 @@ class RestaurantOrdersSummaryView(HttpApiBaseView):
                 })
             return self.success_response(result, message=u"订单查询成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"订单查询失败")
 
 
@@ -256,6 +263,7 @@ class RestaurantOrdersDetailsView(HttpApiBaseView):
             }
             return self.success_response(result, message=u"订单查询成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"订单查询失败")
 
     def _get_order_price(self, order_list):
@@ -318,6 +326,7 @@ class OrderSummaryOfCompanyView(HttpApiBaseView):
                 })
             return self.success_response(result, message=u"订单查询成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"订单查询失败")
 
 
@@ -368,6 +377,7 @@ class OrderListOfCompanyView(HttpApiBaseView):
                 total_rmb += order.total_price
             return self.success_response({"total_rmb": total_rmb, "order_list": result}, message=u"订单查询成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, message=u"订单查询失败")
 
 
@@ -382,6 +392,7 @@ class AcceptOrdersView(HttpApiBaseView):
             try:
                 order_id_list = json.loads(data["order_id_list"])
             except Exception as err:
+                log_error('API: %s, err: %s' % (self.__class__.__name__, err))
                 return self.error_response({}, u"order_id_list 格式错误")
             orders = MealOrders.objects.filter(order_id__in=order_id_list, status=OrderStatus.created)
             for order in orders:
@@ -389,6 +400,7 @@ class AcceptOrdersView(HttpApiBaseView):
                 order.save()
             return self.success_response({}, u"接单成功")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"接单失败, error: %s" % err)
 
 class ModifyCompanyImageView(HttpApiBaseView):
@@ -409,4 +421,20 @@ class ModifyCompanyImageView(HttpApiBaseView):
             company.save()
             return self.success_response({}, u"修改公司图片成功！")
         except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
             return self.error_response({}, u"修改公司图片失败！")
+
+
+class CompanyInfoView(HttpApiBaseView):
+    @login_required
+    def get(self, request):
+        company_id = self.get_login_user_company_id(request)
+        result = {'image_url': '', 'company_name': ''}
+        try:
+            company = Companies.objects.get(id=company_id)
+        except Exception as err:
+            log_error('API: %s, err: %s' % (self.__class__.__name__, err))
+            return self.success_response(result, message=u"公司不存在")
+        result['company_name'] = company.company_name
+        result['image_url'] = company.image_url
+        return self.success_response(result)
