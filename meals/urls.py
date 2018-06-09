@@ -47,6 +47,7 @@ from api.opt.upload_image_view import UploadImageView
 
 urlpatterns = [
     #url(r'^admin/', admin.site.urls),
+    url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.STATIC_ROOT}),
 
     # html
     url(r"^$", TemplateView.as_view(template_name="login.html"), name="user_login_page"),
