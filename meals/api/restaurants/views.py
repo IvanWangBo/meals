@@ -312,10 +312,11 @@ class RestaurantListView(HttpApiBaseView):
             all_restaurants = Restaurants.objects.filter(is_enabled=1)
             if is_order:
                 time_range_id = request.GET.get('time_range_id', 0)
+                user_id = self.get_login_user_id(request)
                 dishes = Dishes.objects.filter(is_enabled=1)
                 flag_map = {}
                 order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
-                has_orders = MealOrders.objects.filter(order_date=order_date, time_range=time_range_id,
+                has_orders = MealOrders.objects.filter(user_id=user_id, order_date=order_date, time_range=time_range_id,
                                                        status=OrderStatus.created)
                 if has_orders:
                     return self.error_response([], message=u"该时间段已点过餐，请在【订单管理】确认，取消后可再次点餐！")
