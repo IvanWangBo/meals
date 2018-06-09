@@ -14,7 +14,7 @@
 <div class="whole">
     <div class="top_banner">
         <div class="top">
-            <i></i>企业团餐管理系统
+            <i class="js_logo"></i>企业团餐管理系统
         </div>
     </div>
     <div class="top_tabs">
@@ -23,6 +23,7 @@
     </div>
     <div class="js_main main">
         <div class="line"></div>
+        <div class="js_notice"></div>
         <!--展示区-->
         <div class="js_secs secs">
             <!--用餐时间段-->
@@ -82,7 +83,7 @@
         }
         var ly = new lazyload(condition);
 
-        var tpl_1='<div class="js_time_range_list time_range_list">\
+        var tpl_1=' <div class="js_time_range_list time_range_list">\
                         <%for(var i=0;i<data.length;i++){%>\
                             <div class="js_time_range time_range time_range_<%=data[i].time_range_id%>" tid="<%=data[i].time_range_id%>"><%=data[i].name%></div>\
                         <%}%>\
@@ -119,6 +120,20 @@
                             <i class="js_plus icons" style="margin-left: 3px;" d_price="<%=data.price%>" d_id="<%=data.dish_id%>">+</i>\
                         </div>\
                     </div>';
+        //获取公司logo
+        self.is_loading=true;
+        self.load_node.show();
+        $.getJSON("/api/company/info/?"+util.format(self.params),function (d) {
+            if(d.code==200){
+                if(d.data.image_url){
+                    $(".js_logo").html('<img src="'+d.data.image_url+'" style="width: 100%;height: 100%;">');
+                }
+            }else{
+                alert(d.message);
+            }
+            self.is_loading=false;
+            self.load_node.hide();
+        });
         //初始化用餐时段列表
         self.is_loading=true;
         self.load_node.show();
@@ -128,6 +143,8 @@
                     data: d.data,
                     util: util
                 })).appendTo(".js_list_1");
+                var ele='<p style="padding-top: 15px;font-weight: bolder;font-size: 16px;">注意：您目前预定的是明天('+util.format_date(new Date().getTime()+24*60*60*1000,"yyyy年MM月dd日")+')的餐品</p>'
+                $(ele).appendTo(".js_notice");
             }else{
                 alert(d.message);
             }

@@ -1,0 +1,73 @@
+.whole{
+    width: 100%;
+    background-color: rgba(255,255,255,0.9);
+}
+.top{
+    height:80px;
+    width: 100%;
+    line-height: 80px;
+    font-size: 24px;
+    font-weight: bolder;
+    color:#000;
+    padding-left: 6%;
+    background-color: rgba(0, 0, 0, 0.09);
+}
+.top i{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    margin-right: 10px;
+    vertical-align: middle;
+    background: lightblue;
+}
+.top_tabs{
+    width: 320px;
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+    margin-left: 6%;
+    padding: 4px;
+    margin-top: 5px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 5px;
+}
+.top_tabs .top_tab{
+    width: 80px;
+    text-align: center;
+    color:#fff;
+    display: inline-block;
+    float: left;
+    cursor: pointer;
+}
+.top_tabs .chosen_1{
+    font-size: 16px;
+    font-weight: bolder;
+    background-color: lightblue;
+    color:#000;
+    border-radius: 5px;
+}
+.main{
+    width: 100%;
+    padding-left: 6%;
+}
+.main .line{
+    border-top:2px dashed #ccc;
+    margin-top: 5px;
+    width: 88%;
+}
+input,select{
+    height: 20px;
+    border-radius: 3px;
+}
+.upload_img{
+    margin-top: 20px;
+    border:1px solid #ccc;
+    padding: 5px;
+}
+.upload_img .submit_button{
+    width: 75px;
+    height: 25px;
+    background-color: green;
+    border-radius: 5px;
+    border:1px solid #ccc;
+}
