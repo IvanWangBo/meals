@@ -1,6 +1,7 @@
 #coding=utf-8
 import json
 from datetime import datetime
+from datetime import timedelta
 
 from api.base_view import HttpApiBaseView
 from django.contrib import auth
@@ -171,6 +172,8 @@ class MealsOrderView(HttpApiBaseView):
             order_list = json.loads(data['order_list'])
             time_range = data["time_range"]
             order_id = cacher.get_order_id()
+            screen_order_id = cacher.get_screen_order_id(order_id, user_id, company_id, datetime.now().year,
+                                                         datetime.now().month, datetime.now().day, time_range)
             order_total_price = 0
             for order in order_list:
                 dish_id = order['dish_id']
@@ -179,9 +182,12 @@ class MealsOrderView(HttpApiBaseView):
                 price = dish.price
                 total_price = price * count
                 order_total_price = order_total_price + total_price
+                order_date = (datetime.now() + timedelta(days=1)).date()
                 order = MealOrders.objects.create(
                     user_id=user_id,
                     order_id=order_id,
+                    order_date=order_date,
+                    screen_order_id=screen_order_id,
                     dish_id=dish_id,
                     count=count,
                     status=OrderStatus.created,
@@ -189,10 +195,10 @@ class MealsOrderView(HttpApiBaseView):
                     total_price=total_price,
                 )
                 order.save()
-                screen_order_id = cacher.get_screen_order_id(order_id, user_id, company_id, order.create_time.year, order.create_time.month, order.create_time.day, time_range)
             return self.success_response({
                 'user_id': user_id,
                 'order_id': order_id,
+                'screen_order_id': screen_order_id,
                 'order_list': order_list,
                 'order_total_price': order_total_price
             }, u"下单成功")
@@ -267,6 +273,8 @@ class MealsOrderList(HttpApiBaseView):
                 extra_detail_map[order.order_id]['create_time'] = order.create_time
                 extra_detail_map[order.order_id]['status'] = order.status
                 extra_detail_map[order.order_id]['time_range'] = order.time_range
+                extra_detail_map[order.order_id]['order_date'] = order.order_date
+                extra_detail_map[order.order_id]['screen_order_id'] = order.screen_order_id
             result = []
             for order_id in result_map:
                 time_range_id = extra_detail_map.get(order_id,{}).get('time_range', 0)
@@ -281,6 +289,8 @@ class MealsOrderList(HttpApiBaseView):
                     'order_price': self._get_order_price(result_map[order_id]),
                     'create_time': extra_detail_map.get(order_id, {}).get('create_time', ''),
                     'status': extra_detail_map.get(order_id, {}).get('status', -2),
+                    'order_date': extra_detail_map.get('order_date', ''),
+                    'screen_order_id': extra_detail_map.get('screen_order_id', ''),
                     'status_name': OrderStatus.map.get(status, ""),
                     'time_range_name': time_range_name
                 })

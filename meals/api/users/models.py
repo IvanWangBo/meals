@@ -1,5 +1,7 @@
 # coding=utf-8
 from django.db import models
+from datetime import datetime
+from datetime import timedelta
 from django.contrib.auth.models import AbstractBaseUser
 
 from common.constants import UserGender
@@ -37,6 +39,8 @@ class Users(AbstractBaseUser):
 class MealOrders(models.Model):
     user_id = models.IntegerField(blank=False, default=0)
     order_id = models.IntegerField(blank=False, default=0, db_index=True)
+    screen_order_id = models.CharField(blank=False, default='', max_length=256)
+    order_data = models.DateField(blank=False, auto_now_add=True)
     dish_id = models.IntegerField(blank=False, default=0)
     count = models.IntegerField(blank=False, default=1)
     time_range = models.IntegerField(blank=False, default=0)
