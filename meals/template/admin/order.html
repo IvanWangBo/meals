@@ -106,7 +106,7 @@
                                     <%}%>\
                                 </select>\
                             </span>\
-                            <span style="margin-left: 30px;">请选择查询日期：<input type="text" name="search_date" id="day_bill_date"></span>\
+                            <span style="margin-left: 30px;">请选择查询用餐日期：<input type="text" name="search_date" id="day_bill_date"></span>\
                             <div class="js_company_day_bill_btn search_btn">查询</div>\
                         </div>\
                     <%}else{%>\
@@ -143,7 +143,7 @@
                             </tr>\
                             <%for(var n=0;n<data.order_list.length;n++){%>\
                                 <tr>\
-                                    <td><%=data.order_list[n].order_id%></td>\
+                                    <td><%=data.order_list[n].screen_order_id%></td>\
                                     <td><%=data.order_list[n].user_real_name%></td>\
                                     <td><%=data.order_list[n].user_id%></td>\
                                     <td><%=data.order_list[n].dish_name%></td>\

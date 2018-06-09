@@ -71,8 +71,11 @@ class PersonnelListView(HttpApiBaseView):
                         else:
                             to_settle_map[order.user_id] = order.total_price
             for user in personnel_list:
+                if user.admin_type == UserAdminType.company:
+                    continue
                 results.append({
                     'user_id': user.id,
+                    'user_name': user.user_name,
                     'department_id': user.department_id,
                     'department_name': department_map.get(user.department_id, ''),
                     'real_name': user.real_name,
@@ -173,6 +176,12 @@ class MealsOrderView(HttpApiBaseView):
             screen_order_id = cacher.get_screen_order_id(order_id, user_id, company_id, datetime.now().year,
                                                          datetime.now().month, datetime.now().day, time_range)
             order_total_price = 0
+            order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
+            has_orders = MealOrders.objects.filter(order_date=order_date, time_range=time_range)
+            if has_orders:
+                can_order = 0
+            else:
+                can_order = 1
             for order in order_list:
                 dish_id = order['dish_id']
                 count = order['count']
@@ -180,7 +189,6 @@ class MealsOrderView(HttpApiBaseView):
                 price = dish.price
                 total_price = price * count
                 order_total_price = order_total_price + total_price
-                order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
                 order = MealOrders.objects.create(
                     user_id=user_id,
                     order_id=order_id,
@@ -194,6 +202,7 @@ class MealsOrderView(HttpApiBaseView):
                 )
                 order.save()
             return self.success_response({
+                'can_order': can_order,
                 'user_id': user_id,
                 'order_id': order_id,
                 'screen_order_id': screen_order_id,
@@ -239,17 +248,22 @@ class MealsOrderList(HttpApiBaseView):
             if not serializer.is_valid():
                 return self.serializer_invalid_response(serializer)
             data = serializer.data
-            if data["user_id"] == -9:
-                user_id = self.get_login_user_id(request)
+            real_name = data["real_name"]
+            if not data["user_id"]:
+                if real_name:
+                    users = Users.objects.filter(real_name=real_name)
+                    user_id_list = [user.id for user in users]
+                else:
+                    user_id_list = [self.get_login_user_id(request)]
             else:
-                user_id = data["user_id"]
+                user_id_list = [data["user_id"]]
             status = data["status"]
             year = data["year"]
             month = data["month"]
             if status == -9:
-                all_orders = MealOrders.objects.filter(user_id=user_id)
+                all_orders = MealOrders.objects.filter(user_id__in=user_id_list)
             else:
-                all_orders = MealOrders.objects.filter(user_id=user_id, status=status)
+                all_orders = MealOrders.objects.filter(user_id=user_id_list, status=status)
             orders = []
             for order in all_orders:
                 if order.create_time.month == month and order.create_time.year == year:
@@ -287,8 +301,8 @@ class MealsOrderList(HttpApiBaseView):
                     'order_price': self._get_order_price(result_map[order_id]),
                     'create_time': extra_detail_map.get(order_id, {}).get('create_time', ''),
                     'status': extra_detail_map.get(order_id, {}).get('status', -2),
-                    'order_date': extra_detail_map.get('order_date', ''),
-                    'screen_order_id': extra_detail_map.get('screen_order_id', ''),
+                    'order_date': extra_detail_map.get(order_id, {}).get('order_date', ''),
+                    'screen_order_id': extra_detail_map.get(order_id, {}).get('screen_order_id', ''),
                     'status_name': OrderStatus.map.get(status, ""),
                     'time_range_name': time_range_name
                 })

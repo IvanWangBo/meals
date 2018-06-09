@@ -1,6 +1,8 @@
 #coding=utf-8
 import random
 import json
+from datetime import date
+from datetime import timedelta
 
 from api.base_view import HttpApiBaseView
 from api.users.models import Users
@@ -17,6 +19,7 @@ from api.decorators import login_required
 from common.constants import OrderStatus
 from common.constants import UserAdminType
 from common.utils import log_error
+from common.utils import date_to_str
 from api.companies.serializers import AddCompanySerializer
 from api.companies.serializers import AddCompanyAdminSerializer
 from api.companies.serializers import ResetCompanyAdminSerializer
@@ -341,17 +344,15 @@ class OrderListOfCompanyView(HttpApiBaseView):
             month = data["month"]
             year = data["year"]
             day = data["day"]
+            order_date = date(year=year, month=month, day=day)
+            order_date_str = date_to_str(order_date)
             company_id = data["company_id"]
             users = Users.objects.filter(company_id=company_id)
             user_id_list = [user.id for user in users]
             user_id_name_map = {}
             for user in users:
                 user_id_name_map[user.id] = user.real_name
-            all_orders = MealOrders.objects.filter(user_id__in=user_id_list, status__in=[OrderStatus.accepted, OrderStatus.created])
-            orders = []
-            for order in all_orders:
-                if order.create_time.month == month and order.create_time.year == year and order.create_time.day == day:
-                    orders.append(order)
+            orders = MealOrders.objects.filter(user_id__in=user_id_list, status__in=[OrderStatus.accepted, OrderStatus.created], order_date=order_date_str)
 
             result = []
             total_rmb = 0
