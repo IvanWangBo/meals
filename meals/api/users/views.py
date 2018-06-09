@@ -71,8 +71,11 @@ class PersonnelListView(HttpApiBaseView):
                         else:
                             to_settle_map[order.user_id] = order.total_price
             for user in personnel_list:
+                if user.admin_type == UserAdminType.company:
+                    continue
                 results.append({
                     'user_id': user.id,
+                    'user_name': user.user_name,
                     'department_id': user.department_id,
                     'department_name': department_map.get(user.department_id, ''),
                     'real_name': user.real_name,
