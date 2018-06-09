@@ -361,6 +361,8 @@ class OrderListOfCompanyView(HttpApiBaseView):
                 time_range = TimeRange.objects.get(id=order.time_range)
                 result.append({
                     "order_id": order.order_id,
+                    "screen_order_id": order.screen_order_id,
+                    "order_date": order.order_date,
                     "user_id": order.user_id,
                     "user_real_name": user_id_name_map.get(order.user_id, ""),
                     "status_name": OrderStatus.map.get(order.status, ""),
