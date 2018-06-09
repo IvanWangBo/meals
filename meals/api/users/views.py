@@ -287,8 +287,8 @@ class MealsOrderList(HttpApiBaseView):
                     'order_price': self._get_order_price(result_map[order_id]),
                     'create_time': extra_detail_map.get(order_id, {}).get('create_time', ''),
                     'status': extra_detail_map.get(order_id, {}).get('status', -2),
-                    'order_date': extra_detail_map.get('order_date', ''),
-                    'screen_order_id': extra_detail_map.get('screen_order_id', ''),
+                    'order_date': extra_detail_map.get(order_id, {}).get('order_date', ''),
+                    'screen_order_id': extra_detail_map.get(order_id, {}).get('screen_order_id', ''),
                     'status_name': OrderStatus.map.get(status, ""),
                     'time_range_name': time_range_name
                 })
