@@ -314,14 +314,14 @@ class RestaurantListView(HttpApiBaseView):
                 for dish in dishes:
                     support_times = json.loads(dish.support_times)
                     for t in support_times:
-                        flag_map[dish.restaurant_id + t] = 1
+                        flag_map["%s%s" % (dish.restaurant_id, t)] = 1
                 company_id = self.get_login_user_company_id(request)
                 relations = RestaurantRelation.objects.filter(company_id=company_id, is_enabled=1)
                 restaurant_ids = [relation.restaurant_id for relation in relations]
                 restaurants = []
                 for restaurant in all_restaurants:
                     if restaurant.id in restaurant_ids:
-                        if flag_map.get(restaurant.id + time_range_id):
+                        if flag_map.get("%s%s" % (restaurant.id, time_range_id)):
                             restaurants.append(restaurant)
             else:
                 restaurants = all_restaurants
