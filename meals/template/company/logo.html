@@ -24,8 +24,10 @@
     <div class="js_main main">
         <div class="line"></div>
         <form id="js_upload_img" class="upload_img" enctype="multipart/form-data" method="post" >
-            <input class="put_9" type="file" required="required" name="image">
-            <button class="js_submit submit_button" id="image_button">上传图片</button>
+            <a class="upload_btn" href="javascript:;">
+                <input class="put_9" type="file" required="required" name="image">请选择图片
+            </a>
+            <button class="js_submit submit_button" id="image_button">点击上传</button>
         </form>
     </div>
     <div class="loading" style="display: none"></div>
@@ -86,7 +88,8 @@
                             },
                             success: function (d) {
                                 if(d.code==200){
-                                    //window.location.reload();
+                                    alert(d.message);
+                                    window.location.reload();
                                 }else{
                                     alert(d.message);
                                 }
@@ -96,6 +99,8 @@
                         })
                     }else{
                         alert(d.message);
+                        self.is_loading=false;
+                        self.load_node.hide();
                     }
                 }
             })
