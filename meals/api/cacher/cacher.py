@@ -53,4 +53,4 @@ class Cacher(object):
         return now_id
 
     def get_screen_order_id(self, order_id, user_id, company_id, year, month, day, time_range):
-        return '%2d%2d%2d%2d%d%3d%4d' % (company_id, year % 100, month, day, time_range, user_id, order_id)
+        return '%02d%02d%02d%02d%0d%03d%04d' % (company_id, year % 100, month, day, time_range, user_id, order_id)
