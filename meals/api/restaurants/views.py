@@ -339,6 +339,8 @@ class RestaurantListView(HttpApiBaseView):
                 'address': restaurant.address,
                 'phone_number': restaurant.phone_number
             } for restaurant in restaurants]
+            if not results:
+                return self.error_response(results, message=u"该时间段没有可供选择的餐厅")
             return self.success_response(results, message=u"获取餐厅列表成功")
 
         except Exception as err:
