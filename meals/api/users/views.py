@@ -172,6 +172,11 @@ class MealsOrderView(HttpApiBaseView):
             company_id = self.get_login_user_company_id(request)
             order_list = json.loads(data['order_list'])
             time_range = data["time_range"]
+            order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
+            has_orders = MealOrders.objects.filter(user_id=user_id, order_date=order_date, time_range=time_range,
+                                                   status=OrderStatus.created)
+            if has_orders:
+                return self.error_response([], message=u"该时间段已点过餐，请在【订单管理】确认，取消后可再次点餐！")
             order_id = cacher.get_order_id()
             screen_order_id = cacher.get_screen_order_id(order_id, user_id, company_id, datetime.now().year,
                                                          datetime.now().month, datetime.now().day, time_range)
