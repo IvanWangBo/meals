@@ -40,7 +40,7 @@ class MealOrders(models.Model):
     user_id = models.IntegerField(blank=False, default=0)
     order_id = models.IntegerField(blank=False, default=0, db_index=True)
     screen_order_id = models.CharField(blank=False, default='', max_length=256)
-    order_data = models.DateField(blank=False, auto_now_add=False)
+    order_data = models.CharField(blank=False, default='', max_length=256)
     dish_id = models.IntegerField(blank=False, default=0)
     count = models.IntegerField(blank=False, default=1)
     time_range = models.IntegerField(blank=False, default=0)

@@ -20,6 +20,7 @@ from api.users.serializers import MealsOrderListSerializer
 from common.constants import UserAdminType
 from common.constants import OrderStatus
 from common.utils import log_error
+from common.utils import date_to_str
 from api.decorators import login_required
 from api.decorators import company_required
 from api.companies.models import Companies
@@ -179,7 +180,7 @@ class MealsOrderView(HttpApiBaseView):
                 price = dish.price
                 total_price = price * count
                 order_total_price = order_total_price + total_price
-                order_date = (datetime.now() + timedelta(days=1)).date()
+                order_date = date_to_str((datetime.now() + timedelta(days=1)).date())
                 order = MealOrders.objects.create(
                     user_id=user_id,
                     order_id=order_id,
